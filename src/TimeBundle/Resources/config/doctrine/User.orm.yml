@@ -1,0 +1,42 @@
+TimeBundle\Entity\User:
+    type: entity
+    table: null
+    repositoryClass: TimeBundle\Repository\UserRepository
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        fname:
+            type: string
+            length: '50'
+            nullable: true
+        lname:
+            type: string
+            length: '50'
+            nullable: true
+        userName:
+            type: string
+            length: '100'
+            nullable: true
+            unique: true
+        password:
+            type: string
+            length: '100'
+            nullable: true
+        age:
+            type: integer
+            nullable: true
+        rule:
+            type: integer
+            nullable: true
+        
+    
+    oneToMany:
+        tasks:
+            targetEntity: task
+            mappedBy: user
+    
+    lifecycleCallbacks: {  }

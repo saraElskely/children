@@ -1,0 +1,3 @@
+time_homepage:
+    path:     /
+    defaults: { _controller: TimeBundle:Default:index }

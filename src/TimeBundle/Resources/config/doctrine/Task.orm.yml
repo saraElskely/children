@@ -1,0 +1,28 @@
+TimeBundle\Entity\Task:
+    type: entity
+    table: null
+    repositoryClass: TimeBundle\Repository\TaskRepository
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        taskName:
+            type: string
+            length: 255
+            nullable: true
+            unique: true
+        userId:
+            type: integer
+            nullable: true
+            
+    manyToOne:
+        creator:
+            targetEntity: user
+            inversedBy: task
+            joinColumn:
+                name: userId
+                referencedColumnName: id
+    lifecycleCallbacks: {  }
