@@ -16,13 +16,34 @@ class Task
      * @var string
      */
     private $taskName;
-
+    
     /**
      * @var int
+     * daily or weekly or sunday ....
      */
-    private $userId;
+    private $schedule;
+
+    /**
+     * @var User
+     */
+    private $creator;
+    
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $taskSchedule;
 
 
+    
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->taskSchedule = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+    
     /**
      * Get id
      *
@@ -56,29 +77,86 @@ class Task
     {
         return $this->taskName;
     }
-
-    /**
-     * Set userId
+    
+        /**
+     * Set schedule
      *
-     * @param int $userId
+     * @param integer $schedule
      *
-     * @return Task
+     * @return DailySchedule
      */
-    public function setUserId($userId)
+    public function setSchedule($schedule)
     {
-        $this->userId = $userId;
+        $this->schedule = $schedule;
 
         return $this;
     }
 
     /**
-     * Get userId
+     * Get schedule
      *
      * @return int
      */
-    public function getUserId()
+    public function getSchedule()
     {
-        return $this->userId;
+        return $this->schedule;
+    }
+
+    /**
+     * Set creator
+     *
+     * @param User $user
+     *
+     * @return Task
+     */
+    public function setCreator(User $creator)
+    {
+        $this->creator = $creator;
+
+        return $this;
+    }
+
+    /**
+     * Get creator
+     *
+     * @return User
+     */
+    public function getCreator()
+    {
+        return $this->creator;
+    }
+
+    /**
+     * Add taskSchedule
+     *
+     * @param \TimeBundle\Entity\DailySchedule $taskSchedule
+     *
+     * @return Task
+     */
+    public function addTaskSchedule(\TimeBundle\Entity\DailySchedule $taskSchedule)
+    {
+        $this->taskSchedule[] = $taskSchedule;
+
+        return $this;
+    }
+
+    /**
+     * Remove taskSchedule
+     *
+     * @param \TimeBundle\Entity\DailySchedule $taskSchedule
+     */
+    public function removeTaskSchedule(\TimeBundle\Entity\DailySchedule $taskSchedule)
+    {
+        $this->taskSchedule->removeElement($taskSchedule);
+    }
+
+    /**
+     * Get taskSchedule
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getTaskSchedule()
+    {
+        return $this->taskSchedule;
     }
 }
-

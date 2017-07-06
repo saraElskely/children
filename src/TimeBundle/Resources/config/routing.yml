@@ -1,3 +1,11 @@
+time_task:
+    resource: "@TimeBundle/Resources/config/routing/task.yml"
+    prefix:   /task
+    
+time_user:
+        resource: "@TimeBundle/Resources/config/routing/user.yml"
+        prefix:   /user
+
 time_homepage:
     path:     /
     defaults: { _controller: TimeBundle:Default:index }

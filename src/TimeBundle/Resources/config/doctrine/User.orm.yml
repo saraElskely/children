@@ -12,31 +12,50 @@ TimeBundle\Entity\User:
         fname:
             type: string
             length: '50'
-            nullable: true
+            nullable: false
         lname:
             type: string
             length: '50'
-            nullable: true
+            nullable: false
         userName:
             type: string
             length: '100'
-            nullable: true
+            nullable: false
             unique: true
         password:
             type: string
             length: '100'
-            nullable: true
+            nullable: false
         age:
             type: integer
-            nullable: true
-        rule:
+            nullable: false
+        role:
             type: integer
-            nullable: true
+            nullable: false
+        
         
     
-    oneToMany:
-        tasks:
-            targetEntity: task
-            mappedBy: user
+    manyToOne:
+        children:
+            targetEntity: User
+            inversedBy: mother
+            joinColumn:
+                name: mother_id
+                referencedColumnName: id
+                nullable: true
     
+    oneToMany:
+        createdTasks:
+            targetEntity: Task
+            mappedBy: creator
+            
+        userSchedule:
+            targetEntity: DailySchedule
+            mappedBy: userInSchedule
+    
+        mother:
+            targetEntity: User
+            mappedBy: children
+        
+        
     lifecycleCallbacks: {  }

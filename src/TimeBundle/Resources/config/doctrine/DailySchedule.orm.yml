@@ -1,0 +1,35 @@
+TimeBundle\Entity\DailySchedule:
+    type: entity
+    table: null
+    repositoryClass: TimeBundle\Repository\DailyScheduleRepository
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        isDone:
+            type: boolean
+        date:
+            type: date
+            
+    manyToOne:
+        taskInSchedule:
+            targetEntity: Task
+            inversedBy: taskSchedule
+            joinColumn:
+                name: taskId
+                referencedColumnName: id
+                nullable: false
+   
+        userInSchedule:
+            targetEntity: User
+            inversedBy: schedule
+            joinColumn:
+                name: userId
+                referencedColumnName: id
+                nullable: false
+
+    
+    lifecycleCallbacks: {  }

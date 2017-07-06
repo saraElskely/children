@@ -12,17 +12,26 @@ TimeBundle\Entity\Task:
         taskName:
             type: string
             length: 255
-            nullable: true
+            nullable: false
             unique: true
-        userId:
+            
+        schedule:
             type: integer
-            nullable: true
             
     manyToOne:
         creator:
-            targetEntity: user
-            inversedBy: task
+            targetEntity: User
+            inversedBy: createdTasks
             joinColumn:
-                name: userId
+                name: user
                 referencedColumnName: id
+                nullable: false
+                
+     
+    oneToMany:
+        taskSchedule:
+            targetEntity: DailySchedule
+            mappedBy: taskInSchedule
+            
+            
     lifecycleCallbacks: {  }
