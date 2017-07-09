@@ -6,6 +6,14 @@ security:
     providers:
         in_memory:
             memory: ~
+            
+        our_db_provider:
+            entity:
+                class: TimeBundle:User
+                property: username
+                # if you're using multiple entity managers
+                # manager_name: customer
+
 
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs
@@ -22,6 +30,43 @@ security:
 
             # https://symfony.com/doc/current/security/form_login_setup.html
             #form_login: ~
+            form_login:
+                login_path: login
+                check_path: login
+                provider: our_db_provider
+                # if true, forward the user to the login form instead of redirecting
+                use_forward: false
 
+                # login success redirecting options (read further below)
+                always_use_default_target_path: false
+                default_target_path:            /user
+                target_path_parameter:          _target_path
+                use_referer:                    false
+
+                # login failure redirecting options (read further below)
+                failure_path:    /login
+                failure_forward: false
+                failure_path_parameter: _failure_path
+#                failure_handler: some.service.id
+#                success_handler: some.service.id
+
+                # field names for the username and password fields
+                username_parameter: _username
+                password_parameter: _password
+                
+            logout:
+                path: /logout
+                
+
+    access_control:
+        - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/user, roles: ROLE_USER }
+        
     encoders:
-        TimeBundle\Entity\User: bcrypt
+        TimeBundle\Entity\User: 
+            algorithm: bcrypt
+            
+    role_hierarchy:
+        ROLE_ADMIN:  ROLE_USER
+        ROLE_MOTHER: ROLE_USER 
+        ROLE_CHILD: ROLE_USER

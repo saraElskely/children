@@ -17,7 +17,7 @@ TimeBundle\Entity\User:
             type: string
             length: '50'
             nullable: false
-        userName:
+        username:
             type: string
             length: '100'
             nullable: false

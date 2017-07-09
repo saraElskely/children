@@ -9,3 +9,11 @@ time_user:
 time_homepage:
     path:     /
     defaults: { _controller: TimeBundle:Default:index }
+
+login:
+    path:     /login
+    defaults: { _controller: TimeBundle:Security:login }
+
+logout:
+    path:     /logout
+    defaults: { _controller: TimeBundle:Security:logout }

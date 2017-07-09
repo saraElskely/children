@@ -16,8 +16,15 @@
           <a class="nav-link active" href="https://v4-alpha.getbootstrap.com/examples/blog/#">Home</a>
           <a class="nav-link" href="#">New features</a>
           <a class="nav-link" href="#">Press</a>
-          <a class="nav-link" href="#">New hires</a>
-          <a class="nav-link" href="#">About</a>
+          <a class="nav-link" href="{{ path('user_index') }}">user</a>
+          {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+            <a class="nav-link">{{ app.user.username }}</a>
+          {% endif %}
+        {% if is_granted('ROLE_USER') %}
+          <a class="nav-link" href="{{ path('\logout') }}">Logout</a>
+        {% else%}
+          <a class="nav-link" href="{{ path('\login') }}">Login</a>
+        {% endif %}
         </nav>
       </div>
     </div>        

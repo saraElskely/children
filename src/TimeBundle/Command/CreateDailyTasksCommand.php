@@ -33,6 +33,7 @@ class CreateDailyTasksCommand extends ContainerAwareCommand
         $task = new  DailySchedule();
         $task->setDate(new \DateTime());
         
+        
         $task->setTaskInSchedule($taskInSchedule);
         $em = $this->getContainer()->get('doctrine')->getManager();
         

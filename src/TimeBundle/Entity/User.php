@@ -4,7 +4,7 @@ namespace TimeBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
-
+use TimeBundle\constant\Roles;
 /**
  * User
  */
@@ -31,7 +31,7 @@ class User implements UserInterface
      * @var string
      * @Assert\NotBlank()
      */
-    private $userName;
+    private $username;
 
     /**
      * @var string
@@ -84,7 +84,7 @@ class User implements UserInterface
     }
 
     public function __toString() {
-        return $this->userName;
+        return $this->username;
     }
 
     /**
@@ -146,27 +146,27 @@ class User implements UserInterface
     }
 
     /**
-     * Set userName
+     * Set username
      *
-     * @param string $userName
+     * @param string $username
      *
      * @return User
      */
-    public function setUserName($userName)
+    public function setUsername($username)
     {
-        $this->userName = $userName;
+        $this->username = $username;
 
         return $this;
     }
 
     /**
-     * Get userName
+     * Get username
      *
      * @return string
      */
-    public function getUserName()
+    public function getUsername()
     {
-        return $this->userName;
+        return $this->username;
     }
 
     /**
@@ -373,11 +373,22 @@ class User implements UserInterface
     }
 
     public function getRoles() {
-        
+        if($this->role == Roles::ROLE_ADMIN){
+            return ['ROLE_ADMIN'];
+        }
+        elseif($this->role == Roles::ROLE_MOTHER){
+            return ['ROLE_MOTHER'];
+        }
+        else{
+            return ['ROLE_CHILD'] ;
+        }
     }
 
     public function getSalt() {
         
     }
+
+
+
 
 }

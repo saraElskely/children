@@ -10,6 +10,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use TimeBundle\Repository\UserRepository;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use TimeBundle\constant\Roles;
 
 class UserType extends AbstractType
 {
@@ -18,7 +19,7 @@ class UserType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('fname')->add('lname')->add('userName')
+        $builder->add('fname')->add('lname')->add('username')
                 ->add('password', RepeatedType::class, array(
                     'type' => PasswordType::class,
                     'first_options'  => array('label' => 'Password'),
@@ -28,8 +29,8 @@ class UserType extends AbstractType
                 ->add('role', ChoiceType::class ,[
                     'placeholder' => 'your role',
                     'choices' => [
-                        'Mother' => 1,
-                        'Child' => 2,
+                        'Mother' => Roles::ROLE_MOTHER,
+                        'Child' => Roles::ROLE_CHILD,
                     ]
                 ]);
 //                ->add('children', EntityType::class , [
