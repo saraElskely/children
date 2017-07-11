@@ -4,9 +4,12 @@ dailyschedule_index:
     methods:  GET
 
 dailyschedule_show:
-    path:     /{id}/show
+    path:     /today
     defaults: { _controller: "TimeBundle:DailySchedule:showTodaySchedule" }
     methods:  GET
 
-
+dailyschedule_done:
+    path:   /today/{schedule_id}
+    defaults: { _controller: "TimeBundle:DailySchedule:scheduleDone" }
+    methods:  [POST ,GET]
 

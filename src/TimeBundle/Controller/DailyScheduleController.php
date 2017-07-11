@@ -4,6 +4,7 @@ namespace TimeBundle\Controller;
 
 use TimeBundle\Entity\DailySchedule;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Response;
 
 
 /**
@@ -42,9 +43,25 @@ class DailyScheduleController extends Controller
                     'date' => new \DateTime()]);
 //        dump($dailySchedules);
 //        die();
-
+        $schedule = $em->getRepository('TimeBundle:DailySchedule')->findOneById(4);
         return $this->render('dailyschedule/show.html.twig', array(
             'dailySchedules' => $dailySchedules,
+            's'=> $schedule
         ));
+    }
+    
+    public function scheduleDoneAction($schedule_id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $schedule = $em->getRepository('TimeBundle:DailySchedule')->findOneById($schedule_id);
+//        dump($schedule);
+        $done = !$schedule->getIsDone() ;
+        $schedule->setIsDone($done);
+        $em->flush();
+
+        $response = array("code" => 200, "status" => $schedule->getIsDone());
+          //you can return result as JSON
+        return new Response(json_encode($response)); 
+        
     }
 }

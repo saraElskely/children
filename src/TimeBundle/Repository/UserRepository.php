@@ -12,9 +12,9 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
 {
     public function getChildrenQueryBuilder()
     {
-      return $this->createQueryBuilder('user')
-                ->select()
-                ->where('user.role = 3');
+        return $this->createQueryBuilder('user')
+                  ->select()
+                  ->where('user.role = 3');
 
     }
 }
