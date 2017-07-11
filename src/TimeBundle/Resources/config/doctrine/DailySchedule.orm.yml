@@ -11,6 +11,7 @@ TimeBundle\Entity\DailySchedule:
     fields:
         isDone:
             type: boolean
+            nullable: true
         date:
             type: date
             
@@ -18,10 +19,13 @@ TimeBundle\Entity\DailySchedule:
         taskInSchedule:
             targetEntity: Task
             inversedBy: taskSchedule
+            fetch: EAGER
             joinColumn:
                 name: taskId
                 referencedColumnName: id
                 nullable: false
+                onDelete: CASCADE
+                onUpdate: CASCADE
    
         userInSchedule:
             targetEntity: User
@@ -30,6 +34,8 @@ TimeBundle\Entity\DailySchedule:
                 name: userId
                 referencedColumnName: id
                 nullable: false
+                onDelete: CASCADE
+                onUpdate: CASCADE
 
     
     lifecycleCallbacks: {  }

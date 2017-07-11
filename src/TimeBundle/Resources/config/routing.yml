@@ -6,6 +6,10 @@ time_user:
         resource: "@TimeBundle/Resources/config/routing/user.yml"
         prefix:   /user
 
+time_dailyschedule:
+    resource: "@TimeBundle/Resources/config/routing/dailyschedule.yml"
+    prefix:   /dailyschedule
+
 time_homepage:
     path:     /
     defaults: { _controller: TimeBundle:Default:index }

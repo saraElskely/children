@@ -60,13 +60,17 @@ security:
 
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/user/new, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/user, roles: ROLE_USER }
+        - { path: ^/task/$ , roles: ROLE_USER }
+        - { path: ^/task/[0-9]+/show$ , roles: ROLE_USER }
+        - { path: ^/task, roles: ROLE_CREATOR }
         
     encoders:
         TimeBundle\Entity\User: 
             algorithm: bcrypt
             
     role_hierarchy:
-        ROLE_ADMIN:  ROLE_USER
-        ROLE_MOTHER: ROLE_USER 
+        ROLE_ADMIN:  [ROLE_USER , ROLE_CREATOR ]
+        ROLE_MOTHER: [ROLE_USER , ROLE_CREATOR ]
         ROLE_CHILD: ROLE_USER

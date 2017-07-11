@@ -22,10 +22,13 @@ TimeBundle\Entity\Task:
         creator:
             targetEntity: User
             inversedBy: createdTasks
+            fetch: EAGER
             joinColumn:
                 name: user
                 referencedColumnName: id
                 nullable: false
+                onDelete: CASCADE
+                onUpdate: CASCADE
                 
      
     oneToMany:

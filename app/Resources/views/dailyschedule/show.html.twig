@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Today Dailyschedule</h1>
+
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Isdone</th>
+                <th>Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for dailySchedule in dailySchedules %}
+            <tr>
+                <td><a href="{{ path('dailyschedule_show', { 'id': dailySchedule.id }) }}">{{ dailySchedule.taskInSchedule.taskName }}</a></td>
+                <td>{% if dailySchedule.isDone %}Yes{% else %}No{% endif %}</td>
+               
+                <td>{% if dailySchedule.date %}
+                        {{ dailySchedule.date|date('Y-m-d') }}
+{#                        {% week = ['0' => 'Sunday', '1' => 'Monday'] %}#}
+                        {{dailySchedule.date|date('l')}}
+                        
+                    {% endif %}</td>
+                
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+   
+
+    <ul>
+        <li>
+            <a href="{{ path('dailyschedule_index') }}">Back to the list</a>
+        </li>
+    </ul>
+{% endblock %}

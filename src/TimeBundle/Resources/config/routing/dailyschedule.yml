@@ -1,0 +1,12 @@
+dailyschedule_index:
+    path:     /
+    defaults: { _controller: "TimeBundle:DailySchedule:showUserSchedule" }
+    methods:  GET
+
+dailyschedule_show:
+    path:     /{id}/show
+    defaults: { _controller: "TimeBundle:DailySchedule:showTodaySchedule" }
+    methods:  GET
+
+
+

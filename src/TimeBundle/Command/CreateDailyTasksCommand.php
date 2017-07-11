@@ -9,6 +9,9 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use TimeBundle\Entity\DailySchedule;
 use Doctrine\ORM\EntityManagerInterface;
+use TimeBundle\constant\Roles;
+use TimeBundle\Entity\User;
+use TimeBundle\Entity\Task;
 
 class CreateDailyTasksCommand extends ContainerAwareCommand
 {
@@ -30,15 +33,27 @@ class CreateDailyTasksCommand extends ContainerAwareCommand
             // ...
         }
         
-        $task = new  DailySchedule();
-        $task->setDate(new \DateTime());
-        
-        
-        $task->setTaskInSchedule($taskInSchedule);
         $em = $this->getContainer()->get('doctrine')->getManager();
         
-        $output->writeln('Command result.'.$em);
-        $output->write('hello...');
+        $users = $em->getRepository('TimeBundle:User')->findByRole(Roles::ROLE_CHILD);
+        $tasks = $em->getRepository('TimeBundle:Task')->findByCreator(Roles::ROLE_MOTHER);
+//        dump($tasks);
+//        die();
+        foreach ($users as $user){
+            foreach ($tasks as $task) {
+                $dailySchedule = new  DailySchedule();
+                $dailySchedule->setDate(new \DateTime());
+                $dailySchedule->setUserInSchedule($user);
+                $dailySchedule->setTaskInSchedule($task);
+
+                $em->persist($dailySchedule);
+                $em->flush();
+        
+            }
+        }
+        
+        $output->writeln('Daily Schedule created for all users.');
+        
     }
 
 }

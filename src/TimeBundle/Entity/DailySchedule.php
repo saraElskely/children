@@ -26,16 +26,6 @@ class DailySchedule
      */
     private $date;
 
-    /**
-     * @var User
-     */
-    private $user;
-    
-    /**
-     * @var Task
-     */
-    private $task;
-
     
     /**
      * @var \TimeBundle\Entity\Task
