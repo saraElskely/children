@@ -29,7 +29,7 @@ TimeBundle\Entity\DailySchedule:
    
         userInSchedule:
             targetEntity: User
-            inversedBy: schedule
+            inversedBy: userSchedule
             joinColumn:
                 name: userId
                 referencedColumnName: id

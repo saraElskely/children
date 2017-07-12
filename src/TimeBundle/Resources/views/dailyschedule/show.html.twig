@@ -41,7 +41,7 @@
                      <script>
               $(document).ready(function(){
                   $("#{{dailySchedule.id}}done").click(function(){
-                      $.ajax({url: "{{ path('dailyschedule_done', {'schedule_id': dailySchedule.id }) }}", success: function(result){
+                      $.ajax({url: "{{ path('dailySchedule_done', {'schedule_id': dailySchedule.id }) }}", success: function(result){
                               console.log(result);
             if (result.status == 1){
                           $("#{{dailySchedule.id}}notDone").show();
@@ -51,7 +51,7 @@
                     });
                   });
                   $("#{{dailySchedule.id}}notDone").click(function(){
-                      $.ajax({url: "{{ path('dailyschedule_done', {'schedule_id': dailySchedule.id }) }}", success: function(result){
+                      $.ajax({url: "{{ path('dailySchedule_done', {'schedule_id': dailySchedule.id }) }}", success: function(result){
                         if (!result.status){
                           $("#{{dailySchedule.id}}done").show();
                           $("#{{dailySchedule.id}}notDone").hide();
@@ -64,7 +64,7 @@
                 {% endfor %}
             </ul>
             <div class="card-block">
-              <a class="card-link" href="{{ path('dailyschedule_index') }}">Back to the list</a>
+              <a class="card-link" href="{{ path('dailySchedule_index') }}">Back to the list</a>
               
             </div>
         </div>

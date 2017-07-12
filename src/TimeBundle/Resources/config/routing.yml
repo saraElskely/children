@@ -6,8 +6,8 @@ time_user:
         resource: "@TimeBundle/Resources/config/routing/user.yml"
         prefix:   /user
 
-time_dailyschedule:
-    resource: "@TimeBundle/Resources/config/routing/dailyschedule.yml"
+time_dailySchedule:
+    resource: "@TimeBundle/Resources/config/routing/dailySchedule.yml"
     prefix:   /dailyschedule
 
 time_homepage:
@@ -21,3 +21,15 @@ login:
 logout:
     path:     /logout
     defaults: { _controller: TimeBundle:Security:logout }
+
+show_my_children:
+    path:     /showMyChildren
+    defaults: { _controller: TimeBundle:Mother:showMyChildren }
+
+add_child:
+    path:     /addChild
+    defaults: { _controller: TimeBundle:Mother:addChild }
+
+show_my_children_tasks:
+    path:     /showMyChildrenTasks
+    defaults: { _controller: TimeBundle:Mother:showMyChildrenTasks }

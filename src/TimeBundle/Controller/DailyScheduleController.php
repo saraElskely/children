@@ -25,7 +25,7 @@ class DailyScheduleController extends Controller
 //        dump($dailySchedules);
 //        die();
 
-        return $this->render('dailyschedule/index.html.twig', array(
+        return $this->render('TimeBundle:dailyschedule:index.html.twig', array(
             'dailySchedules' => $dailySchedules,
         ));
     }
@@ -44,7 +44,7 @@ class DailyScheduleController extends Controller
 //        dump($dailySchedules);
 //        die();
         $schedule = $em->getRepository('TimeBundle:DailySchedule')->findOneById(4);
-        return $this->render('dailyschedule/show.html.twig', array(
+        return $this->render('TimeBundle:dailyschedule:show.html.twig', array(
             'dailySchedules' => $dailySchedules,
             's'=> $schedule
         ));

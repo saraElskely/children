@@ -87,10 +87,40 @@ class User implements UserInterface
         return $this->username;
     }
 
+    public function eraseCredentials() {
+        
+    }
+
+    public function getPassword(): string {
+        return $this->password;
+    }
+
+    public function getRoles() {
+        
+        if($this->role == Roles::ROLE_ADMIN){
+            return ['ROLE_ADMIN'];
+        }
+        elseif($this->role == Roles::ROLE_MOTHER){
+            return ['ROLE_MOTHER'];
+        }
+        else{
+            return ['ROLE_CHILD'] ;
+        }
+    }
+
+    public function getSalt() {
+        
+    }
+
+    public function getUsername(): string {
+        return $this->username;
+    }
+
+
     /**
      * Get id
      *
-     * @return int
+     * @return integer
      */
     public function getId()
     {
@@ -160,16 +190,6 @@ class User implements UserInterface
     }
 
     /**
-     * Get username
-     *
-     * @return string
-     */
-    public function getUsername()
-    {
-        return $this->username;
-    }
-
-    /**
      * Set password
      *
      * @param string $password
@@ -181,16 +201,6 @@ class User implements UserInterface
         $this->password = $password;
 
         return $this;
-    }
-
-    /**
-     * Get password
-     *
-     * @return string
-     */
-    public function getPassword()
-    {
-        return $this->password;
     }
 
     /**
@@ -210,7 +220,7 @@ class User implements UserInterface
     /**
      * Get age
      *
-     * @return int
+     * @return integer
      */
     public function getAge()
     {
@@ -232,25 +242,14 @@ class User implements UserInterface
     }
 
     /**
-     * Get rule
+     * Get role
      *
-     * @return int
+     * @return integer
      */
     public function getRole()
     {
         return $this->role;
     }
-    
-    /**
-     * Get createdTask
-     *
-     * @return ArrayCollection
-     */
-    function getCreatedTasks() 
-    {
-        return $this->createdTasks;
-    }
-
 
     /**
      * Add createdTask
@@ -274,6 +273,16 @@ class User implements UserInterface
     public function removeCreatedTask(\TimeBundle\Entity\Task $createdTask)
     {
         $this->createdTasks->removeElement($createdTask);
+    }
+
+    /**
+     * Get createdTasks
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getCreatedTasks()
+    {
+        return $this->createdTasks;
     }
 
     /**
@@ -311,84 +320,60 @@ class User implements UserInterface
     }
 
     /**
-     * Add mother
+     * Add child
      *
-     * @param \TimeBundle\Entity\User $mother
+     * @param \TimeBundle\Entity\User $child
      *
      * @return User
      */
-    public function addMother(\TimeBundle\Entity\User $mother)
+    public function addChild(\TimeBundle\Entity\User $child)
     {
-        $this->mother[] = $mother;
+        $this->children[] = $child;
 
         return $this;
     }
 
     /**
-     * Remove mother
+     * Remove child
      *
-     * @param \TimeBundle\Entity\User $mother
+     * @param \TimeBundle\Entity\User $child
      */
-    public function removeMother(\TimeBundle\Entity\User $mother)
+    public function removeChild(\TimeBundle\Entity\User $child)
     {
-        $this->mother->removeElement($mother);
-    }
-
-    /**
-     * Get mother
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getMother()
-    {
-        return $this->mother;
-    }
-
-    /**
-     * Set children
-     *
-     * @param \TimeBundle\Entity\User $children
-     *
-     * @return User
-     */
-    public function setChildren(\TimeBundle\Entity\User $children = null)
-    {
-        $this->children = $children;
-
-        return $this;
+        $this->children->removeElement($child);
     }
 
     /**
      * Get children
      *
-     * @return \TimeBundle\Entity\User
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getChildren()
     {
         return $this->children;
     }
 
-    public function eraseCredentials() {
-        
+    /**
+     * Set mother
+     *
+     * @param \TimeBundle\Entity\User $mother
+     *
+     * @return User
+     */
+    public function setMother(\TimeBundle\Entity\User $mother = null)
+    {
+        $this->mother = $mother;
+
+        return $this;
     }
 
-    public function getRoles() {
-        if($this->role == Roles::ROLE_ADMIN){
-            return ['ROLE_ADMIN'];
-        }
-        elseif($this->role == Roles::ROLE_MOTHER){
-            return ['ROLE_MOTHER'];
-        }
-        else{
-            return ['ROLE_CHILD'] ;
-        }
+    /**
+     * Get mother
+     *
+     * @return \TimeBundle\Entity\User
+     */
+    public function getMother()
+    {
+        return $this->mother;
     }
-
-    public function getSalt() {
-        
-    }
-
-
-
-
 }

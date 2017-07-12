@@ -36,9 +36,9 @@ TimeBundle\Entity\User:
         
     
     manyToOne:
-        children:
+        mother:
             targetEntity: User
-            inversedBy: mother
+            inversedBy: children
             joinColumn:
                 name: mother_id
                 referencedColumnName: id
@@ -56,9 +56,9 @@ TimeBundle\Entity\User:
             targetEntity: DailySchedule
             mappedBy: userInSchedule
     
-        mother:
+        children:
             targetEntity: User
-            mappedBy: children
+            mappedBy: mother
         
         
     lifecycleCallbacks: {  }

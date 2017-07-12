@@ -15,13 +15,13 @@
         <tbody>
         {% for dailySchedule in dailySchedules %}
             <tr>
-                <td><a href="{{ path('dailyschedule_show', { 'id': dailySchedule.id }) }}">{{ dailySchedule.id }}</a></td>
+                <td><a href="{{ path('dailySchedule_show', { 'id': dailySchedule.id }) }}">{{ dailySchedule.id }}</a></td>
                 <td>{% if dailySchedule.isDone %}Yes{% else %}No{% endif %}</td>
                 <td>{% if dailySchedule.date %}{{ dailySchedule.date|date('Y-m-d') }}{% endif %}</td>
                 <td>
                     <ul>
                         <li>
-                            <a href="{{ path('dailyschedule_show', { 'id': dailySchedule.id }) }}">show</a>
+                            <a href="{{ path('dailySchedule_show', { 'id': dailySchedule.id }) }}">show</a>
                         </li>
                     </ul>
                 </td>

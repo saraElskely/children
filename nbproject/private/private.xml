@@ -5,26 +5,33 @@
         <group>
             <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Controller/TaskController.php</file>
             <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Resources/views/task/show.html.twig</file>
+            <file>file:/home/saraelsayed/symfony/children_project/app/Resources/views/base.html.twig</file>
             <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Controller/UserController.php</file>
+            <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Form/LoginForm.php</file>
             <file>file:/home/saraelsayed/symfony/children_project/app/config/parameters.yml</file>
             <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/constant/Roles.php</file>
-            <file>file:/home/saraelsayed/symfony/children_project/app/Resources/views/dailyschedule/index.html.twig</file>
             <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Resources/views/task/new.html.twig</file>
-            <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Resources/config/routing/dailyschedule.yml</file>
             <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Resources/config/services.yml</file>
             <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Resources/config/doctrine/Task.orm.yml</file>
-            <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Command/CreateDailyTasksCommand.php</file>
-            <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Controller/DailyScheduleController.php</file>
             <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Entity/DailySchedule.php</file>
             <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Resources/config/routing/task.yml</file>
             <file>file:/home/saraelsayed/symfony/children_project/app/config/routing.yml</file>
+            <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/constant/Schedule.php</file>
+            <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Resources/config/routing/user.yml</file>
+            <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Resources/views/user/show.html.twig</file>
+            <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Repository/TaskRepository.php</file>
+            <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Resources/views/Security/login.html.twig</file>
+            <file>file:/home/saraelsayed/symfony/children_project/app/Resources/views/dailyschedule/index.html.twig</file>
+            <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Resources/views/user/edit.html.twig</file>
+            <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Command/CreateDailyTasksCommand.php</file>
+            <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Controller/DailyScheduleController.php</file>
+            <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Repository/DailyScheduleRepository.php</file>
             <file>file:/home/saraelsayed/symfony/children_project/app/Resources/views/dailyschedule/show.html.twig</file>
             <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Repository/UserRepository.php</file>
             <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Entity/Task.php</file>
             <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Form/UserType.php</file>
             <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Resources/views/user/new.html.twig</file>
             <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Controller/SecurityController.php</file>
-            <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/constant/Schedule.php</file>
             <file>file:/home/saraelsayed/symfony/children_project/app/config/security.yml</file>
         </group>
     </open-files>

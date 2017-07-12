@@ -33,3 +33,9 @@ services:
     # AppBundle\Service\ExampleService:
     #     arguments:
     #         $someArgument: 'some_value'
+
+    TimeBundle\Service\:
+        resource: '../../src/TimeBundle/Service'
+        public: true
+        arguments:
+            $entityManager: '@doctrine.orm.default_entity_manager'
