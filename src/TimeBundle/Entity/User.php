@@ -31,7 +31,7 @@ class User implements UserInterface
      * @var string
      * @Assert\NotBlank()
      */
-    private $username;
+    private $username = '';
 
     /**
      * @var string
@@ -43,7 +43,7 @@ class User implements UserInterface
      *      maxMessage = "Your  password cannot be longer than {{ limit }} characters"
      * )
      */
-    private $password;
+    private $password = '';
 
     /**
      * @var int

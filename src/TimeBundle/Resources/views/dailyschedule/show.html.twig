@@ -37,8 +37,9 @@
                            </div>
                          {% endif %}
                     </li>
-                    <?= __DIR__ ?>
-                     <script>
+                    
+                    
+            <script>
               $(document).ready(function(){
                   $("#{{dailySchedule.id}}done").click(function(){
                       $.ajax({url: "{{ path('dailySchedule_done', {'schedule_id': dailySchedule.id }) }}", success: function(result){
@@ -60,11 +61,12 @@
                     });
                   });
               });
-              </script>
+            </script>
                 {% endfor %}
             </ul>
             <div class="card-block">
-              <a class="card-link" href="{{ path('dailySchedule_index') }}">Back to the list</a>
+              <a class="card-link" href="{{ path('dailySchedule_index',{ 'child_id': child_id }) }}">Back to the list</a>
+              
               
             </div>
         </div>

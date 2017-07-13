@@ -3,32 +3,56 @@
 {% block body %}
     <h1>User Dailyschedules list</h1>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Isdone</th>
-                <th>Date</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for dailySchedule in dailySchedules %}
-            <tr>
-                <td><a href="{{ path('dailySchedule_show', { 'id': dailySchedule.id }) }}">{{ dailySchedule.id }}</a></td>
-                <td>{% if dailySchedule.isDone %}Yes{% else %}No{% endif %}</td>
-                <td>{% if dailySchedule.date %}{{ dailySchedule.date|date('Y-m-d') }}{% endif %}</td>
-                <td>
-                    <ul>
-                        <li>
-                            <a href="{{ path('dailySchedule_show', { 'id': dailySchedule.id }) }}">show</a>
-                        </li>
-                    </ul>
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+          <a class="card-link" href="{{ path('dailySchedule_show', { 'child_id': child_id }) }}">Today Schedule </a>
 
+    
+            {% if dailySchedules %}
+                <div class="row">
+  
+                {% for taskDate,dailySchedule in dailySchedules %}
+                    <div class="col-sm-3">
+                        <div class="card" >
+                            <h2> </h2>
+                            <div class="card-block">
+                              <h4 class="card-title">{{taskDate|date('l')}}</h4>
+                              <p class="card-text">{{ taskDate|date('Y-m-d') }}</p>
+                            </div>
+                            <ul class="list-group list-group-flush">
+                                {% for task in dailySchedule %}
+                                    <li class="list-group-item">
+                                         {{ task.taskInSchedule.taskName }}
+                {#                         <pre class='text-right '> {% if dailySchedule.isDone %}Yes{% else %}No{% endif %}</div>#}
+
+                                        {% if task.isDone %}
+                                           <div class="date" id="{{task.id}}done" >
+                                            <h6 class="glyphicon glyphicon-ok" aria-hidden="true">Done</h6>
+                                           </div>
+                                           <div class="date" style="display:none" id="{{task.id}}notDone">
+                                             <h6 class="fa fa-plus" aria-hidden="true">NotDone</h6>
+                                           </div>
+
+
+                                         {% else %}
+                                           <div class="date" style="display:none" id="{{task.id}}done">
+                                             <h6 class="glyphicon glyphicon-ok" aria-hidden="true">Done</h6>
+                                           </div>
+                                           <div class="date" id="{{task.id}}notDone">
+                                             <h6 class="fa fa-plus" aria-hidden="true">NotDone</h6>
+                                           </div>
+                                         {% endif %}
+                                    </li>
+
+                                {% endfor %}
+                            </ul>
+                            <div class="card-block">
+        {#                      <a class="card-link" href="{{ path('dailySchedule_index') }}">Back to the list</a>#}
+
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                </div>
+    {% endif %}
+    
     
 {% endblock %}

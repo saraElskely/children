@@ -25,14 +25,14 @@ class CreateAdminUserCommand extends ContainerAwareCommand
     {
         $helper = $this->getHelper('question');
         
-        $question = new Question('Please enter username :(admin)','admin');
-        $username = $helper->ask($input, $output, $question);
+//        $question = new Question('Please enter username :(admin)','admin');
+//        $username = $helper->ask($input, $output, $question);
         
         $question = new Question('Please enter password more than 8 character :(admin/admin)','admin/admin');
         $password = $helper->ask($input, $output, $question);
         
         $admin = new User();
-        $admin->setUsername($username)
+        $admin->setUsername('admin')
                 ->setRole(Roles::ROLE_ADMIN)
                 ->setAge(30)
                 ->setFname('admin')

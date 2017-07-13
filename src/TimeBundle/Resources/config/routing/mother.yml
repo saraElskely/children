@@ -1,0 +1,12 @@
+mother_show_my_children:
+    path:     /showMyChildren
+    defaults: { _controller: TimeBundle:Mother:showMyChildren }
+
+mother_add_child:
+    path:     /addChild
+    defaults: { _controller: TimeBundle:Mother:addChild }
+
+mother_show_my_children_tasks:
+    path:     /showMyChildrenTasks
+    defaults: { _controller: TimeBundle:Mother:showMyChildrenTasks }
+

@@ -15,9 +15,14 @@
       <div class="container">
         <nav class="nav blog-nav">
           <a class="nav-link active" href="https://v4-alpha.getbootstrap.com/examples/blog/#">Home</a>
-          <a class="nav-link" href="#">New features</a>
-          <a class="nav-link" href="#">Press</a>
-          <a class="nav-link" href="{{ path('user_index') }}">user</a>
+          
+          {% if is_granted('ROLE_MOTHER') %}
+              <a class="nav-link" href="{{ path('mother_show_my_children') }}">your children</a>
+              <a class="nav-link" href="{{ path('mother_show_my_children_tasks') }}">your tasks</a>
+              <a class="nav-link" href="{{ path('task_new') }}">Create task</a>
+              <a class="nav-link" href="{{ path('user_new') }}">Add child</a>
+          {% endif %}
+          
           {% if is_granted('IS_AUTHENTICATED_FULLY') %}
             <a class="nav-link">{{ app.user.username }}</a>
           {% endif %}
@@ -30,10 +35,11 @@
       </div>
     </div>        
 
-            
+    <div class='container'>      
             
 
         {% block body %}{% endblock %}
+    </div>
         {% block javascripts %}
             
         {% endblock %}

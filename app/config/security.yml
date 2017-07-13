@@ -65,6 +65,7 @@ security:
         - { path: ^/task/$ , roles: ROLE_USER }
         - { path: ^/task/[0-9]+/show$ , roles: ROLE_USER }
         - { path: ^/task, roles: ROLE_CREATOR }
+        - { path: ^/mother, roles: ROLE_MOTHER }
         
     encoders:
         TimeBundle\Entity\User: 

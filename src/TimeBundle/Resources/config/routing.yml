@@ -9,6 +9,10 @@ time_user:
 time_dailySchedule:
     resource: "@TimeBundle/Resources/config/routing/dailySchedule.yml"
     prefix:   /dailyschedule
+    
+time_mother:
+    resource: "@TimeBundle/Resources/config/routing/mother.yml"
+    prefix:   /mother
 
 time_homepage:
     path:     /
@@ -22,14 +26,3 @@ logout:
     path:     /logout
     defaults: { _controller: TimeBundle:Security:logout }
 
-show_my_children:
-    path:     /showMyChildren
-    defaults: { _controller: TimeBundle:Mother:showMyChildren }
-
-add_child:
-    path:     /addChild
-    defaults: { _controller: TimeBundle:Mother:addChild }
-
-show_my_children_tasks:
-    path:     /showMyChildrenTasks
-    defaults: { _controller: TimeBundle:Mother:showMyChildrenTasks }

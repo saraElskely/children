@@ -10,5 +10,27 @@ namespace TimeBundle\Repository;
  */
 class DailyScheduleRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function getChildDailySchedules($child_id)
+    {
+        return $this->createQueryBuilder('schedule')
+                ->select()
+                ->where("schedule.userInSchedule = $child_id")
+                ->orderBy('schedule.date', 'ASC')
+                ->getQuery()
+                ->execute();
+    }
+    
+    public function getChildTodaySchedule($child_id){
+        $today = new \DateTime();
+        $today = $today->format('y-m-d');
+//        dump($today->format('y-m-d'));
+//        die();
+        return $this->createQueryBuilder('schedule')
+                ->select()
+                ->where("schedule.userInSchedule = $child_id")
+                ->andWhere("schedule.date = '$today'")
+                ->getQuery()
+                ->execute();
+    }
     
 }

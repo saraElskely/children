@@ -38,7 +38,7 @@ class TaskController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $creator = $this->get('security.token_storage')->getToken()->getUser();
+            $creator = $this->getUser();
             $task->setCreator($creator);
             $em = $this->getDoctrine()->getManager();
             $em->persist($task);

@@ -1,6 +1,7 @@
 <?php
 
 namespace TimeBundle\Repository;
+use TimeBundle\constant\Roles;
 
 /**
  * TaskRepository
@@ -10,4 +11,22 @@ namespace TimeBundle\Repository;
  */
 class TaskRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function getAdminTasks()
+    {
+        $admin_id = $this->getEntityManager()->getRepository('TimeBundle:User')->getAdminId();
+        return $this->createQueryBuilder('task')
+                ->select()
+                ->where("task.creator = $admin_id")
+                ->getQuery()
+                ->execute();
+    }
+    public function getMotherTasks($mother_id)
+    {
+        return $this->createQueryBuilder('task')
+                ->select()
+                ->where("task.creator = $mother_id")
+                ->getQuery()
+                ->execute();
+        
+    }
 }

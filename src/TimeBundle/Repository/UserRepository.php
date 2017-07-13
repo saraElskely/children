@@ -17,4 +17,14 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
                   ->where('user.role = 3');
 
     }
+    public function getAdminId(){
+        $adminUsername = 'admin' ;
+        $admin = $this->createQueryBuilder('user')
+                ->select()
+                ->where("user.username = '$adminUsername'")
+                ->getQuery()
+                ->execute();
+        
+        return $admin[0]->getId();
+    }
 }

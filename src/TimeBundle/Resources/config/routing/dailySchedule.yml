@@ -1,15 +1,23 @@
 dailySchedule_index:
-    path:     /
-    defaults: { _controller: "TimeBundle:DailySchedule:showUserSchedule" }
+    path:     /{child_id}
+    defaults: { _controller: "TimeBundle:DailySchedule:showChildSchedule",child_id:0 }
     methods:  GET
+    requirements:
+        child_id: '\d+'
+
 
 dailySchedule_show:
-    path:     /today
-    defaults: { _controller: "TimeBundle:DailySchedule:showTodaySchedule" }
+    path:     /{child_id}/today
+    defaults: { _controller: "TimeBundle:DailySchedule:showTodaySchedule",child_id:0 }
     methods:  GET
+    requirements:
+        child_id: '\d+'
+
+    
 
 dailySchedule_done:
     path:   /today/{schedule_id}
     defaults: { _controller: "TimeBundle:DailySchedule:scheduleDone" }
     methods:  [POST ,GET]
-
+    requirements:
+        schedule_id: '\d+'
