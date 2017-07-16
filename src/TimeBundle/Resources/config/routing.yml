@@ -26,3 +26,7 @@ logout:
     path:     /logout
     defaults: { _controller: TimeBundle:Security:logout }
 
+mother_registration:
+    path:     /register
+    defaults: { _controller: TimeBundle:Mother:motherRegistration }
+    methods:  [GET, POST]

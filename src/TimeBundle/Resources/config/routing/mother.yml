@@ -1,12 +1,16 @@
 mother_show_my_children:
     path:     /showMyChildren
     defaults: { _controller: TimeBundle:Mother:showMyChildren }
+    methods:  GET
 
 mother_add_child:
     path:     /addChild
     defaults: { _controller: TimeBundle:Mother:addChild }
+    methods:  [GET, POST]
 
 mother_show_my_children_tasks:
     path:     /showMyChildrenTasks
     defaults: { _controller: TimeBundle:Mother:showMyChildrenTasks }
+    methods:  GET
+
 

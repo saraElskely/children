@@ -10,7 +10,7 @@ user_show:
 
 user_new:
     path:     /new
-    defaults: { _controller: "TimeBundle:User:new" }
+    defaults: { _controller: "TimeBundle:User:register" }
     methods:  [GET, POST]
 
 user_edit:

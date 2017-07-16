@@ -25,14 +25,14 @@ class UserType extends AbstractType
                     'first_options'  => array('label' => 'Password'),
                     'second_options' => array('label' => 'Repeat Password'),
                 ))
-                ->add('age')
-                ->add('role', ChoiceType::class ,[
-                    'placeholder' => 'your role',
-                    'choices' => [
-                        'Mother' => Roles::ROLE_MOTHER,
-                        'Child' => Roles::ROLE_CHILD,
-                    ]
-                ]);
+                ->add('age');
+//                ->add('role', ChoiceType::class ,[
+//                    'placeholder' => 'your role',
+//                    'choices' => [
+//                        'Mother' => Roles::ROLE_MOTHER,
+//                        'Child' => Roles::ROLE_CHILD,
+//                    ]
+//                ]);
 //                ->add('children', EntityType::class , [
 //                    'class' => 'TimeBundle:User',
 //                    'query_builder' => function(UserRepository $repo){
