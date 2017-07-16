@@ -8,6 +8,7 @@ use TimeBundle\Entity\User;
 use TimeBundle\Form\UserType;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use TimeBundle\constant\Roles;
+use TimeBundle\Service\UserService;
 
 class MotherController extends Controller
 {
@@ -15,23 +16,25 @@ class MotherController extends Controller
     public function register(Request $request, $role)
     {   
         $passwordEncoder = $this->get('security.password_encoder');
+        
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
         
         if ($form->isSubmitted() && $form->isValid()) {
             $password = $passwordEncoder->encodePassword($user, $user->getPassword());
-            $user->setPassword($password);
-            $user->setRole($role);
+            
             if($role == Roles::ROLE_CHILD)
             {
                 $mother = $this->getUser();
-                $user->setMother($mother);
+                $userService = $this->get(UserService::class)
+                    ->createUser($user->getUsername(),$user->getFname() ,$user->getFname() ,$password ,$role ,$user->getAge(),$mother);
+         
+            }else{
+                $userService = $this->get(UserService::class)
+                    ->createUser($user->getUsername(),$user->getFname() ,$user->getFname() ,$Password ,$role ,$user->getAge());
+          
             }
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($user);
-            $em->flush();
-//            return $user;
             return $this->redirectToRoute('mother_show_my_children');
         }
 
@@ -49,9 +52,9 @@ class MotherController extends Controller
     
     public function addChildAction(Request $request)
     {
+        
         return $this->register($request, Roles::ROLE_CHILD);
-//        dump($child);
-//        die();
+
 //        if($child instanceof User) {
 //            $mother = $this->getUser();
 //            $mother->addChild($child);

@@ -35,7 +35,31 @@ class UserController extends Controller
      * Creates a new user entity.
      *
      */
-
+//    public function registerAction(Request $request, $role)
+//    {   
+//        $passwordEncoder = $this->get('security.password_encoder');
+//        $user = new User();
+//        $form = $this->createForm(UserType::class, $user);
+//        $form->handleRequest($request);
+//
+//        if ($form->isSubmitted() && $form->isValid()) {
+//            $password = $passwordEncoder->encodePassword($user, $user->getPassword());
+//            $user->setPassword($password);
+//            $user->setRole($role);
+//            $em = $this->getDoctrine()->getManager();
+//            $em->persist($user);
+//            $em->flush();
+//
+//            return $this->redirectToRoute('user_show', array('id' => $user->getId()));
+//        }
+//
+//        return $this->render('TimeBundle:user:new.html.twig', array(
+//            'user' => $user,
+//            'form' => $form->createView(),
+//        ));
+//    }
+    
+    
 
     /**
      * Finds and displays a user entity.

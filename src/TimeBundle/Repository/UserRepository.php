@@ -2,6 +2,9 @@
 
 namespace TimeBundle\Repository;
 
+use TimeBundle\Entity\User;
+use TimeBundle\constant\Roles;
+
 /**
  * UserRepository
  *
@@ -26,5 +29,39 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
                 ->execute();
         
         return $admin[0]->getId();
+    }
+    
+    public function createAdminUser($encodedPassword){
+        
+        $admin = new User();
+        
+        $admin->setUsername('admin')
+                ->setRole(Roles::ROLE_ADMIN)
+                ->setAge(30)
+                ->setFname('admin')
+                ->setLname('admin')
+                ->setPassword($encodedPassword);
+        
+        
+        $entityManager = $this->getEntityManager();
+        $entityManager->persist($admin);
+        $entityManager->flush();
+
+        return $admin;
+    }
+    
+    public function createUser($username ,$fname ,$lname ,$encodedPassword ,$role ,$age,User $mother = null){
+        $user = new User();
+        $user->setAge($age)
+                ->setFname($fname)
+                ->setLname($lname)
+                ->setPassword($encodedPassword)
+                ->setRole($role)
+                ->setUsername($username)
+                ->setMother($mother);
+        
+        $entityManager = $this->getEntityManager();
+        $entityManager->persist($user);
+        $entityManager->flush();
     }
 }

@@ -11,7 +11,7 @@ use TimeBundle\constant\Roles;
  *
  * @author saraelsayed
  */
-class CreateDailyScheduleService {
+class DailyScheduleService {
     private $entityManager;
     
     public function __construct(EntityManagerInterface $entityManager) {

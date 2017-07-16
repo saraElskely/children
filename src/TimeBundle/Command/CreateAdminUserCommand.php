@@ -31,24 +31,14 @@ class CreateAdminUserCommand extends ContainerAwareCommand
         $question = new Question('Please enter password more than 8 character :(admin/admin)','admin/admin');
         $password = $helper->ask($input, $output, $question);
         
-        $admin = new User();
-        $admin->setUsername('admin')
-                ->setRole(Roles::ROLE_ADMIN)
-                ->setAge(30)
-                ->setFname('admin')
-                ->setLname('admin');
-        
         $passwordEncoder = $this->getContainer()->get('security.password_encoder');
-        $encodedPassword = $passwordEncoder->encodePassword($admin, $password);
+        $encodedPassword = $passwordEncoder->encodePassword(new User(), $password);
         
-        $admin->setPassword($encodedPassword);
-        
-        $entityManager = $this->getContainer()->get('doctrine')->getManager();
-        $entityManager->persist($admin);
-        $entityManager->flush();
-        
+        $admin = $this->getContainer()->get('doctrine')
+                ->getManager()->getRepository('TimeBundle:User')
+                ->createAdminUser($encodedPassword);
 
-        $output->writeln('you create admin successfuly with username :'.$username.' & password :'.$password);
+        $output->writeln('you create admin successfuly with username :'.$admin->getUsername().' & password :'.$password);
     }
 
 }
