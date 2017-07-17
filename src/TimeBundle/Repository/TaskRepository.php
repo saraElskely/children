@@ -1,7 +1,10 @@
 <?php
 
 namespace TimeBundle\Repository;
+
 use TimeBundle\constant\Roles;
+use TimeBundle\Entity\Task;
+use TimeBundle\Entity\User;
 
 /**
  * TaskRepository
@@ -11,6 +14,29 @@ use TimeBundle\constant\Roles;
  */
 class TaskRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function createTask($taskName , $schedule ,$creator)
+    {
+        $task = new Task();
+        $task->setTaskName($taskName)
+                ->setCreator($creator)
+                ->setSchedule($schedule);
+        
+        $entityManager = $this->getEntityManager();
+        $entityManager->persist($task);
+        $entityManager->flush();    
+        return $task;
+                
+    }
+    
+    public function deleteTask($task_id)
+    {
+        $this->createQueryBuilder('task')
+                ->delete()
+                ->where("task.id = $task_id")
+                ->getQuery()
+                ->execute();
+    }
+
     public function getAdminTasks()
     {
         $admin_id = $this->getEntityManager()->getRepository('TimeBundle:User')->getAdminId();
@@ -27,6 +53,24 @@ class TaskRepository extends \Doctrine\ORM\EntityRepository
                 ->where("task.creator = $mother_id")
                 ->getQuery()
                 ->execute();
+        
+    }
+    
+    public function getAllMothersTasks()
+    {
+        $role = Roles::ROLE_MOTHER ;
+        $subquery = $this->getEntityManager()->getRepository('TimeBundle:User')->createQueryBuilder('user')
+                ->select('user.id')
+                ->where("user.role = $role")
+                ->getDQL();
+        $qb = $this->createQueryBuilder('task');
+        $qb->select()
+                ->where($qb->expr()->in('task.creator', $subquery))
+                ->getQuery()
+                ->execute();
+        dump($qb);
+        die();
+        return $qb ;
         
     }
 }

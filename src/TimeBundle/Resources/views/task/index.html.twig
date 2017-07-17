@@ -1,37 +1,93 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>Tasks list</h1>
+    <div class='row'>
+    {% if tasks.admin %}
+    <div class="col-sm-6">
+        <div class="card" >
+            <h2> </h2>
+            <div class="card-block">
+              <h4 class="card-title"> Admin Tasks </h4>
+            </div>
+            
+            <ul class="list-group list-group-flush">
+                
+                {% for task in tasks.admin %}
+                    <li class="list-group-item">
+                         {{ task.taskName }}
+                        
+                    </li>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Taskname</th>
-                <th>Schedule</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for task in tasks %}
-            <tr>
-                <td><a href="{{ path('task_show', { 'id': task.id }) }}">{{ task.id }}</a></td>
-                <td>{{ task.taskName }}</td>
-                <td>{{ task.schedule }}</td>
-                <td>
-                    <ul>
-                        <li>
-                            <a href="{{ path('task_show', { 'id': task.id }) }}">show</a>
-                        </li>
-                        <li>
-                            <a href="{{ path('task_edit', { 'id': task.id }) }}">edit</a>
-                        </li>
-                    </ul>
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+                {% endfor %}
+            </ul>
+            
+            <div class="card-block">
+
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% if tasks.mothers %}
+    <div class="col-sm-6">
+        <div class="card" >
+            <h2> </h2>
+            <div class="card-block">
+              <h4 class="card-title"> Mothers Tasks </h4>
+            </div>
+            
+            <ul class="list-group list-group-flush">
+                
+                {% for task in tasks.mothers %}
+                    <li class="list-group-item">
+                         {{ task.taskName }}
+                        
+                    </li>
+
+                {% endfor %}
+            </ul>
+            
+            <div class="card-block">
+
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+
+    <div class="col-sm-6">
+        <div class="card" >
+            <h2> </h2>
+            <div class="card-block">
+              <h4 class="card-title"> Your Tasks </h4>
+            </div>
+            
+            <ul class="list-group list-group-flush">
+                {% if tasks.yourTask %}
+                {% for task in tasks.yourTask %}
+                    <li class="list-group-item">
+                         {{ task.taskName }}
+                         <ul>
+                             <li><a href="{{ path('task_edit', { 'id': task.id }) }}">Edit  </a></li>
+                             <li><a href="{{ path('task_show', { 'id': task.id }) }}">  Show</a></li>
+                         </ul>
+                    </li>
+                
+                {% endfor %}
+                {%else%}
+                    <li> 
+                    </li>
+                {% endif %}
+                
+            </ul>
+            
+            <div class="card-block">
+
+            </div>
+        </div>
+    </div>
+
+</div>
+    
 
     <ul>
         <li>

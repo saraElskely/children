@@ -33,7 +33,7 @@ class DailyScheduleController extends Controller
             $dailySchedules = $em->getRepository('TimeBundle:DailySchedule')->getChildDailySchedules($child_id);
         }
 
-        $arrayOfDailyTasks = array();
+        $arrayOfDailyTasks = array(); // day is a key && value for each key is tasks in this day
         foreach ($dailySchedules as $task){
             $date = $task->getDate()->format('y-m-d');
             if(array_key_exists($date, $arrayOfDailyTasks)){

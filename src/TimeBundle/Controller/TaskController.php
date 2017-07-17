@@ -5,6 +5,7 @@ namespace TimeBundle\Controller;
 use TimeBundle\Entity\Task;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use TimeBundle\Service\TaskService;
 
 /**
  * Task controller.
@@ -17,10 +18,11 @@ class TaskController extends Controller
      *
      */
     public function indexAction()
-    {
-        $em = $this->getDoctrine()->getManager();
-
-        $tasks = $em->getRepository('TimeBundle:Task')->findAll();
+    {        
+        $user = $this->getUser();
+    
+        $tasks = $this->get(TaskService::class)
+                    ->getTasks($user->getId(),$user->getRole());
 
         return $this->render('TimeBundle:task:index.html.twig', array(
             'tasks' => $tasks,
@@ -39,11 +41,9 @@ class TaskController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $creator = $this->getUser();
-            $task->setCreator($creator);
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($task);
-            $em->flush();
-
+            $task = $this->get(TaskService::class)
+                    ->createTask($task->getTaskName(),$task->getSchedule(),$creator);
+            
             return $this->redirectToRoute('task_show', array('id' => $task->getId()));
         }
 
@@ -53,6 +53,7 @@ class TaskController extends Controller
         ));
     }
 
+    
     /**
      * Finds and displays a task entity.
      *
@@ -100,9 +101,7 @@ class TaskController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($task);
-            $em->flush();
+            $this->get(TaskService::class)->deleteTask($task->getId());
         }
 
         return $this->redirectToRoute('task_index');
