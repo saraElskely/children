@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use TimeBundle\Form\UserType;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use TimeBundle\constant\Roles;
+use TimeBundle\Service\UserService;
 
 
 /**
@@ -20,14 +21,17 @@ class UserController extends Controller
      * Lists all user entities.
      *
      */
-    public function indexAction()
+    public function indexAction($page = 1)
     {
-        $em = $this->getDoctrine()->getManager();
-
-        $users = $em->getRepository('TimeBundle:User')->findAll();
+        $limit = 2;
+        $paginator = $this->get(UserService::class)->getMothers($page);
+        $users = $paginator->getIterator();
+        $maxPages = ceil($paginator->count()/$limit);
 
         return $this->render('TimeBundle:user:index.html.twig', array(
             'users' => $users,
+            'currentPage' => $page,
+            'maxPages' => $maxPages
         ));
     }
 

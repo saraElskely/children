@@ -4,6 +4,7 @@ namespace TimeBundle\Repository;
 
 use TimeBundle\Entity\User;
 use TimeBundle\constant\Roles;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 /**
  * UserRepository
@@ -63,5 +64,46 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
         $entityManager = $this->getEntityManager();
         $entityManager->persist($user);
         $entityManager->flush();
+    }
+    
+    public function getUser($userId)
+    {
+        $user = $this->createQueryBuilder('user')
+                ->select()
+                ->where("user.id = $userId")
+                ->getQuery()
+                ->getOneOrNullResult();
+        
+        return $user;   
+    }
+    
+    public function getMotherChildrenId($motherId)
+    {
+        return $this->createQueryBuilder('user')
+                ->select('user.id')
+                ->where("user.mother = $motherId")
+                ->getQuery()
+                ->execute();      
+    }
+
+        public function getMothers($currentPage = 1)
+    {
+        $role = Roles::ROLE_MOTHER;
+        $query = $this->createQueryBuilder('user')
+                ->select()
+                ->where("user.role = $role")
+                ->getQuery();
+
+        $paginator = $this->paginate( $query, $currentPage);
+        return $paginator;
+    }
+    
+    public function paginate( $dql, $page = 1, $limit = 2){
+        $paginator = new Paginator($dql);
+        $paginator->getQuery()
+                ->setFirstResult($limit*($page-1))
+                ->setMaxResults($limit);
+
+        return $paginator ;
     }
 }

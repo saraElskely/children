@@ -16,7 +16,7 @@ time_mother:
 
 time_homepage:
     path:     /
-    defaults: { _controller: TimeBundle:Default:index }
+    defaults: { _controller: TimeBundle:Security:login }
 
 login:
     path:     /login

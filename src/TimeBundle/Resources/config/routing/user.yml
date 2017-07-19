@@ -1,6 +1,6 @@
 user_index:
-    path:     /
-    defaults: { _controller: "TimeBundle:User:index" }
+    path:     /{page}
+    defaults: { _controller: "TimeBundle:User:index",page:1 }
     methods:  GET
 
 user_show:

@@ -37,23 +37,37 @@ class TaskRepository extends \Doctrine\ORM\EntityRepository
                 ->execute();
     }
 
-    public function getAdminTasks()
+    public function getAdminTasks($todayAsSchedule)
     {
-        $admin_id = $this->getEntityManager()->getRepository('TimeBundle:User')->getAdminId();
+        $adminId = $this->getEntityManager()->getRepository('TimeBundle:User')->getAdminId();
         return $this->createQueryBuilder('task')
                 ->select()
-                ->where("task.creator = $admin_id")
-                ->getQuery()
-                ->execute();
-    }
-    public function getMotherTasks($mother_id)
-    {
-        return $this->createQueryBuilder('task')
-                ->select()
-                ->where("task.creator = $mother_id")
+                ->where("task.creator = $adminId")
+                ->andWhere("task.schedule = 0 OR task.schedule = $todayAsSchedule")
                 ->getQuery()
                 ->execute();
         
+    }
+    
+    public function getTodayMothersTasks($todayAsSchedule)
+    {
+        $adminId = $this->getEntityManager()->getRepository('TimeBundle:User')->getAdminId();
+        return $this->createQueryBuilder('task')
+                ->select()
+                ->where("task.schedule = 0 OR task.schedule = $todayAsSchedule")
+                ->andWhere("task.creator != $adminId")
+                ->getQuery()
+                ->execute();
+    }
+
+
+    public function getMotherTasks($motherId)
+    {
+        return $this->createQueryBuilder('task')
+                ->select()
+                ->where("task.creator = $motherId")
+                ->getQuery()
+                ->execute();
     }
     
     public function getAllMothersTasks()
@@ -63,14 +77,14 @@ class TaskRepository extends \Doctrine\ORM\EntityRepository
                 ->select('user.id')
                 ->where("user.role = $role")
                 ->getDQL();
+        
         $qb = $this->createQueryBuilder('task');
-        $qb->select()
+        $mothersTasks = $this->createQueryBuilder('task')->select()
                 ->where($qb->expr()->in('task.creator', $subquery))
                 ->getQuery()
-                ->execute();
-        dump($qb);
-        die();
-        return $qb ;
+                ->getArrayResult();
+        
+        return $mothersTasks ;
         
     }
 }

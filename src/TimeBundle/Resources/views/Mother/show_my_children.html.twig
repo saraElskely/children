@@ -3,8 +3,8 @@
 {% block title %}TimeBundle:Mother:showMyChildren{% endblock %}
 
 {% block body %}
-    <h1>Welcome {{ app.user.username }} this is your children </h1>
-    
+    <h1>Welcome {{ app.user.fname }}  your children </h1>
+    {% if children %}
     <div class="row">
         {% for child in children %}
         <div class="col-sm-4">
@@ -18,4 +18,7 @@
         </div>
         {% endfor %}
     </div>
+    {% else %}
+        <a class="nav-link" href="{{ path('mother_add_child') }}">Add child</a>
+    {% endif %}
 {% endblock %}
