@@ -9,6 +9,7 @@ use TimeBundle\Form\UserType;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use TimeBundle\constant\Roles;
 use TimeBundle\Service\UserService;
+use TimeBundle\Utility\Paginator;
 
 
 /**
@@ -24,9 +25,10 @@ class UserController extends Controller
     public function indexAction($page = 1)
     {
         $limit = 2;
-        $paginator = $this->get(UserService::class)->getMothers($page);
-        $users = $paginator->getIterator();
-        $maxPages = ceil($paginator->count()/$limit);
+        $query = $this->get(UserService::class)->getMothers();
+        $paginator = new Paginator();
+        $users = $paginator->paginate($page,$limit);
+        $maxPages = ceil($paginator->getResultCount()/$limit);
 
         return $this->render('TimeBundle:user:index.html.twig', array(
             'users' => $users,

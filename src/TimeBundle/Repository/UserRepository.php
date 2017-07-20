@@ -5,6 +5,7 @@ namespace TimeBundle\Repository;
 use TimeBundle\Entity\User;
 use TimeBundle\constant\Roles;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use TimeBundle\Service\PaginatorService;
 
 /**
  * UserRepository
@@ -86,7 +87,7 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
                 ->execute();      
     }
 
-        public function getMothers($currentPage = 1)
+    public function getMothers()
     {
         $role = Roles::ROLE_MOTHER;
         $query = $this->createQueryBuilder('user')
@@ -94,16 +95,33 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
                 ->where("user.role = $role")
                 ->getQuery();
 
-        $paginator = $this->paginate( $query, $currentPage);
-        return $paginator;
+//        $paginator = new PaginatorService('',$query);
+        return $query;
     }
     
-    public function paginate( $dql, $page = 1, $limit = 2){
-        $paginator = new Paginator($dql);
-        $paginator->getQuery()
+//    public function paginate( $dql, $page = 1, $limit = 2){
+//        $paginator = new Paginator($dql);
+//        $paginator->getQuery()
+//                ->setFirstResult($limit*($page-1))
+//                ->setMaxResults($limit);
+//
+//        return $paginator ;
+//    }
+    
+    public function getResultCount($query)
+    {
+        return $this->entityManager->createQueryBuilder()
+                ->select('count(:q)')
+                ->setParameter('q', $query)
+                ->getQuery()
+                ->getSingleScalarResult();
+    }
+    
+    public function paginate($query, $page = 1, $limit = 2)
+    {
+        return $query
                 ->setFirstResult($limit*($page-1))
-                ->setMaxResults($limit);
-
-        return $paginator ;
+                ->setMaxResults($limit)
+                ->execute();
     }
 }

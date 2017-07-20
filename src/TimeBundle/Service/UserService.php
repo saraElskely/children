@@ -29,5 +29,6 @@ class UserService {
     public function getMothers($currentPage = 1)
     {
         return $this->entityManager->getRepository('TimeBundle:User')->getMothers($currentPage);
+        
     }
 }
