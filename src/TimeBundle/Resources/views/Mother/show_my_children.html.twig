@@ -11,7 +11,7 @@
             <div class="card">
                 <img class="card-img-top" src="..." alt="Card image cap">
                 <div class="card-block">
-                  <h3 class="card-title">{{child.username}}</h3>
+                  <h3 class="card-title">{{child.username|title}}</h3>
                   <a href="{{ path('dailySchedule_index', { 'child_id': child.id }) }}" class="btn btn-primary">Go To {{child.fname}}`s Schedule</a>
                 </div>
             </div>
