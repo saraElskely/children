@@ -20,7 +20,7 @@ class SecurityController extends Controller
             '_username' => $lastUsername
         ]);
         
-        return $this->render('TimeBundle:Security:login.html.twig', array(
+        return $this->render('TimeBundle:user:login.html.twig', array(
             'last_username' => $lastUsername ,
             'error'  => $error,
         ));

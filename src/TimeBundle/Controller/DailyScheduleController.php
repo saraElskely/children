@@ -6,6 +6,7 @@ use TimeBundle\Entity\DailySchedule;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use TimeBundle\constant\Roles;
+use TimeBundle\Service\DailyScheduleService;
 
 /**
  * Dailyschedule controller.
@@ -19,32 +20,10 @@ class DailyScheduleController extends Controller
      */
     public function showChildScheduleAction($child_id)
     {
-        $em = $this->getDoctrine()->getManager();
-        
-        $user = $this->getUser();
-        $role = $user->getRoles();
-        if($child_id == 0 && $role == Roles::ROLE_CHILD){ //if current user is child
-            $dailySchedules = $em->getRepository('TimeBundle:DailySchedule')->findByUserInSchedule($user);
-        }
-        elseif ($child_id == 0) {
-            throw new \Exception('your child id not found');
-        }
-        else{ //if current user [mother or admin ]
-            $dailySchedules = $em->getRepository('TimeBundle:DailySchedule')->getChildDailySchedules($child_id);
-        }
+        $dailySchedules = $this->get(DailyScheduleService::class)->getChildDailySchedules($child_id);
 
-        $arrayOfDailyTasks = array();
-        foreach ($dailySchedules as $task){
-            $date = $task->getDate()->format('y-m-d');
-            if(array_key_exists($date, $arrayOfDailyTasks)){
-                array_push($arrayOfDailyTasks[$date], $task);
-            }
-            else{
-                $arrayOfDailyTasks[$date]=array($task);
-            }
-        }
-//        dump($weeklySchedule);
-//        die();
+        $arrayOfDailyTasks = $this->get(DailyScheduleService::class)->getDayByDayDailySchedule($dailySchedules); // array => day is a key && value for each key is tasks in this day
+       
         return $this->render('TimeBundle:dailyschedule:index.html.twig', array(
             'dailySchedules' => $arrayOfDailyTasks,
             'child_id' => $child_id
@@ -55,36 +34,28 @@ class DailyScheduleController extends Controller
      * Finds and displays a dailySchedule entity.
      *
      */
-    public function showTodayScheduleAction($child_id)
+    public function showChildTodayScheduleAction($child_id)
     {
-        $em = $this->getDoctrine()->getManager();
-        $user = $this->getUser();
-        $role = $user->getRoles();
+        $todaySchedule = $this->get(DailyScheduleService::class)->getChildTodaySchedule($child_id);
         
-        if($child_id == 0 && $role == Roles::ROLE_CHILD){ //if current user is child
-            $dailySchedules = $em->getRepository('TimeBundle:DailySchedule')->findBy(
-                    ['userInSchedule' => $user ,
-                        'date' => new \DateTime()]);
-        }elseif($child_id == 0){
-            throw new \Exception('your child id not found');
-        }
-        else {
-            $dailySchedules = $em->getRepository('TimeBundle:DailySchedule')->getChildTodaySchedule($child_id);
-        }
-
+        
+        
+        
+        $todaySchedule = $this->get(DailyScheduleService::class)->createMothersDailySchedule(7,5);
+        
         return $this->render('TimeBundle:dailyschedule:show.html.twig', array(
-            'dailySchedules' => $dailySchedules,
+            'dailySchedules' => $todaySchedule,
             'child_id' => $child_id
         ));
     }
+    
     
     public function scheduleDoneAction($schedule_id)
     {
         $em = $this->getDoctrine()->getManager();
         $schedule = $em->getRepository('TimeBundle:DailySchedule')->findOneById($schedule_id);
 //        dump($schedule);
-        $done = !$schedule->getIsDone() ;
-        $schedule->setIsDone($done);
+        $schedule->setIsDone(!$schedule->getIsDone());
         $em->flush();
 
         $response = array("code" => 200, "status" => $schedule->getIsDone());
@@ -92,4 +63,6 @@ class DailyScheduleController extends Controller
         return new Response(json_encode($response)); 
         
     }
+    
+    
 }

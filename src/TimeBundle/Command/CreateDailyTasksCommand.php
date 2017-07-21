@@ -51,8 +51,8 @@ class CreateDailyTasksCommand extends ContainerAwareCommand
 //            }
 //        }
         
-        $dailyScheduleService = $this->getContainer()->get('TimeBundle\Service\CreateDailyScheduleService');
-                $dailyScheduleService->createAdminDailySchedule();
+        $dailyScheduleService = $this->getContainer()->get('TimeBundle\Service\DailyScheduleService');
+        $dailyScheduleService->createAdminDailySchedule();
         
         $output->writeln('Daily Schedule admin tasks created for all users.');
         

@@ -16,7 +16,7 @@ time_mother:
 
 time_homepage:
     path:     /
-    defaults: { _controller: TimeBundle:Default:index }
+    defaults: { _controller: TimeBundle:Security:login }
 
 login:
     path:     /login
@@ -26,3 +26,7 @@ logout:
     path:     /logout
     defaults: { _controller: TimeBundle:Security:logout }
 
+mother_registration:
+    path:     /register
+    defaults: { _controller: TimeBundle:Mother:motherRegistration }
+    methods:  [GET, POST]

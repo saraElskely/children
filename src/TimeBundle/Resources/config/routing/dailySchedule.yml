@@ -1,6 +1,6 @@
 dailySchedule_index:
     path:     /{child_id}
-    defaults: { _controller: "TimeBundle:DailySchedule:showChildSchedule",child_id:0 }
+    defaults: { _controller: "TimeBundle:DailySchedule:showChildSchedule" }
     methods:  GET
     requirements:
         child_id: '\d+'
@@ -8,7 +8,7 @@ dailySchedule_index:
 
 dailySchedule_show:
     path:     /{child_id}/today
-    defaults: { _controller: "TimeBundle:DailySchedule:showTodaySchedule",child_id:0 }
+    defaults: { _controller: "TimeBundle:DailySchedule:showChildTodaySchedule" }
     methods:  GET
     requirements:
         child_id: '\d+'

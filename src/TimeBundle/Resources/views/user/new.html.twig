@@ -2,22 +2,23 @@
 
 {% block body %}
     
-    <div class="container">
+    
         <div class="row">
             <div class="col-xs-12">
-                <h1>Registration Form</h1>
+                {% if is_granted('ROLE_MOTHER') %}
+                    <h1>Add new child</h1>
+                {% else %}
+                    <h1>Registration Form</h1>
+                {% endif %}
+                
 
                 {{ form_start(form ,{'attr': {'novalidate': 'novalidate'}} ) }}
                     {{ form_widget(form) }}
                     <input type="submit" value="Register" class="btn btn-primary"/>
                 {{ form_end(form) }}
 
-                <ul>
-                    <li>
-                        <a href="{{ path('user_index') }}">Back to the list</a>
-                    </li>
-                </ul>
+              
             </div>
         </div>
-    </div>
+   
 {% endblock %}

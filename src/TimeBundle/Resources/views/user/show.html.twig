@@ -1,47 +1,36 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>User</h1>
+    <br>
+    <br>
+    <div class="col-sm-4">
+        <div class="card">
+            <img class="card-img-top" src="..." alt="Card image cap">
+            <div class="card-block">
+              <h3 class="card-title">{{user.username}}</h3>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                     fname :{{ user.fname }}
+                </li>
+                <li class="list-group-item">
+                     lname :{{ user.lname }}
+                </li>
+                <li class="list-group-item">
+                     age :{{ user.age }}
+                </li>
+                <li class="list-group-item">
+                     role :{{user.role == 1? 'Mother':(user.role == 2 ? 'Child':'admin')}}
+                </li>
+            </ul>
+        </div>
+    </div>
 
-    <table>
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ user.id }}</td>
-            </tr>
-            <tr>
-                <th>Fname</th>
-                <td>{{ user.fname }}</td>
-            </tr>
-            <tr>
-                <th>Lname</th>
-                <td>{{ user.lname }}</td>
-            </tr>
-            <tr>
-                <th>Username</th>
-                <td>{{ user.userName }}</td>
-            </tr>
-            <tr>
-                <th>Password</th>
-                <td>{{ user.password }}</td>
-            </tr>
-            <tr>
-                <th>Age</th>
-                <td>{{ user.age }}</td>
-            </tr>
-            <tr>
-                <th>Role</th>
-                <td>{{ user.role }}</td>
-            </tr>
-        </tbody>
-    </table>
+
 
     <ul>
         <li>
             <a href="{{ path('user_index') }}">Back to the list</a>
-        </li>
-        <li>
-            <a href="{{ path('user_edit', { 'id': user.id }) }}">Edit</a>
         </li>
         <li>
             {{ form_start(delete_form) }}

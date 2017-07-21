@@ -53,7 +53,7 @@ class User implements UserInterface
 
     /**
      * @var int
-     * @Assert\NotBlank()
+     * 
      */
     private $role;
     

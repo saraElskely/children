@@ -2,6 +2,7 @@
 
 namespace TimeBundle\Repository;
 
+use TimeBundle\Entity\DailySchedule;
 /**
  * DailyScheduleRepository
  *
@@ -10,27 +11,40 @@ namespace TimeBundle\Repository;
  */
 class DailyScheduleRepository extends \Doctrine\ORM\EntityRepository
 {
-    public function getChildDailySchedules($child_id)
+    public function getChildDailySchedules($childId)
     {
         return $this->createQueryBuilder('schedule')
                 ->select()
-                ->where("schedule.userInSchedule = $child_id")
+                ->where("schedule.userInSchedule = $childId")
                 ->orderBy('schedule.date', 'ASC')
                 ->getQuery()
                 ->execute();
     }
     
-    public function getChildTodaySchedule($child_id){
+    public function getChildTodaySchedule($childId){
         $today = new \DateTime();
         $today = $today->format('y-m-d');
 //        dump($today->format('y-m-d'));
 //        die();
         return $this->createQueryBuilder('schedule')
                 ->select()
-                ->where("schedule.userInSchedule = $child_id")
+                ->where("schedule.userInSchedule = $childId")
                 ->andWhere("schedule.date = '$today'")
                 ->getQuery()
                 ->execute();
+    }
+    
+    public function createDailySchedule($childId, $taskId, $date)
+    {
+        $dailySchedule = new DailySchedule();
+        $dailySchedule->setDate($date)
+                ->setTaskInSchedule($taskId)
+                ->setUserInSchedule($childId)
+                ->setIsDone(FALSE);
+        $entityManager = $this->getEntityManager();
+        $entityManager->persist($dailySchedule);
+        $entityManager->flush();    
+        return $dailySchedule;
     }
     
 }

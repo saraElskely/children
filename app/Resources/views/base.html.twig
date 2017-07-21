@@ -14,23 +14,25 @@
     <div class="blog-masthead">
       <div class="container">
         <nav class="nav blog-nav">
-          <a class="nav-link active" href="https://v4-alpha.getbootstrap.com/examples/blog/#">Home</a>
           
           {% if is_granted('ROLE_MOTHER') %}
-              <a class="nav-link" href="{{ path('mother_show_my_children') }}">your children</a>
-              <a class="nav-link" href="{{ path('mother_show_my_children_tasks') }}">your tasks</a>
+              <a class="nav-link" href="{{ path('mother_show_my_children',{'motherId': app.user.id }) }}">your children</a>
+              <a class="nav-link" href="{{ path('task_index') }}">your Children`s tasks</a>
               <a class="nav-link" href="{{ path('task_new') }}">Create task</a>
-              <a class="nav-link" href="{{ path('user_new') }}">Add child</a>
+              <a class="nav-link" href="{{ path('mother_add_child') }}">Add child</a>
+          {% elseif is_granted('ROLE_CHILD') %}
+              <a class="nav-link" href="{{ path('dailySchedule_index',{'child_id': app.user.id }) }}">Your Schedule</a>
+              <a class="nav-link" href="{{ path('dailySchedule_show',{'child_id': app.user.id }) }}">Today Schedule</a>
           {% endif %}
           
           {% if is_granted('IS_AUTHENTICATED_FULLY') %}
             <a class="nav-link">{{ app.user.username }}</a>
+            <a class="nav-link" href="{{ path('\logout') }}">Logout</a>
+          {% else %}
+              <a class="nav-link active" href="{{ path('mother_registration') }}">Register</a>
+              <a class="nav-link" href="{{ path('\login') }}">Login</a>
           {% endif %}
-        {% if is_granted('ROLE_USER') %}
-          <a class="nav-link" href="{{ path('\logout') }}">Logout</a>
-        {% else%}
-          <a class="nav-link" href="{{ path('\login') }}">Login</a>
-        {% endif %}
+          
         </nav>
       </div>
     </div>        
@@ -38,7 +40,9 @@
     <div class='container'>      
             
 
-        {% block body %}{% endblock %}
+        {% block body %}
+        
+        {% endblock %}
     </div>
         {% block javascripts %}
             

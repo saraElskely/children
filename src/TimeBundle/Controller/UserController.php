@@ -7,6 +7,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use TimeBundle\Form\UserType;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use TimeBundle\constant\Roles;
+use TimeBundle\Service\UserService;
+use TimeBundle\Utility\Paginator;
 
 
 /**
@@ -19,14 +22,18 @@ class UserController extends Controller
      * Lists all user entities.
      *
      */
-    public function indexAction()
+    public function indexAction($page = 1)
     {
-        $em = $this->getDoctrine()->getManager();
-
-        $users = $em->getRepository('TimeBundle:User')->findAll();
+        $limit = 2;
+        $query = $this->get(UserService::class)->getMothers();
+        $paginator = new Paginator();
+        $users = $paginator->paginate($page,$limit);
+        $maxPages = ceil($paginator->getResultCount()/$limit);
 
         return $this->render('TimeBundle:user:index.html.twig', array(
             'users' => $users,
+            'currentPage' => $page,
+            'maxPages' => $maxPages
         ));
     }
 
@@ -34,28 +41,31 @@ class UserController extends Controller
      * Creates a new user entity.
      *
      */
-    public function newAction(Request $request)
-    {   
-        $passwordEncoder = $this->get('security.password_encoder');
-        $user = new User();
-        $form = $this->createForm(UserType::class, $user);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $password = $passwordEncoder->encodePassword($user, $user->getPassword());
-            $user->setPassword($password);
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($user);
-            $em->flush();
-
-            return $this->redirectToRoute('user_show', array('id' => $user->getId()));
-        }
-
-        return $this->render('TimeBundle:user:new.html.twig', array(
-            'user' => $user,
-            'form' => $form->createView(),
-        ));
-    }
+//    public function registerAction(Request $request, $role)
+//    {   
+//        $passwordEncoder = $this->get('security.password_encoder');
+//        $user = new User();
+//        $form = $this->createForm(UserType::class, $user);
+//        $form->handleRequest($request);
+//
+//        if ($form->isSubmitted() && $form->isValid()) {
+//            $password = $passwordEncoder->encodePassword($user, $user->getPassword());
+//            $user->setPassword($password);
+//            $user->setRole($role);
+//            $em = $this->getDoctrine()->getManager();
+//            $em->persist($user);
+//            $em->flush();
+//
+//            return $this->redirectToRoute('user_show', array('id' => $user->getId()));
+//        }
+//
+//        return $this->render('TimeBundle:user:new.html.twig', array(
+//            'user' => $user,
+//            'form' => $form->createView(),
+//        ));
+//    }
+    
+    
 
     /**
      * Finds and displays a user entity.
