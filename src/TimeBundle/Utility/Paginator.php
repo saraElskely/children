@@ -23,7 +23,7 @@ class Paginator {
             $this->numOfItem = 0 ;
         }
         $this->limit = $limit  ;
-        $this->maxPage = ceil($this->numOfItem/ $this->limit);
+        $this->maxPage = ceil($this->numOfItem / $this->limit);
         
     }
     
@@ -34,7 +34,7 @@ class Paginator {
     
     public function getOffest( $page = 1)
     {
-        ($page < $this->getMaxPage()) ? $this->offest= $this->limit*($page-1) : $this->offest= 1;
+        ($page <= $this->getMaxPage()) ? $this->offest= $this->limit*($page-1) : $this->offest= 0;
         return $this->offest ;
     }
     

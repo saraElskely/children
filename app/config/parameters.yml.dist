@@ -15,5 +15,12 @@ parameters:
     mailer_user: ~
     mailer_password: ~
 
+    jwt_private_key_path: '%kernel.root_dir%/var/jwt/private.pem' 
+    jwt_public_key_path:  '%kernel.root_dir%/var/jwt/public.pem'  
+    jwt_key_pass_phrase:  'children'                                         
+    jwt_token_ttl:        3600 
+
     # A secret key that's used to generate certain security-related tokens
     secret: ThisTokenIsNotSoSecretChangeIt
+
+    

@@ -26,9 +26,20 @@ class UserService {
         return $this->entityManager->getRepository('TimeBundle:User')->getUser($userId);
     }
     
-    public function getMothers($currentPage = 1)
+    public function deleteUser($userId)
     {
-        return $this->entityManager->getRepository('TimeBundle:User')->getMothers($currentPage);
+        return $this->entityManager->getRepository('TimeBundle:User')->deleteUser($userId);
+    }
+
+
+    public function getMothers($offest =1, $limit =2)
+    {
+        return $this->entityManager->getRepository('TimeBundle:User')->getMothers($offest,$limit);
         
     }
+    public function getMothersCount()
+    {
+        return $this->entityManager->getRepository('TimeBundle:User')->getMothersCount();
+    }
+
 }

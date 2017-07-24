@@ -37,11 +37,8 @@ class DailyScheduleController extends Controller
     public function showChildTodayScheduleAction($child_id)
     {
         $todaySchedule = $this->get(DailyScheduleService::class)->getChildTodaySchedule($child_id);
-        
-        
-        
-        
-        $todaySchedule = $this->get(DailyScheduleService::class)->createMothersDailySchedule(7,5);
+    
+//        $todaySchedule = $this->get(DailyScheduleService::class)->createMothersDailySchedule(7,5);
         
         return $this->render('TimeBundle:dailyschedule:show.html.twig', array(
             'dailySchedules' => $todaySchedule,

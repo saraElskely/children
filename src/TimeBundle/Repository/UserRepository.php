@@ -78,6 +78,15 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
         return $user;   
     }
     
+    public function deleteUser($userId)
+    {
+        $this->createQueryBuilder('user')
+                ->delete()
+                ->where("user.id = $userId")
+                ->getQuery()
+                ->execute();
+    }
+    
     public function getMotherChildrenId($motherId)
     {
         return $this->createQueryBuilder('user')
@@ -87,41 +96,35 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
                 ->execute();      
     }
 
-    public function getMothers()
+    public function getMothers($offest =1, $limit=2)
     {
         $role = Roles::ROLE_MOTHER;
-        $query = $this->createQueryBuilder('user')
+        $mothers = $this->createQueryBuilder('user')
                 ->select()
                 ->where("user.role = $role")
-                ->getQuery();
-
-//        $paginator = new PaginatorService('',$query);
-        return $query;
-    }
-    
-//    public function paginate( $dql, $page = 1, $limit = 2){
-//        $paginator = new Paginator($dql);
-//        $paginator->getQuery()
-//                ->setFirstResult($limit*($page-1))
-//                ->setMaxResults($limit);
-//
-//        return $paginator ;
-//    }
-    
-    public function getResultCount($query)
-    {
-        return $this->entityManager->createQueryBuilder()
-                ->select('count(:q)')
-                ->setParameter('q', $query)
                 ->getQuery()
-                ->getSingleScalarResult();
-    }
-    
-    public function paginate($query, $page = 1, $limit = 2)
-    {
-        return $query
-                ->setFirstResult($limit*($page-1))
+                ->setFirstResult($offest)
                 ->setMaxResults($limit)
                 ->execute();
+        
+//        dump($query);
+//        die();
+
+        return $mothers ;
+        
     }
+    
+    public function getMothersCount()
+    {
+        $role = Roles::ROLE_MOTHER;
+        return $this->createQueryBuilder('user')
+                ->select('count(user.id)')
+                ->where("user.role = $role")
+                ->getQuery()
+                ->getSingleScalarResult()
+                ;
+        
+        
+    }
+
 }
