@@ -72,6 +72,7 @@ security:
                 # field names for the username and password fields
                 username_parameter: _username
                 password_parameter: _password
+                csrf_token_generator: security.csrf.token_manager
                 
             logout:
                 path: /logout

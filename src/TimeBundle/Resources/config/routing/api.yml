@@ -1,11 +1,12 @@
-api_dailySchedule_change:
-    path:   /today/{schedule_id}/{state}
-    defaults: { _controller: "TimeBundle:ApiDailySchedule:changeScheduleState", state:1 }
-    methods:  [POST ,GET]
-    requirements:
-        schedule_id: '\d+'
+api_dailySchedule:
+    resource: "@TimeBundle/Resources/config/routing/dailySchedule.yml"
 
-api_test:
+api_login:
     path:   /login_check
     defaults: { _controller: "TimeBundle:ApiDailySchedule:test" }
     methods:  [POST ]
+    
+api_test:
+    path:   /test
+    defaults: { _controller: "TimeBundle:ApiDailySchedule:test" }
+    methods:  GET

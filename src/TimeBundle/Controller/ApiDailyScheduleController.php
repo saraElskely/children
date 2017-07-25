@@ -31,7 +31,9 @@ class ApiDailyScheduleController extends Controller {
     
     public function testAction()
     {
-        
+        $response = array("code" => 200, "status" => 7);
+          // returned result as JSON
+        return new Response(json_encode($response)); 
     }
 
    

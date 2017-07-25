@@ -37,13 +37,13 @@ class TaskRepository extends \Doctrine\ORM\EntityRepository
                 ->execute();
     }
 
-    public function getAdminTasks($todayAsSchedule)
+    public function getAdminTasks()
     {
         $adminId = $this->getEntityManager()->getRepository('TimeBundle:User')->getAdminId();
         return $this->createQueryBuilder('task')
                 ->select()
                 ->where("task.creator = $adminId")
-                ->andWhere("task.schedule = 0 OR task.schedule = $todayAsSchedule")
+//                ->andWhere("task.schedule = 0 OR task.schedule = $todayAsSchedule")
                 ->getQuery()
                 ->execute();
         

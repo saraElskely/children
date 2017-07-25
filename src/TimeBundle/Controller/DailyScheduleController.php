@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use TimeBundle\constant\Roles;
 use TimeBundle\Service\DailyScheduleService;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Dailyschedule controller.
@@ -47,15 +48,21 @@ class DailyScheduleController extends Controller
     }
     
     
-    public function scheduleDoneAction($schedule_id)
+    public function scheduleDoneAction(Request $request, $schedule_id)
     {
         $em = $this->getDoctrine()->getManager();
         $schedule = $em->getRepository('TimeBundle:DailySchedule')->findOneById($schedule_id);
 //        dump($schedule);
         $schedule->setIsDone(!$schedule->getIsDone());
         $em->flush();
+        
+        $firewall = $this->container
+                        ->get('security.firewall.map')
+                        ->getFirewallConfig($request)
+                        ->getName();
+        
 
-        $response = array("code" => 200, "status" => $schedule->getIsDone());
+        $response = array("code" => $firewall, "status" => $schedule->getIsDone());
           // returned result as JSON
         return new Response(json_encode($response)); 
         
