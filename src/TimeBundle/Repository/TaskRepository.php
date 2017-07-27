@@ -49,15 +49,20 @@ class TaskRepository extends \Doctrine\ORM\EntityRepository
         
     }
     
-    public function getTodayMothersTasks($todayAsSchedule)
+    public function getTodayChildTasks($todayAsSchedule, $motherId)
     {
+        $today = new \DateTime();
+        $today = $today->format('Y-m-d');
+        
         $adminId = $this->getEntityManager()->getRepository('TimeBundle:User')->getAdminId();
-        return $this->createQueryBuilder('task')
-                ->select()
+        dump( $this->createQueryBuilder('task')
+                ->select('task , schedule.isDone')
+                ->leftJoin('TimeBundle:DailySchedule', 'schedule','WITH',"task.id = schedule.id AND schedule.date = '$today'")
                 ->where("task.schedule = 0 OR task.schedule = $todayAsSchedule")
-                ->andWhere("task.creator != $adminId")
+                ->andWhere("task.creator = $adminId OR task.creator = $motherId")
                 ->getQuery()
-                ->execute();
+                ->execute());
+        die();
     }
 
 

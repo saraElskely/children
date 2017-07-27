@@ -5,6 +5,7 @@ namespace TimeBundle\Service;
 use Doctrine\ORM\EntityManagerInterface;
 use TimeBundle\Entity\Task;
 use TimeBundle\constant\Roles;
+use TimeBundle\Service\DailyScheduleService;
 
 /**
  * Description of TaskService
@@ -37,6 +38,34 @@ class TaskService {
             $tasks['yourTask'] = $this->entityManager->getRepository('TimeBundle:Task')->getMotherTasks($userId);
         }
         return $tasks;
+    }
+    
+    public function getTodayChildTasks($todayAsSchedule, $motherId, $childId)
+    {
+        $allTodayTasks = $this->entityManager->getRepository('TimeBundle:Task')
+                ->getTodayChildTasks($todayAsSchedule, $motherId);
+        
+        $doneSchedules = $this->entityManager->getRepository('TimeBundle:dailySchedule')
+                ->getChildTodaySchedule($childId);
+    
+        return $doneSchedules ? 
+                $this->prepareTodayTasks($allTodayTasks, $doneSchedules) : 
+                $allTodayTasks;
+       
+    }
+    
+    public function prepareTodayTasks($allTodayTasks, $doneSchedules)
+    {
+        foreach ($allTodayTasks as  $index => $task) {
+            foreach ($doneSchedules as $schedule) {
+                if(isset($allTodayTasks[$index])){
+                    $task->getId() === $schedule['id'] ? 
+                            $allTodayTasks[$index]->state= 'Done' : 
+                            $allTodayTasks[$index]->state= 'notDone';
+                }
+            }
+        }
+        return $allTodayTasks;
     }
 
 }

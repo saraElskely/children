@@ -22,7 +22,8 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
                   ->where('user.role = 3');
 
     }
-    public function getAdminId(){
+    public function getAdminId()
+    {
         $adminUsername = 'admin' ;
         $admin = $this->createQueryBuilder('user')
                 ->select()
@@ -33,7 +34,19 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
         return $admin[0]->getId();
     }
     
-    public function createAdminUser($encodedPassword){
+    public function getMotherId($childId)
+    {
+        $mother = $this->createQueryBuilder('user')
+                        ->select()
+                        ->where("user.id =$childId")
+                        ->getQuery()
+                        ->execute();
+//                dump($mother[0]->getId());
+//                die();
+        return $mother[0]->getId();
+    }
+
+        public function createAdminUser($encodedPassword){
         
         $admin = new User();
         

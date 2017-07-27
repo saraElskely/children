@@ -1,5 +1,11 @@
 api_dailySchedule:
-    resource: "@TimeBundle/Resources/config/routing/dailySchedule.yml"
+#    resource: "@TimeBundle/Resources/config/routing/dailySchedule.yml"
+    path:   /today/{task_id}/{state}
+    defaults: { _controller: "TimeBundle:DailySchedule:changeScheduleState" }
+    methods:  [POST ,GET]
+    requirements:
+        schedule_id: '\d+'
+    
 
 api_login:
     path:   /login_check
