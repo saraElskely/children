@@ -10,6 +10,10 @@ time_dailySchedule:
     resource: "@TimeBundle/Resources/config/routing/dailySchedule.yml"
     prefix:   /dailyschedule
     
+time_api:
+    resource: "@TimeBundle/Resources/config/routing/api.yml"
+    prefix:   /api
+    
 time_mother:
     resource: "@TimeBundle/Resources/config/routing/mother.yml"
     prefix:   /mother

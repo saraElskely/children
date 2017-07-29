@@ -4,6 +4,7 @@ dailySchedule_index:
     methods:  GET
     requirements:
         child_id: '\d+'
+#        firewall: api|dailySchedule
 
 
 dailySchedule_show:
@@ -15,9 +16,9 @@ dailySchedule_show:
 
     
 
-dailySchedule_done:
-    path:   /today/{schedule_id}
-    defaults: { _controller: "TimeBundle:DailySchedule:scheduleDone" }
+dailySchedule_change_state:
+    path:   /today/{task_id}/{state}
+    defaults: { _controller: "TimeBundle:DailySchedule:changeScheduleState" }
     methods:  [POST ,GET]
     requirements:
         schedule_id: '\d+'

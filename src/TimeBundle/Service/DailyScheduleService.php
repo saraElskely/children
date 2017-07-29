@@ -5,6 +5,7 @@ namespace TimeBundle\Service;
 use Doctrine\ORM\EntityManagerInterface;
 use TimeBundle\Entity\DailySchedule;
 use TimeBundle\constant\Roles;
+use TimeBundle\Utility\Date;
 
 /**
  * Description of CreateDailySchedule
@@ -22,7 +23,7 @@ class DailyScheduleService {
     {
         $children =$this->entityManager->getRepository('TimeBundle:User')->findByRole(Roles::ROLE_CHILD);
         $adminTasks = $this->entityManager->getRepository('TimeBundle:Task')
-                ->getAdminTasks($this->getTodayInWeek());
+                ->getAdminTasks(Date::getTodayInWeek());
 
         foreach ($children as $child){
             foreach ($adminTasks as $task) {
@@ -40,7 +41,7 @@ class DailyScheduleService {
     
     public function createMothersDailySchedule( $motherId, $childId )
     {
-        $todayAsSchedule = $this->getTodayInWeek() ;
+        $todayAsSchedule = Date::getTodayInWeek();
         $mothersTasks = $this->entityManager->getRepository('TimeBundle:Task')
                 ->getTodayMothersTasks($todayAsSchedule);
         foreach ($mothersTasks as $task) {
@@ -56,19 +57,19 @@ class DailyScheduleService {
 //                ->createMotherDailySchedule( $todayMotherTasksId, $childId );
     }
     
-    public function getTodayInWeek()
-    {
-        $today = new \DateTime();
-        $today = strtotime($today->format('y-m-d'));
-        $today = date('w', $today);
-        
-        return pow(2,$today);
-    }
+//    public function getTodayInWeek()
+//    {
+//        $today = new \DateTime();
+//        $today = strtotime($today->format('y-m-d'));
+//        $today = date('w', $today);
+//        
+//        return pow(2,$today);
+//    }
     
     public function getTodayMotherTasksId($motherTasks)
     {
         $todayMotherTasksId = array();
-        $today =  $this->getTodayInWeek() ;
+        $today =  Date::getTodayInWeek() ;
         foreach ($motherTasks as $task) {
             if(($task->getSchedule() & $today) == $today){
                 $todayMotherTasksId[]= $task->getId();
@@ -91,7 +92,7 @@ class DailyScheduleService {
                 ->getChildTodaySchedule($childId);
     }
     
-    public function getDayByDayDailySchedule($dailySchedules)
+    public function getDayByDayDailySchedule( $dailySchedules)
     {
         $arrayOfDailyTasks =array();
         foreach ($dailySchedules as $task){
@@ -106,5 +107,30 @@ class DailyScheduleService {
         return $arrayOfDailyTasks;
         
     }
+    
+    public function changeScheduleState( $childId, $taskId, $state)
+    {
+        if( $state){
+            return $this->deleteSchedule( $childId, $taskId);
+        }else{
+            return $this->createDailySchedule( $childId, $taskId); 
+        }
+    }
+    
+    public function createDailySchedule( $childId, $taskId)
+    {
+        return $this->entityManager
+                ->getRepository('TimeBundle:DailySchedule')
+                ->createDailySchedule( $childId, $taskId);
+    }
+
+    public function deleteSchedule($childId, $taskId)
+    {
+        return $this->entityManager
+                ->getRepository('TimeBundle:DailySchedule')
+                ->deleteSchedule( $childId, $taskId);
+    }
+    
+    
     
 }

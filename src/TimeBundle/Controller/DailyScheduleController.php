@@ -4,9 +4,13 @@ namespace TimeBundle\Controller;
 
 use TimeBundle\Entity\DailySchedule;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use TimeBundle\constant\Roles;
 use TimeBundle\Service\DailyScheduleService;
+use TimeBundle\Service\UserService;
+use TimeBundle\Service\TaskService;
+use Symfony\Component\HttpFoundation\Request;
+use TimeBundle\Utility\Date;
 
 /**
  * Dailyschedule controller.
@@ -36,31 +40,44 @@ class DailyScheduleController extends Controller
      */
     public function showChildTodayScheduleAction($child_id)
     {
-        $todaySchedule = $this->get(DailyScheduleService::class)->getChildTodaySchedule($child_id);
+//        $todaySchedule = $this->get(DailyScheduleService::class)->getChildTodaySchedule($child_id);
         
+//        $w = $this->get(DailyScheduleService::class)->deleteSchedule( 9, 6);
+//        dump($w);
+//        die();
+        $motherId = $this->get(UserService::class)->getMotherId($child_id);
+        $todayAsSchedule = Date::getTodayInWeek();
+        $todayTasks = $this->get(TaskService::class)->getTodayChildTasks($todayAsSchedule, $motherId, $child_id);
         
-        
-        
-        $todaySchedule = $this->get(DailyScheduleService::class)->createMothersDailySchedule(7,5);
-        
-        return $this->render('TimeBundle:dailyschedule:show.html.twig', array(
-            'dailySchedules' => $todaySchedule,
+        return $this->render('TimeBundle:dailyschedule:todaySchedule.html.twig', array(
+            'dailySchedules' => $todayTasks,
             'child_id' => $child_id
         ));
     }
     
     
-    public function scheduleDoneAction($schedule_id)
+    public function changeScheduleStateAction(Request $request, $task_id, $state)
     {
-        $em = $this->getDoctrine()->getManager();
-        $schedule = $em->getRepository('TimeBundle:DailySchedule')->findOneById($schedule_id);
-//        dump($schedule);
-        $schedule->setIsDone(!$schedule->getIsDone());
-        $em->flush();
+        $childId = $this->getUser()->getId();
+        
+        $this->get(DailyScheduleService::class)->changeScheduleState( $childId, $task_id, $state);
+        
+        $firewall = $this->container
+                        ->get('security.firewall.map')
+                        ->getFirewallConfig($request)
+                        ->getName();
+ 
+        
+        $response = array("status" => $firewall, "data" => 1);
+        
+        if( $firewall === 'api')
+        {
+            return new JsonResponse();
+        }
 
-        $response = array("code" => 200, "status" => $schedule->getIsDone());
+        
           // returned result as JSON
-        return new Response(json_encode($response)); 
+        return new JsonResponse($response); 
         
     }
     

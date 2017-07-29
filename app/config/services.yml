@@ -5,14 +5,14 @@ parameters:
 
 services:
     # default configuration for services in *this* file
-    _defaults:
-        # automatically injects dependencies in your services
-        autowire: true
-        # automatically registers your services as commands, event subscribers, etc.
-        autoconfigure: true
-        # this means you cannot fetch services directly from the container via $container->get()
-        # if you need to do this, you can override this setting on individual services
-        public: false
+#    _defaults:
+#        # automatically injects dependencies in your services
+#        autowire: true
+#        # automatically registers your services as commands, event subscribers, etc.
+#        autoconfigure: true
+#        # this means you cannot fetch services directly from the container via $container->get()
+#        # if you need to do this, you can override this setting on individual services
+#        public: false
 
     # makes classes in src/AppBundle available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -39,3 +39,7 @@ services:
         public: true
         arguments:
             $entityManager: '@doctrine.orm.default_entity_manager'
+
+    app.jwt_token_authenticator:
+        parent: lexik_jwt_authentication.security.guard.jwt_token_authenticator
+        class: TimeBundle\Security\Guard\JWTAuthenticator

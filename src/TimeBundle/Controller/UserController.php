@@ -25,11 +25,13 @@ class UserController extends Controller
     public function indexAction($page = 1)
     {
         $limit = 2;
-        $query = $this->get(UserService::class)->getMothers();
-        $paginator = new Paginator();
-        $users = $paginator->paginate($page,$limit);
-        $maxPages = ceil($paginator->getResultCount()/$limit);
-
+        $resultCount = $this->get(UserService::class)->getMothersCount();
+        $paginator = new Paginator($resultCount);
+        $maxPages = $paginator->getMaxPage();
+        $offest = $paginator->getOffest($page);
+        $users = $this->get(UserService::class)->getMothers( $offest ,$limit);
+        
+        
         return $this->render('TimeBundle:user:index.html.twig', array(
             'users' => $users,
             'currentPage' => $page,
@@ -114,9 +116,7 @@ class UserController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($user);
-            $em->flush();
+            $this->get(UserService::class)->deleteUser($user->getId());
         }
 
         return $this->redirectToRoute('user_index');

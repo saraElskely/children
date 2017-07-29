@@ -3,6 +3,8 @@
 namespace TimeBundle\Repository;
 
 use TimeBundle\Entity\DailySchedule;
+//use TimeBundle\Entity\User;
+//use TimeBundle\Entity\Task;
 /**
  * DailyScheduleRepository
  *
@@ -23,28 +25,75 @@ class DailyScheduleRepository extends \Doctrine\ORM\EntityRepository
     
     public function getChildTodaySchedule($childId){
         $today = new \DateTime();
-        $today = $today->format('y-m-d');
-//        dump($today->format('y-m-d'));
-//        die();
-        return $this->createQueryBuilder('schedule')
-                ->select()
+        $today = $today->format('Y-m-d');
+        
+        return  $this->createQueryBuilder('schedule')
+                ->select('task.id')
+                ->join('schedule.taskInSchedule', 'task')
                 ->where("schedule.userInSchedule = $childId")
                 ->andWhere("schedule.date = '$today'")
                 ->getQuery()
-                ->execute();
+                ->getArrayResult();
+        
+         
     }
     
-    public function createDailySchedule($childId, $taskId, $date)
+    public function createDailySchedule( $childId, $taskId)
     {
-        $dailySchedule = new DailySchedule();
-        $dailySchedule->setDate($date)
-                ->setTaskInSchedule($taskId)
-                ->setUserInSchedule($childId)
-                ->setIsDone(FALSE);
         $entityManager = $this->getEntityManager();
+        $today = new \DateTime();
+
+        $child = $entityManager->getReference('TimeBundle:User', $childId);
+        $task = $entityManager->getReference('TimeBundle:Task', $taskId);
+        
+        $dailySchedule = new DailySchedule();
+        $dailySchedule->setDate($today)
+                ->setTaskInSchedule($task)
+                ->setUserInSchedule($child)
+                ->setIsDone(TRUE);
+              
         $entityManager->persist($dailySchedule);
         $entityManager->flush();    
         return $dailySchedule;
+    }
+    
+    public function deleteSchedule( $childId, $taskId)
+    {
+        $today = new \DateTime();
+        $today = $today->format('Y-m-d');
+        
+        return $this->createQueryBuilder('schedule')
+                ->delete()
+                ->where("schedule.userInSchedule = $childId AND schedule.taskInSchedule = $taskId")
+                ->andWhere("schedule.date = '$today'")
+                ->getQuery()
+                ->execute();
+        
+    }
+    
+    public function getScheduleId( $childId, $taskId, $date)
+    {
+        return $this->createQueryBuilder('schedule')
+                ->select('schedule.id')
+                ->where("schedule.taskInSchedule = $taskId AND schedule.userInSchedule = $childId")
+                ->andWhere("schedule.date = $date")
+                ->getQuery()
+                ->getOneOrNullResult() ;
+        
+        
+    }
+    
+    public function changeScheduleState( $scheduleId, $state)
+    {
+        $today = new \DateTime();
+        $today = $today->format('Y-m-d');
+        
+        return $this->createQueryBuilder('schedule')
+                ->update()
+                ->set('schedule.isDone', $state)
+                ->where("schedule.id = $scheduleId AND schedule.date = '$today'")
+                ->getQuery()
+                ->execute();
     }
     
 }

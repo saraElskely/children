@@ -4,8 +4,6 @@ security:
 
     # https://symfony.com/doc/current/security.html#b-configuring-how-users-are-loaded
     providers:
-        in_memory:
-            memory: ~
             
         our_db_provider:
             entity:
@@ -20,6 +18,26 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+         
+        login:
+            pattern:  ^/api/login
+            stateless: true
+            anonymous: true
+            form_login:
+                check_path: /api/login_check
+                require_previous_session: false
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+                provider:   our_db_provider
+               
+
+        api:
+            pattern:   ^/api
+            stateless: true
+            anonymous: false
+            guard:
+                authenticators:
+                    - app.jwt_token_authenticator
 
         main:
             anonymous: ~
@@ -39,7 +57,7 @@ security:
 
                 # login success redirecting options (read further below)
                 always_use_default_target_path: false
-                default_target_path:            /user
+                default_target_path:            /task
                 target_path_parameter:          _target_path
                 use_referer:                    false
 
@@ -49,10 +67,12 @@ security:
                 failure_path_parameter: _failure_path
 #                failure_handler: some.service.id
 #                success_handler: some.service.id
+                
 
                 # field names for the username and password fields
                 username_parameter: _username
                 password_parameter: _password
+                csrf_token_generator: security.csrf.token_manager
                 
             logout:
                 path: /logout
@@ -64,6 +84,7 @@ security:
         - { path: ^/user, roles: ROLE_USER }
         - { path: ^/task, roles: ROLE_CREATOR }
         - { path: ^/mother, roles: ROLE_MOTHER }
+#        - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
         
     encoders:
         TimeBundle\Entity\User: 
