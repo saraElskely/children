@@ -6,11 +6,14 @@
             <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Controller/DailyScheduleController.php</file>
             <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Service/DailyScheduleService.php</file>
             <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Controller/ApiDailyScheduleController.php</file>
+            <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Resources/views/dailyschedule/todaySchedule.html.twig</file>
+            <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Resources/views/task/index.html.twig</file>
+            <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Entity/DailySchedule.php</file>
+            <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Resources/config/routing/dailySchedule.yml</file>
             <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Repository/DailyScheduleRepository.php</file>
             <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Service/TaskService.php</file>
             <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Repository/TaskRepository.php</file>
             <file>file:/home/saraelsayed/symfony/children_project/app/config/parameters.yml</file>
-            <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Repository/UserRepository.php</file>
             <file>file:/home/saraelsayed/symfony/children_project/app/config/security.yml</file>
         </group>
     </open-files>

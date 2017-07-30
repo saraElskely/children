@@ -10,7 +10,7 @@ use TimeBundle\Service\DailyScheduleService;
 use TimeBundle\Service\UserService;
 use TimeBundle\Service\TaskService;
 use Symfony\Component\HttpFoundation\Request;
-use TimeBundle\Utility\Date;
+
 
 /**
  * Dailyschedule controller.
@@ -45,9 +45,11 @@ class DailyScheduleController extends Controller
 //        $w = $this->get(DailyScheduleService::class)->deleteSchedule( 9, 6);
 //        dump($w);
 //        die();
-        $motherId = $this->get(UserService::class)->getMotherId($child_id);
-        $todayAsSchedule = Date::getTodayInWeek();
-        $todayTasks = $this->get(TaskService::class)->getTodayChildTasks($todayAsSchedule, $motherId, $child_id);
+        $startDate =  new \DateTime();
+            $startDate->modify('sunday this week');
+        $this->get(TaskService::class)->getWeeklyChildTasks($startDate, $child_id);
+        
+        $todayTasks = $this->get(TaskService::class)->getTodayChildTasks( $child_id);
         
         return $this->render('TimeBundle:dailyschedule:todaySchedule.html.twig', array(
             'dailySchedules' => $todayTasks,

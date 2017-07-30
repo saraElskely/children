@@ -37,13 +37,14 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
     public function getMotherId($childId)
     {
         $mother = $this->createQueryBuilder('user')
-                        ->select()
+                        ->select('mother.id')
                         ->where("user.id =$childId")
+                        ->join('user.mother', 'mother')
                         ->getQuery()
                         ->execute();
-//                dump($mother[0]->getId());
+//                dump($mother[0]['id']);
 //                die();
-        return $mother[0]->getId();
+        return $mother[0]['id'];
     }
 
         public function createAdminUser($encodedPassword){

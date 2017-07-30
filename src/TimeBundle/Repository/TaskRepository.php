@@ -53,18 +53,40 @@ class TaskRepository extends \Doctrine\ORM\EntityRepository
     {
         $today = new \DateTime();
         $today = $today->format('Y-m-d');
+        $d = new \DateTime();
+//        dump($d->modify('sunday this week')->format('Y-m-d'));
+//        dump($d->modify('+1 week'));
+        
+//        die();
         
         $adminId = $this->getEntityManager()->getRepository('TimeBundle:User')->getAdminId();
-        dump( $this->createQueryBuilder('task')
+
+        return  $this->createQueryBuilder('task')
                 ->select('task , schedule.isDone')
-                ->leftJoin('TimeBundle:DailySchedule', 'schedule','WITH',"task.id = schedule.id AND schedule.date = '$today'")
+                ->leftJoin('TimeBundle:DailySchedule', 'schedule','WITH'," schedule.date = '$today'")
                 ->where("task.schedule = 0 OR task.schedule = $todayAsSchedule")
                 ->andWhere("task.creator = $adminId OR task.creator = $motherId")
                 ->getQuery()
-                ->execute());
-        die();
+                ->execute();
     }
 
+    public function getWeeklyChildTasks($startDate, $motherId, $childId)
+    {
+        
+        $Date = $startDate->format('Y-m-d');
+        $start = new \DateTime($Date);
+        $endDate = $start->modify('+1 week')->format('Y-m-d');
+        $adminId = $this->getEntityManager()->getRepository('TimeBundle:User')->getAdminId();
+
+        return  $this->createQueryBuilder('task')
+                ->select('task, schedule.date, schedule.isDone ')
+                ->leftJoin('TimeBundle:DailySchedule', 'schedule','WITH',
+                        "task.id = schedule.taskInSchedule AND schedule.date BETWEEN '$Date' AND '$endDate' AND schedule.userInSchedule = $childId")
+                ->Where("task.creator = $adminId OR task.creator = $motherId")
+                ->getQuery()
+                ->execute();
+        
+    }
 
     public function getMotherTasks($motherId)
     {
