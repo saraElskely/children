@@ -5,6 +5,8 @@ namespace TimeBundle\Repository;
 use TimeBundle\constant\Roles;
 use TimeBundle\Entity\Task;
 use TimeBundle\Entity\User;
+use TimeBundle\constant\Schedule;
+use Doctrine\ORM\Query\Expr;
 
 /**
  * TaskRepository
@@ -53,39 +55,43 @@ class TaskRepository extends \Doctrine\ORM\EntityRepository
     {
         $today = new \DateTime();
         $today = $today->format('Y-m-d');
-        $d = new \DateTime();
-//        dump($d->modify('sunday this week')->format('Y-m-d'));
-//        dump($d->modify('+1 week'));
-        
-//        die();
-        
+
         $adminId = $this->getEntityManager()->getRepository('TimeBundle:User')->getAdminId();
+        $SCHEDULE_DAILY = Schedule::SCHEDULE_DAILY;
 
         return  $this->createQueryBuilder('task')
                 ->select('task , schedule.isDone')
                 ->leftJoin('TimeBundle:DailySchedule', 'schedule','WITH'," schedule.date = '$today'")
-                ->where("task.schedule = 0 OR task.schedule = $todayAsSchedule")
+                ->where("task.schedule = $SCHEDULE_DAILY OR task.schedule = $todayAsSchedule")
                 ->andWhere("task.creator = $adminId OR task.creator = $motherId")
                 ->getQuery()
                 ->execute();
     }
 
     public function getWeeklyChildTasks($startDate, $motherId, $childId)
-    {
+    { 
+        $start = $startDate;
         
-        $Date = $startDate->format('Y-m-d');
-        $start = new \DateTime($Date);
-        $endDate = $start->modify('+1 week')->format('Y-m-d');
+        $date = new \DateTime($start);
+        $end = $date->modify('+1 week')->format('Y-m-d');
+        dump($startDate);
+        dump($end);
         $adminId = $this->getEntityManager()->getRepository('TimeBundle:User')->getAdminId();
-
+       
+//        SELECT t.* ,s.is_done ,s.date
+//        FROM task AS t
+//        LEFT JOIN daily_schedule AS s 
+//        ON t.id = s.taskId  AND (s.date BETWEEN '2017-07-28' AND '2017-08-04') AND s.userId = 23
+//        WHERE t.user IN (10 ,7)
+        
         return  $this->createQueryBuilder('task')
-                ->select('task, schedule.date, schedule.isDone ')
+                ->select('task, schedule.isDone, schedule.date')
                 ->leftJoin('TimeBundle:DailySchedule', 'schedule','WITH',
-                        "task.id = schedule.taskInSchedule AND schedule.date BETWEEN '$Date' AND '$endDate' AND schedule.userInSchedule = $childId")
-                ->Where("task.creator = $adminId OR task.creator = $motherId")
+                        "task.id = schedule.taskInSchedule AND (schedule.date BETWEEN '$start' AND '$end') AND schedule.userInSchedule = $childId")
+                ->Where("task.creator IN ($adminId,  $motherId)")
                 ->getQuery()
                 ->execute();
-        
+    
     }
 
     public function getMotherTasks($motherId)

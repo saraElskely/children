@@ -1,11 +1,11 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+    {#{{dump()}}#}
     <h1>User Dailyschedules list</h1>
 
           <a class="card-link" href="{{ path('dailySchedule_show', { 'child_id': child_id }) }}">Today Schedule </a>
 
-    
             {% if dailySchedules %}
                 <div class="row">
   
@@ -20,10 +20,10 @@
                             <ul class="list-group list-group-flush">
                                 {% for task in dailySchedule %}
                                     <li class="list-group-item">
-                                         {{ task.taskInSchedule.taskName }}
+                                         {{ task.taskName }}
                 {#                         <pre class='text-right '> {% if dailySchedule.isDone %}Yes{% else %}No{% endif %}</div>#}
 
-                                        {% if task.isDone %}
+                                        {% if task.state %}
                                            <div class="date" id="{{task.id}}done" >
                                             <h6 class="glyphicon glyphicon-ok" aria-hidden="true">Done</h6>
                                            </div>

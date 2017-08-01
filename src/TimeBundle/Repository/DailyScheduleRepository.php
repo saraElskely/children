@@ -3,8 +3,7 @@
 namespace TimeBundle\Repository;
 
 use TimeBundle\Entity\DailySchedule;
-//use TimeBundle\Entity\User;
-//use TimeBundle\Entity\Task;
+
 /**
  * DailyScheduleRepository
  *

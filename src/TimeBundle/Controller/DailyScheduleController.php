@@ -24,10 +24,12 @@ class DailyScheduleController extends Controller
      */
     public function showChildScheduleAction($child_id)
     {
-        $dailySchedules = $this->get(DailyScheduleService::class)->getChildDailySchedules($child_id);
-
-        $arrayOfDailyTasks = $this->get(DailyScheduleService::class)->getDayByDayDailySchedule($dailySchedules); // array => day is a key && value for each key is tasks in this day
-       
+//        $dailySchedules = $this->get(DailyScheduleService::class)->getChildDailySchedules($child_id);
+//
+//        $arrayOfDailyTasks = $this->get(DailyScheduleService::class)->getDayByDayDailySchedule($dailySchedules); // array => day is a key && value for each key is tasks in this day
+//        dump($arrayOfDailyTasks);
+//        die;
+        $arrayOfDailyTasks = $this->get(TaskService::class)->getWeeklyChildTasks( $child_id);
         return $this->render('TimeBundle:dailyschedule:index.html.twig', array(
             'dailySchedules' => $arrayOfDailyTasks,
             'child_id' => $child_id
@@ -45,9 +47,9 @@ class DailyScheduleController extends Controller
 //        $w = $this->get(DailyScheduleService::class)->deleteSchedule( 9, 6);
 //        dump($w);
 //        die();
-        $startDate =  new \DateTime();
-            $startDate->modify('sunday this week');
-        $this->get(TaskService::class)->getWeeklyChildTasks($startDate, $child_id);
+        $startDate =  new \DateTime('2017-08-05');
+        //$startDate->modify('next Tuesday -1 week');
+//        $this->get(TaskService::class)->getWeeklyChildTasks( $child_id);
         
         $todayTasks = $this->get(TaskService::class)->getTodayChildTasks( $child_id);
         

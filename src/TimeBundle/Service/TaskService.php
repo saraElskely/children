@@ -7,6 +7,7 @@ use TimeBundle\Entity\Task;
 use TimeBundle\constant\Roles;
 use TimeBundle\Service\DailyScheduleService;
 use TimeBundle\Utility\Date;
+use TimeBundle\constant\Schedule;
 
 /**
  * Description of TaskService
@@ -54,7 +55,7 @@ class TaskService {
         
         
         
-        return $this->prepareTasksArray($allTodayTasks);
+        return $this->mapTasksToArray($allTodayTasks);
         
 //        $doneSchedules = $this->entityManager->getRepository('TimeBundle:dailySchedule')
 //                ->getChildTodaySchedule($childId);
@@ -64,12 +65,10 @@ class TaskService {
 //                $allTodayTasks;
        
     }
-    public function getWeeklyChildTasks($startDate , $childId)
-    {
-        
+    public function getWeeklyChildTasks($childId, $startDate = null)
+    { 
         if( $startDate === NULL) {
-            $startDate =  new \DateTime();
-            $startDate->modify('sunday this week');
+            $startDate = Date::getStartDateInWeek();
         }
                 
         $motherId = $this->entityManager
@@ -79,13 +78,13 @@ class TaskService {
         $weeklyTasks = $this->entityManager->getRepository('TimeBundle:Task')
                 ->getWeeklyChildTasks($startDate, $motherId, $childId);
        
-        $weeklyTasksArray = $this->prepareTasksArray($weeklyTasks);
+        $weeklyTasksArray = $this->mapTasksToArray($weeklyTasks);
         
-        $this->getFinalWeeklyTasks($startDate, $weeklyTasksArray);
+        return $this->getFinalWeeklyTaskArray($startDate, $weeklyTasksArray);
         
     }
 
-    public function prepareTasksArray($allTodayTasks)
+    public function mapTasksToArray($allTodayTasks)
     {
         $tasks = array();
         foreach ($allTodayTasks as  $index => $task) {
@@ -93,37 +92,60 @@ class TaskService {
                              'taskName' => $task[0]->getTaskName(),
                              'schedule' => $task[0]->getSchedule(),
                              'state' => $task['isDone'],
-                             'date' => isset($task['date'])? $task['date'] : NULL ];
-
+                             'date' => isset($task['date'])? $task['date']->format('Y-m-d') : false ];
         }
 //        dump($tasks);
 //        die();
         return $tasks;
     }
     
-    public function getFinalWeeklyTasks($startDate, $weeklyTasks)
+    
+
+    public function getFinalWeeklyTaskArray($startDate, $weeklyTasks)
     {
+        $dailyTasksArray = Date::getEmptyArrayOfDatesForWeek($startDate);
+        $tasksIdArray = array();
         
-        $dailyTasks = array();
-        $tasksId = array();
-        
-        for($i = 0; $i < 7; $i++){
-            $date = $startDate->format('Y-m-d');
-            $dailyTasks[$date] = array();
-            $startDate = $startDate->modify('+1 day');  
-        }
-        foreach ($weeklyTasks as $task) {
-            if( !isset($tasksId[$task['id']]))
-            {
-                $tasksId[$task['id']] =$task['id'];
+        foreach ($weeklyTasks as $task){
+            if( !isset($tasksIdArray[$task['id']])){
+                $tasksIdArray[$task['id']] =$task['id'];
+                if( $task['schedule'] == Schedule::SCHEDULE_DAILY ) {
+                    $dailyTasksArray = $this->setDailyTask($dailyTasksArray, $task);    
+                }
+                else 
+                    $dailyTasksArray = $this->setWeeklyTask($dailyTasksArray, $task, $startDate);   
             } else {
-                $dailyTasks[$task['date']][$task['id']]=$task;
+                $dailyTasksArray[$task['date']][$task['id']]=$task;
             }
         }
-        
-        dump($dailyTasks[1]=1);
-        die();
-        
+        return $dailyTasksArray ;
+//        dump($dailyTasksArray);
+//        die();
+    
+    }
+    
+    public function setDailyTask($dailyTasksArray, $task)
+    {
+        foreach ($dailyTasksArray as $date => $dailyTask) {
+            $dailyTasksArray[$date][$task['id']] = $task;
+            if( is_null($task['date']) || $date != $task['date']){
+                $dailyTasksArray[$date][$task['id']]['date'] = $date;
+                $dailyTasksArray[$date][$task['id']]['state'] = false;
+            }
+        }
+        return $dailyTasksArray;
+    }
+    
+    public function setWeeklyTask($dailyTasksArray, $task, $startDate )
+    {
+        $offest = Date::getDayInWeek($startDate);
+        foreach (Schedule::SCHEDULE_DAYS as $day){
+            if($task['schedule'] & $day){     
+                $i = Date::getDayInWeekBasedOnStart($day, $offest);
+                $dailyTasksArray[(new \DateTime($startDate))->modify('+'.$i.' day')->format('Y-m-d')][$task['id']]=$task;    
+            }
+        }
+        return $dailyTasksArray;
     }
 
 }
