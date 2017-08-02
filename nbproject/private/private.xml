@@ -6,8 +6,8 @@
             <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Controller/DailyScheduleController.php</file>
             <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Controller/ApiDailyScheduleController.php</file>
             <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Utility/Date.php</file>
+            <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Repository/DailyScheduleRepository.php</file>
             <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Repository/TaskRepository.php</file>
-            <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Service/TaskService.php</file>
             <file>file:/home/saraelsayed/symfony/children_project/app/config/parameters.yml</file>
             <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/constant/Schedule.php</file>
             <file>file:/home/saraelsayed/symfony/children_project/app/config/security.yml</file>

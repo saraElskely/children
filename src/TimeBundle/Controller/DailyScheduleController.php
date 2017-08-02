@@ -10,6 +10,7 @@ use TimeBundle\Service\DailyScheduleService;
 use TimeBundle\Service\UserService;
 use TimeBundle\Service\TaskService;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 
 /**
@@ -29,6 +30,9 @@ class DailyScheduleController extends Controller
 //        $arrayOfDailyTasks = $this->get(DailyScheduleService::class)->getDayByDayDailySchedule($dailySchedules); // array => day is a key && value for each key is tasks in this day
 //        dump($arrayOfDailyTasks);
 //        die;
+        $user = $this->getUser();
+        $this->get(DailyScheduleService::class)->denyAccessUnlessGranted( $user, $child_id);
+        
         $arrayOfDailyTasks = $this->get(TaskService::class)->getWeeklyChildTasks( $child_id);
         return $this->render('TimeBundle:dailyschedule:index.html.twig', array(
             'dailySchedules' => $arrayOfDailyTasks,
@@ -47,9 +51,9 @@ class DailyScheduleController extends Controller
 //        $w = $this->get(DailyScheduleService::class)->deleteSchedule( 9, 6);
 //        dump($w);
 //        die();
-        $startDate =  new \DateTime('2017-08-05');
-        //$startDate->modify('next Tuesday -1 week');
-//        $this->get(TaskService::class)->getWeeklyChildTasks( $child_id);
+        
+        $user = $this->getUser();
+        $this->get(DailyScheduleService::class)->denyAccessUnlessGranted( $user, $child_id);
         
         $todayTasks = $this->get(TaskService::class)->getTodayChildTasks( $child_id);
         
@@ -62,8 +66,11 @@ class DailyScheduleController extends Controller
     
     public function changeScheduleStateAction(Request $request, $task_id, $state)
     {
-        $childId = $this->getUser()->getId();
-        
+        $user = $this->getUser();
+        if($user->getRole() !== Roles::ROLE_CHILD) 
+            throw new AccessDeniedException();
+
+        $childId = $user->getId() ;
         $this->get(DailyScheduleService::class)->changeScheduleState( $childId, $task_id, $state);
         
         $firewall = $this->container

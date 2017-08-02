@@ -41,7 +41,7 @@
                     <li class="list-group-item">
                          {{ task.taskName }}
                          <ul>
-                             <li>{{ task.schedule }}</li>
+                             <li>{{ task.creator.username }}</li>
                          </ul>
                         
                     </li>
@@ -70,8 +70,8 @@
                     <li class="list-group-item">
                          {{ task.taskName }}
                          <ul>
-                             <li><a href="{{ path('task_edit', { 'id': task.id }) }}">Edit  </a></li>
-                             <li><a href="{{ path('task_show', { 'id': task.id }) }}">  Show</a></li>
+                             <li><a href="{{ path('task_edit', { 'task_id': task.id }) }}">Edit  </a></li>
+                             <li><a href="{{ path('task_show', { 'task_id': task.id }) }}">  Show</a></li>
                          </ul>
                     </li>
                 

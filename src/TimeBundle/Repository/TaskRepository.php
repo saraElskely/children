@@ -6,7 +6,7 @@ use TimeBundle\constant\Roles;
 use TimeBundle\Entity\Task;
 use TimeBundle\Entity\User;
 use TimeBundle\constant\Schedule;
-use Doctrine\ORM\Query\Expr;
+use Symfony\Component\Config\Definition\Exception\Exception;
 
 /**
  * TaskRepository
@@ -30,11 +30,21 @@ class TaskRepository extends \Doctrine\ORM\EntityRepository
                 
     }
     
-    public function deleteTask($task_id)
+    public function getTask($taskId)
+    {
+        $task = $this->findById($taskId); 
+
+        if(!isset( $task[0])) 
+            throw new Exception('task not found ') ;
+        
+        return $task[0] ;
+    }
+
+    public function deleteTask($taskId)
     {
         $this->createQueryBuilder('task')
                 ->delete()
-                ->where("task.id = $task_id")
+                ->where("task.id = $taskId")
                 ->getQuery()
                 ->execute();
     }
@@ -115,7 +125,7 @@ class TaskRepository extends \Doctrine\ORM\EntityRepository
         $mothersTasks = $this->createQueryBuilder('task')->select()
                 ->where($qb->expr()->in('task.creator', $subquery))
                 ->getQuery()
-                ->getArrayResult();
+                ->getResult();
         
         return $mothersTasks ;
         

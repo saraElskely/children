@@ -6,6 +6,7 @@ use TimeBundle\Entity\User;
 use TimeBundle\constant\Roles;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use TimeBundle\Service\PaginatorService;
+use Symfony\Component\Config\Definition\Exception\Exception;
 
 /**
  * UserRepository
@@ -44,11 +45,14 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
                         ->execute();
 //                dump($mother[0]['id']);
 //                die();
+        if(!isset( $mother[0])) 
+            throw new Exception('Not child person ') ;
+        
         return $mother[0]['id'];
     }
 
-        public function createAdminUser($encodedPassword){
-        
+    public function createAdminUser($encodedPassword)
+    {
         $admin = new User();
         
         $admin->setUsername('admin')
@@ -57,8 +61,7 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
                 ->setFname('admin')
                 ->setLname('admin')
                 ->setPassword($encodedPassword);
-        
-        
+
         $entityManager = $this->getEntityManager();
         $entityManager->persist($admin);
         $entityManager->flush();
@@ -66,7 +69,8 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
         return $admin;
     }
     
-    public function createUser($username ,$fname ,$lname ,$encodedPassword ,$role ,$age,User $mother = null){
+    public function createUser($username ,$fname ,$lname ,$encodedPassword ,$role ,$age,User $mother = null)
+    {
         $user = new User();
         $user->setAge($age)
                 ->setFname($fname)
@@ -137,8 +141,7 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
                 ->getQuery()
                 ->getSingleScalarResult()
                 ;
-        
-        
+   
     }
 
 }

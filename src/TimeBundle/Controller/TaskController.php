@@ -20,7 +20,8 @@ class TaskController extends Controller
     public function indexAction()
     {        
         $user = $this->getUser();
-    
+        $this->get(TaskService::class)->denyAccessUnlessGranted('index', $user);
+
         $tasks = $this->get(TaskService::class)
                     ->getTasks($user->getId(),$user->getRole());
 
@@ -35,6 +36,9 @@ class TaskController extends Controller
      */
     public function newAction(Request $request)
     {
+        $user = $this->getUser();
+        $this->get(TaskService::class)->denyAccessUnlessGranted('new', $user);
+        
         $task = new Task();
         $form = $this->createForm('TimeBundle\Form\TaskType', $task);
         $form->handleRequest($request);
@@ -58,8 +62,12 @@ class TaskController extends Controller
      * Finds and displays a task entity.
      *
      */
-    public function showAction(Task $task)
+    public function showAction( $task_id)
     {
+        $user = $this->getUser();
+        $task = $this->get(TaskService::class)->getTask($task_id);
+        $this->get(TaskService::class)->denyAccessUnlessGranted('show', $user, $task);
+        
         $deleteForm = $this->createDeleteForm($task);
 
         return $this->render('TimeBundle:task:show.html.twig', array(
@@ -72,8 +80,12 @@ class TaskController extends Controller
      * Displays a form to edit an existing task entity.
      *
      */
-    public function editAction(Request $request, Task $task)
+    public function editAction(Request $request, $task_id)
     {
+        $user = $this->getUser();
+        $task = $this->get(TaskService::class)->getTask($task_id);
+        $this->get(TaskService::class)->denyAccessUnlessGranted('edit', $user, $task);
+
         $deleteForm = $this->createDeleteForm($task);
         $editForm = $this->createForm('TimeBundle\Form\TaskType', $task);
         $editForm->handleRequest($request);
@@ -81,7 +93,7 @@ class TaskController extends Controller
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             $this->getDoctrine()->getManager()->flush();
 
-            return $this->redirectToRoute('task_edit', array('id' => $task->getId()));
+            return $this->redirectToRoute('task_edit', array('task_id' => $task->getId()));
         }
 
         return $this->render('TimeBundle:task:edit.html.twig', array(
@@ -95,8 +107,13 @@ class TaskController extends Controller
      * Deletes a task entity.
      *
      */
-    public function deleteAction(Request $request, Task $task)
+    public function deleteAction(Request $request, $task_id)
     {
+        $user = $this->getUser();
+        $task = $this->get(TaskService::class)->getTask($task_id);
+        
+        $this->get(TaskService::class)->denyAccessUnlessGranted('delete', $user, $task);
+        
         $form = $this->createDeleteForm($task);
         $form->handleRequest($request);
 
@@ -117,7 +134,7 @@ class TaskController extends Controller
     private function createDeleteForm(Task $task)
     {
         return $this->createFormBuilder()
-            ->setAction($this->generateUrl('task_delete', array('id' => $task->getId())))
+            ->setAction($this->generateUrl('task_delete', array('task_id' => $task->getId())))
             ->setMethod('DELETE')
             ->getForm()
         ;

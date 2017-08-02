@@ -8,6 +8,7 @@ use TimeBundle\constant\Roles;
 use TimeBundle\Service\DailyScheduleService;
 use TimeBundle\Utility\Date;
 use TimeBundle\constant\Schedule;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * Description of TaskService
@@ -21,10 +22,40 @@ class TaskService {
     public function __construct(EntityManagerInterface $entityManager) {
         $this->entityManager = $entityManager;
     }
+    
+    private function isValid($action, $user)
+    {
+        return (!in_array($action, array('new', 'edit', 'delete', 'show', 'index')) || ! $user instanceof User ) ;
+    }
 
-    public function createTask($taskName, $schedule, $creator) {
-        $task = $this->entityManager->getRepository('TimeBundle:Task')->createTask($taskName, $schedule, $creator);
-        return $task;
+    public function denyAccessUnlessGranted($action, $user, $task = null)
+    {
+        if($this->isValid($action, $user)){
+            switch ($action){
+                case 'index':
+                case 'new': 
+                    if($user->getRole() === Roles::ROLE_ADMIN || $user->getRole() === Roles::ROLE_MOTHER )
+                        return TRUE;
+                case 'edit':
+                case 'delete':
+                case 'show':
+                    if(! $task && ! $task instanceof Task) 
+                        throw new Exception('task not found');
+                    elseif ($user->getId() === $task->getCreator()->getId()) 
+                         return TRUE ;
+            }
+        }
+        throw new AccessDeniedException();
+    }
+
+    public function createTask($taskName, $schedule, $creator) 
+    {
+        return $this->entityManager->getRepository('TimeBundle:Task')->createTask($taskName, $schedule, $creator);    
+    }
+    
+    public function getTask($taskId)
+    {
+        return $this->entityManager->getRepository('TimeBundle:Task')->getTask($taskId);
     }
 
     public function deleteTask($taskId) {
@@ -52,19 +83,10 @@ class TaskService {
         
         $allTodayTasks = $this->entityManager->getRepository('TimeBundle:Task')
                 ->getTodayChildTasks($todayAsSchedule, $motherId);
-        
-        
-        
-        return $this->mapTasksToArray($allTodayTasks);
-        
-//        $doneSchedules = $this->entityManager->getRepository('TimeBundle:dailySchedule')
-//                ->getChildTodaySchedule($childId);
-//    
-//        return $doneSchedules ? 
-//                $this->prepareTodayTasks($allTodayTasks, $doneSchedules) : 
-//                $allTodayTasks;
-       
+  
+        return $this->mapTasksToArray($allTodayTasks); 
     }
+    
     public function getWeeklyChildTasks($childId, $startDate = null)
     { 
         if( $startDate === NULL) {
@@ -98,8 +120,6 @@ class TaskService {
 //        die();
         return $tasks;
     }
-    
-    
 
     public function getFinalWeeklyTaskArray($startDate, $weeklyTasks)
     {
