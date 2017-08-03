@@ -23,6 +23,7 @@
           {% elseif is_granted('ROLE_CHILD') %}
               <a class="nav-link" href="{{ path('dailySchedule_index',{'child_id': app.user.id }) }}">Your Schedule</a>
               <a class="nav-link" href="{{ path('dailySchedule_show',{'child_id': app.user.id }) }}">Today Schedule</a>
+  
           {% endif %}
           
           {% if is_granted('IS_AUTHENTICATED_FULLY') %}
@@ -38,7 +39,11 @@
     </div>        
 
     <div class='container'>      
-            
+            {% if is_granted('ROLE_ADMIN') %}
+                
+                {{ include('TimeBundle:task:searchForm.html.twig') }}
+                
+            {% endif %}
 
         {% block body %}
         

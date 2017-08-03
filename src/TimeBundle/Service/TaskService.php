@@ -167,5 +167,11 @@ class TaskService {
         }
         return $dailyTasksArray;
     }
+    
+    public function getFilteredTasks($taskName, $schedule, $userId)
+    {
+        return $this->entityManager->getRepository('TimeBundle:Task')
+                ->getFilteredTasks($taskName, $schedule, $userId);
+    }
 
 }

@@ -22,3 +22,8 @@ user_delete:
     path:     /{id}/delete
     defaults: { _controller: "TimeBundle:User:delete" }
     methods:  DELETE
+
+user_filter:
+    path:   /filter
+    defaults: { _controller: "TimeBundle:Task:filter" }
+    methods:  GET

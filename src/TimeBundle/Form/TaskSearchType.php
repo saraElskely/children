@@ -6,17 +6,22 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use TimeBundle\constant\Schedule;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use TimeBundle\Repository\UserRepository;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use TimeBundle\constant\Roles;
 
-class TaskType extends AbstractType
+class TaskSearchType extends AbstractType
 {
     /**
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('taskName')->add('schedule', ChoiceType::class,[
-            'placeholder' => 'your schedule !',
+        $builder->add('taskName')
+                ->add('schedule', ChoiceType::class ,[
+                    'placeholder' => 'schedule',
                     'choices' => [
                         'Daily' => Schedule::SCHEDULE_DAILY,
                         'Saturday' => Schedule::SCHEDULE_SATURDAY,
@@ -27,7 +32,13 @@ class TaskType extends AbstractType
                         'thursday'=> Schedule::SCHEDULE_THURSDAY,
                         'Friday' => Schedule::SCHEDULE_FRIDAY
                     ]
-            ]);
+                ]);
+//                ->add('mother', EntityType::class , [
+//                    'class' => 'TimeBundle:User',
+//                    'query_builder' => function(UserRepository $repo){
+//                        return $repo->getChildrenQueryBuilder();
+//                    }
+//                ]);
     }
     
     /**
@@ -50,3 +61,4 @@ class TaskType extends AbstractType
 
 
 }
+

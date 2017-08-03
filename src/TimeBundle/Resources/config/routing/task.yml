@@ -22,3 +22,8 @@ task_delete:
     path:     /{task_id}/delete
     defaults: { _controller: "TimeBundle:Task:delete" }
     methods:  DELETE
+
+task_filter:
+    path:   /filter
+    defaults: { _controller: "TimeBundle:Task:filter" }
+    methods:  GET

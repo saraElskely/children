@@ -130,4 +130,22 @@ class TaskRepository extends \Doctrine\ORM\EntityRepository
         return $mothersTasks ;
         
     }
+    
+    public function getFilteredTasks($taskName, $schedule, $userId)
+    {
+        dump($taskName);
+        dump($schedule);
+        $query = $this->createQueryBuilder('task')->select();
+        if(! is_null($taskName)){
+            $query->where("task.taskName LIKE '%$taskName%'");
+        }
+        if (! is_null($schedule) ) {
+            $query->andWhere("BIT_AND(task.schedule, $schedule) = $schedule");
+        }
+        if(!is_null($userId)){
+            $query->andWhere("task.creator = $userId");
+        }
+        
+        return $query->getQuery()->getResult();
+    }
 }

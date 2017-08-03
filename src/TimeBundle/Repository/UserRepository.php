@@ -140,8 +140,30 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
                 ->where("user.role = $role")
                 ->getQuery()
                 ->getSingleScalarResult()
-                ;
-   
+                ;   
+    }
+    
+    public function getFilteredUsers($username, $role)
+    {
+        $query = $this->createQueryBuilder('user')->select();
+        if(!is_null($username)){
+            $query->where("user.username LIKE '%$username%'");
+        }
+        if(!is_null($role)){
+            $query->andWhere("user.role = $role");
+        }
+        
+        return $query->getQuery()->getResult();
+    }
+    
+    public function search($name)
+    {
+        return $this->createQueryBuilder('user')
+                ->where("user.username LIKE '%$name%'")
+                ->orWhere("user.fname LIKE '%$name%'")
+                ->orWhere("user.lname LIKE '%$name%'")
+                ->getQuery()
+                ->getResult();
     }
 
 }
