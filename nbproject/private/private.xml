@@ -4,11 +4,13 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Controller/TaskController.php</file>
+            <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Resources/views/task/search.html.twig</file>
             <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Controller/UserController.php</file>
-            <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Controller/MotherController.php</file>
+            <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Resources/views/task/searchForm.html.twig</file>
+            <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Resources/views/task/index.html.twig</file>
             <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Repository/DailyScheduleRepository.php</file>
-            <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Service/TaskService.php</file>
-            <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Repository/UserRepository.php</file>
+            <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Repository/TaskRepository.php</file>
+            <file>file:/home/saraelsayed/symfony/children_project/src/TimeBundle/Resources/views/user/login.html.twig</file>
         </group>
     </open-files>
 </project-private>

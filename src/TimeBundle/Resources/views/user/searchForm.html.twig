@@ -1,0 +1,17 @@
+
+<form action="{{ path('user_filter') }}" method="get">
+    <label for="username">Username</label>
+    <input type="text"  name="username" value="" />
+
+    <label for="roles">Role</label>
+    <select name="role">
+        <option value="-1">Role</option>
+        <option value="0">Admin</option>
+        <option value="1">Mother</option>
+        <option value="2">Child</option>
+        
+    </select>
+    
+
+    <button type="submit">Filter</button>
+</form>

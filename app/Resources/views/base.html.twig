@@ -42,6 +42,7 @@
             {% if is_granted('ROLE_ADMIN') %}
                 
                 {{ include('TimeBundle:task:searchForm.html.twig') }}
+                {{ include('TimeBundle:user:searchForm.html.twig') }}
                 
             {% endif %}
 

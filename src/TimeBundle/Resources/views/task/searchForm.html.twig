@@ -1,13 +1,11 @@
 
-
-
 <form action="{{ path('task_filter') }}" method="get">
     <label for="taskName">Task Name</label>
     <input type="text"  name="taskName" value="" />
 
     <label for="shedule">Schedule</label>
     <select name="schedule">
-        <option value="">Schedule</option>
+        <option value="-1">Schedule</option>
         <option value="0">Daily</option>
         <option value="1">Sunday</option>
         <option value="2">Monday</option>

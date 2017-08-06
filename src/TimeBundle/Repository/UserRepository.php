@@ -113,6 +113,20 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
                 ->getQuery()
                 ->execute();      
     }
+    
+    public function checkMotherId($motherId)
+    {
+        $role = Roles::ROLE_MOTHER;
+        $mother = $this->createQueryBuilder('user')
+                ->select()
+                ->where("user.id = $motherId AND user.role = $role")
+                ->getQuery()
+                ->execute();
+        
+        if(!isset( $mother[0])) 
+            throw new Exception('Mother not found ') ;
+        return TRUE;
+    }
 
     public function getMothers($offest =1, $limit=2)
     {
@@ -149,7 +163,7 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
         if(!is_null($username)){
             $query->where("user.username LIKE '%$username%'");
         }
-        if(!is_null($role)){
+        if( $role != -1 ){
             $query->andWhere("user.role = $role");
         }
         

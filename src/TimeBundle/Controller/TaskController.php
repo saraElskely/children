@@ -104,17 +104,13 @@ class TaskController extends Controller
     }
     
     public function filterAction(Request $request)
-    {        
-//        if ($form->isSubmitted()) {
-        
-            $tasks = $this->get(TaskService::class)
+    {   
+        $tasks = $this->get(TaskService::class)
                     ->getFilteredTasks($request->query->get('taskName'), $request->query->get('schedule'),NULL);
-            dump($tasks);
-            die;
-            return $this->render('TimeBundle:task:search.html.twig', array('tasks' => $tasks));
-//        }
-
-        
+//            dump($tasks);
+//            die;
+        return $this->render('TimeBundle:task:search.html.twig', array('tasks' => $tasks));
+    
     }
 
     /**

@@ -24,5 +24,7 @@ class Schedule {
                             self::SCHEDULE_FRIDAY,
                             self::SCHEDULE_SATURDAY
                             ] ;
+    
+    const SCHEDULE_WEEK_DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const SCHEDULE_DAYS_PER_WEEK = 7; 
 }

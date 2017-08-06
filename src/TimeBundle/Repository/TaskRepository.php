@@ -133,19 +133,21 @@ class TaskRepository extends \Doctrine\ORM\EntityRepository
     
     public function getFilteredTasks($taskName, $schedule, $userId)
     {
-        dump($taskName);
-        dump($schedule);
+//        dump($taskName);
+//        dump($schedule);
         $query = $this->createQueryBuilder('task')->select();
-        if(! is_null($taskName)){
+        if( $taskName !== ''){
             $query->where("task.taskName LIKE '%$taskName%'");
         }
-        if (! is_null($schedule) ) {
-            $query->andWhere("BIT_AND(task.schedule, $schedule) = $schedule");
-        }
+        $schedule == 0 ? $query->andWhere("task.schedule = $schedule"): $schedule != -1 ?
+            $query->andWhere("BIT_AND(task.schedule, $schedule) = $schedule") : $query ;
+        
         if(!is_null($userId)){
             $query->andWhere("task.creator = $userId");
         }
         
-        return $query->getQuery()->getResult();
+//        dump($query->getQuery());
+//        die;
+        return $query->getQuery()->execute();
     }
 }

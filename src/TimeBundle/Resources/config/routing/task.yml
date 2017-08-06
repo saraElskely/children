@@ -7,6 +7,8 @@ task_show:
     path:     /{task_id}/show
     defaults: { _controller: "TimeBundle:Task:show" }
     methods:  GET
+    requirements:
+        task_id: '\d+'
 
 task_new:
     path:     /new
@@ -17,11 +19,15 @@ task_edit:
     path:     /{task_id}/edit
     defaults: { _controller: "TimeBundle:Task:edit" }
     methods:  [GET, POST]
+    requirements:
+        task_id: '\d+'
 
 task_delete:
     path:     /{task_id}/delete
     defaults: { _controller: "TimeBundle:Task:delete" }
     methods:  DELETE
+    requirements:
+        task_id: '\d+'
 
 task_filter:
     path:   /filter

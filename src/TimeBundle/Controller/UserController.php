@@ -41,7 +41,11 @@ class UserController extends Controller
     
     public function filterAction(Request $request)
     {
-        
+        $users = $this->get(UserService::class)
+                    ->getFilteredUsers($request->query->get('username'), $request->query->get('role'));
+//            dump($users);
+//            die;
+        return $this->render('TimeBundle:user:search.html.twig', array('users' => $users));
     }
 
     /**
@@ -49,10 +53,7 @@ class UserController extends Controller
      *
      */
     public function showAction(User $user)
-    {
-        dump($this->get(UserService::class)->getFilteredUsers('sara', NULL));
-        die;
-        
+    {   
         $deleteForm = $this->createDeleteForm($user);
 
         return $this->render('TimeBundle:user:show.html.twig', array(

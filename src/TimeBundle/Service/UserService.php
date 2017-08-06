@@ -47,33 +47,21 @@ class UserService {
     }
     public function getFilteredUsers($username, $role)
     {
-        return $this->entityManager->getRepository('TimeBundle:User')->getFilteredUsers($username, $role);
+        return $this->entityManager->getRepository('TimeBundle:User')
+                ->getFilteredUsers($username, $role);
+    }
+
+    public function denyAccessUnlessShowChildrenGranted($user, $motherId)
+    {
+        if( $user->getRole() === Roles::ROLE_ADMIN && 
+                $this->entityManager->getRepository('TimeBundle:User')->checkMotherId($motherId)) {
+            return TRUE;
+        }elseif ( $user->getRole() === Roles::ROLE_MOTHER && $motherId == $user->getId()) {
+            return TRUE;
+        } 
+        throw new AccessDeniedException();
     }
 
 
-//    private function isValid($action, $user)
-//    {
-//        return (!in_array($action, array('new', 'edit', 'delete', 'show', 'index')) || ! $user instanceof User ) ;
-//    }
-//
-//    public function denyAccessUnlessGranted($action, $user, $task = null)
-//    {
-//        if($this->isValid($action, $user)){
-//            switch ($action){
-//                case 'index':
-//                case 'new': 
-//                    if($user->getRole() === Roles::ROLE_ADMIN || $user->getRole() === Roles::ROLE_MOTHER )
-//                        return TRUE;
-//                case 'edit':
-//                case 'delete':
-//                case 'show':
-//                    if(! $task && ! $task instanceof Task) 
-//                        throw new Exception('task not found');
-//                    elseif ($user->getId() === $task->getCreator()->getId()) 
-//                         return TRUE ;
-//            }
-//        }
-//        throw new AccessDeniedException();
-//    }
 
 }

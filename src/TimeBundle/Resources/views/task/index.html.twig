@@ -14,8 +14,12 @@
                 
                 {% for task in tasks.admin %}
                     <li class="list-group-item">
-                         {{ task.taskName }}
-                        
+                        {{ task.taskName }} 
+                        <ul>
+                        {% for day in task.schedule|scheduleDate %}
+                            <li>{{day}} </li>
+                        {% endfor%}
+                        </ul>
                     </li>
 
                 {% endfor %}
@@ -43,7 +47,11 @@
                          <ul>
                              <li>{{ task.creator.username }}</li>
                          </ul>
-                        
+                        <ul>
+                        {% for day in task.schedule|scheduleDate %}
+                            <li>{{day}} </li>
+                        {% endfor%}
+                        </ul>                        
                     </li>
 
                 {% endfor %}
@@ -69,6 +77,15 @@
                 {% for task in tasks.yourTask %}
                     <li class="list-group-item">
                          {{ task.taskName }}
+                         <ul>
+                        {% if  task.schedule == 0 %}    
+                            <li>{{ 'Daily'}}</li>
+                        {% else %}
+                        {% for day in task.schedule|scheduleDate %}
+                            <li>{{day}} </li>
+                        {% endfor%}
+                        {% endif %}
+                        </ul>
                          <ul>
                              <li><a href="{{ path('task_edit', { 'task_id': task.id }) }}">Edit  </a></li>
                              <li><a href="{{ path('task_show', { 'task_id': task.id }) }}">  Show</a></li>
