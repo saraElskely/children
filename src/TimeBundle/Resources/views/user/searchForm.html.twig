@@ -5,7 +5,7 @@
 
     <label for="roles">Role</label>
     <select name="role">
-        <option value="-1">Role</option>
+        <option value="">Role</option>
         <option value="0">Admin</option>
         <option value="1">Mother</option>
         <option value="2">Child</option>
@@ -15,3 +15,32 @@
 
     <button type="submit">Filter</button>
 </form>
+
+    
+    
+    
+            <script>
+              $(document).ready(function(){
+                  $("#{{task.id}}done").click(function(){
+                      console.log('click');
+                      $.ajax({url: "{{ path('task_filter', {'task_id': task.id ,'state': 1 }) }}", success: function(result){
+                              console.log(result);
+                        if (result.data ){
+                          $("#{{task.id}}notDone").show();
+                          $("#{{task.id}}done").hide();
+                        }
+                      }
+                    });
+                  });
+                  $("#{{task.id}}notDone").click(function(){
+                      $.ajax({url: "{{ path('dailySchedule_change_state', {'task_id': task.id ,'state': 0 }) }}", success: function(result){
+                        console.log(result);
+                        if (result.data){
+                          $("#{{task.id}}done").show();
+                          $("#{{task.id}}notDone").hide();
+                        }
+                      }
+                    });
+                  });
+              });
+            </script>

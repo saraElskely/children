@@ -53,9 +53,6 @@ class DailyScheduleService {
             dump($childrenId);
         }
         die();
-//        $todayMotherTasksId = $motherTasks ? $this->getTodayMotherTasksId($motherTasks): NULL;
-//        return $this->entityManager->getRepository('TimeBundle:DailySchedule')
-//                ->createMotherDailySchedule( $todayMotherTasksId, $childId );
     }
     
 //    public function getTodayInWeek()
@@ -132,22 +129,18 @@ class DailyScheduleService {
                 ->deleteSchedule( $childId, $taskId);
     }
    
-    public function denyAccessUnlessGranted( $user, $childId)
+    public function denyAccessUnlessGranted(User $user, $childId)
     {
-        if($user instanceof User){
-            
-            switch ($user->getRole()){
-                case Roles::ROLE_ADMIN :
+        switch ($user->getRole()){
+            case Roles::ROLE_ADMIN :
+                return TRUE;
+            case Roles::ROLE_MOTHER :
+                if( $this->entityManager->getRepository('TimeBundle:User')->getMotherId($childId) === $user->getId() )
                     return TRUE;
-                case Roles::ROLE_MOTHER :
-                    if( $this->entityManager->getRepository('TimeBundle:User')->getMotherId($childId) === $user->getId() )
-                        return TRUE;
-                case Roles::ROLE_CHILD :
-                    if( $user->getId() == $childId)
-                        return TRUE;
-            }
+            case Roles::ROLE_CHILD :
+                if( $user->getId() == $childId)
+                    return TRUE;
         }
-
         throw new AccessDeniedException();
     }
     

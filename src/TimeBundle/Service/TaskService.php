@@ -18,6 +18,11 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 class TaskService {
 
     private $entityManager;
+    const CREATE = 'new';
+    const EDIT = 'edit';
+    const DELETE = 'delete';
+    const SHOW = 'show';
+    const INDEX = 'index';
 
     public function __construct(EntityManagerInterface $entityManager) {
         $this->entityManager = $entityManager;
@@ -25,24 +30,27 @@ class TaskService {
     
     private function isValid($action, $user)
     {
-        return (!in_array($action, array('new', 'edit', 'delete', 'show', 'index')) || ! $user instanceof User ) ;
+        return ( in_array($action, array(self::CREATE, self::DELETE, self::EDIT, self::INDEX, self::SHOW)) ||  $user instanceof User ) ;
     }
 
     public function denyAccessUnlessGranted($action, $user, $task = null)
     {
         if($this->isValid($action, $user)){
             switch ($action){
-                case 'index':
-                case 'new': 
-                    if($user->getRole() === Roles::ROLE_ADMIN || $user->getRole() === Roles::ROLE_MOTHER )
+                case self::INDEX :
+                case self::CREATE: 
+                    if($user->getRole() === Roles::ROLE_ADMIN || $user->getRole() === Roles::ROLE_MOTHER ) {
                         return TRUE;
-                case 'edit':
-                case 'delete':
-                case 'show':
-                    if(! $task && ! $task instanceof Task) 
+                    }
+                    break;   
+                case self::EDIT:
+                case self::DELETE:
+                case self::SHOW:
+                    if(! $task && ! $task instanceof Task) {
                         throw new Exception('task not found');
-                    elseif ($user->getId() === $task->getCreator()->getId()) 
+                    }elseif ($user->getId() === $task->getCreator()->getId()) {
                          return TRUE ;
+                    }
             }
         }
         throw new AccessDeniedException();

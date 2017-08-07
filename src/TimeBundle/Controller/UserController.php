@@ -10,6 +10,7 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use TimeBundle\constant\Roles;
 use TimeBundle\Service\UserService;
 use TimeBundle\Utility\Paginator;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 
 /**
@@ -22,6 +23,8 @@ class UserController extends Controller
      * Lists all user entities.
      *
      */
+    
+    // authorization missing 
     public function indexAction($page = 1)
     {
         $limit = 2;
@@ -41,8 +44,11 @@ class UserController extends Controller
     
     public function filterAction(Request $request)
     {
+        if($this->getUser()->getRole() !== Roles::ROLE_ADMIN) {
+            throw new AccessDeniedException();
+        }
         $users = $this->get(UserService::class)
-                    ->getFilteredUsers($request->query->get('username'), $request->query->get('role'));
+                    ->getFilteredUsers($request->query->get('username'), int_val($request->query->get('role')));
 //            dump($users);
 //            die;
         return $this->render('TimeBundle:user:search.html.twig', array('users' => $users));
@@ -52,10 +58,13 @@ class UserController extends Controller
      * Finds and displays a user entity.
      *
      */
-    public function showAction(User $user)
+    public function showAction($id)
     {   
-        $deleteForm = $this->createDeleteForm($user);
+        $currUser = $this->getUser();
+        $user = $this->get(UserService::class)->getUser($id);
+        $this->get(UserService::class)->denyAccessUnlessGranted('show', $currUser, $user);
 
+        $deleteForm = $this->createDeleteForm($user);
         return $this->render('TimeBundle:user:show.html.twig', array(
             'user' => $user,
             'delete_form' => $deleteForm->createView(),
@@ -66,16 +75,23 @@ class UserController extends Controller
      * Displays a form to edit an existing user entity.
      *
      */
-    public function editAction(Request $request, User $user)
+    public function editAction(Request $request, $id)
     {
+        $passwordEncoder = $this->get('security.password_encoder');
+        
+        $currUser = $this->getUser();
+        $user = $this->get(UserService::class)->getUser($id);
+        $this->get(UserService::class)->denyAccessUnlessGranted('edit', $currUser, $user);
+        
         $deleteForm = $this->createDeleteForm($user);
         $editForm = $this->createForm('TimeBundle\Form\UserType', $user);
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
+            $user->setPassword($passwordEncoder->encodePassword($user, $user->getPassword()));
             $this->getDoctrine()->getManager()->flush();
 
-            return $this->redirectToRoute('user_edit', array('id' => $user->getId()));
+            return $this->redirectToRoute('user_show', array('id' => $user->getId()));
         }
 
         return $this->render('TimeBundle:user:edit.html.twig', array(
@@ -89,15 +105,20 @@ class UserController extends Controller
      * Deletes a user entity.
      *
      */
-    public function deleteAction(Request $request, User $user)
+    public function deleteAction(Request $request, $id)
     {
+        $currUser = $this->getUser();
+        $user = $this->get(UserService::class)->getUser($id);
+        $this->get(UserService::class)->denyAccessUnlessGranted('delete', $currUser, $user);
+        
         $form = $this->createDeleteForm($user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->get(UserService::class)->deleteUser($user->getId());
         }
-
+            
+        //if mother ==> error
         return $this->redirectToRoute('user_index');
     }
 

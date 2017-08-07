@@ -92,8 +92,12 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
                 ->where("user.id = $userId")
                 ->getQuery()
                 ->getOneOrNullResult();
-        
-        return $user;   
+        if(is_null($user)) {
+            throw new Exception('user not found');
+        } else {
+            return $user;
+        }
+           
     }
     
     public function deleteUser($userId)
@@ -137,13 +141,10 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
                 ->getQuery()
                 ->setFirstResult($offest)
                 ->setMaxResults($limit)
-                ->execute();
-        
+                ->execute();       
 //        dump($query);
 //        die();
-
         return $mothers ;
-        
     }
     
     public function getMothersCount()
@@ -160,13 +161,16 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
     public function getFilteredUsers($username, $role)
     {
         $query = $this->createQueryBuilder('user')->select();
-        if(!is_null($username)){
+        if(!is_null($username) && $username !== ''){
             $query->where("user.username LIKE '%$username%'");
         }
-        if( $role != -1 ){
+        if(  in_array($role, Roles::ROLE_ARRAY,TRUE) ) {
             $query->andWhere("user.role = $role");
+        } 
+        elseif ($role !== '') {
+            throw new Exception('role not found');
         }
-        
+
         return $query->getQuery()->getResult();
     }
     

@@ -23,7 +23,7 @@ class MotherController extends Controller {
         if ($form->isSubmitted() && $form->isValid()) {
             $password = $passwordEncoder->encodePassword($user, $user->getPassword());
 
-                $user = $this->get(UserService::class)
+            $user = $this->get(UserService::class)
                         ->createUser($user->getUsername(), $user->getFname(), $user->getFname(), $password, Roles::ROLE_MOTHER, $user->getAge());
 
             return $this->redirectToRoute('mother_show_my_children',array(
@@ -69,23 +69,14 @@ class MotherController extends Controller {
     public function showMyChildrenAction($motherId) 
     {
         $user = $this->getUser();
-        $this->get(UserService::class)->denyAccessUnlessShowChildrenGranted($user,$motherId);
+        $this->get(UserService::class)->denyAccessUnlessShowChildrenGranted($user, $motherId);
         
-//        dump($user->getId());
-//        dump($motherId);
-//        die;
-        if( $user->getRole() === Roles::ROLE_ADMIN || 
-                ( $user->getRole() === Roles::ROLE_MOTHER && $motherId == $user->getId())){
-            $mother = $this->get(UserService::class)->getUser($motherId);
-            $children = $mother->getChildren();
-            
-            return $this->render('TimeBundle:Mother:show_my_children.html.twig', array(
-                    'children' => $children
-            ));
-        } else {
-            throw new AccessDeniedException();
-        }
-       
+        $mother = $this->get(UserService::class)->getUser($motherId);
+        $children = $mother->getChildren();
+
+        return $this->render('TimeBundle:Mother:show_my_children.html.twig', array(
+                'children' => $children
+        ));       
     }
 
 //    public function showMyChildrenTasksAction()
