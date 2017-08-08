@@ -57,7 +57,7 @@ security:
 
                 # login success redirecting options (read further below)
                 always_use_default_target_path: false
-                default_target_path:            /task
+                default_target_path:            /redirect
                 target_path_parameter:          _target_path
                 use_referer:                    false
 

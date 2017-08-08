@@ -1,6 +1,12 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+    
+    
+    {% if is_granted('ROLE_ADMIN') %} 
+        {{ include('TimeBundle:task:searchForm.html.twig') }}
+    {% endif %}
+    
     <div class='row'>
     {% if tasks.admin is defined%}
     <div class="col-sm-6">

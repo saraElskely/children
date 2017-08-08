@@ -47,8 +47,9 @@ class UserController extends Controller
         if($this->getUser()->getRole() !== Roles::ROLE_ADMIN) {
             throw new AccessDeniedException();
         }
+
         $users = $this->get(UserService::class)
-                    ->getFilteredUsers($request->query->get('username'), int_val($request->query->get('role')));
+                    ->getFilteredUsers($request->query->get('username'),$request->query->get('role'));
 //            dump($users);
 //            die;
         return $this->render('TimeBundle:user:search.html.twig', array('users' => $users));

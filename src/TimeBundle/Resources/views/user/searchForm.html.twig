@@ -1,5 +1,5 @@
 
-<form action="{{ path('user_filter') }}" method="get">
+<form action="{{ path('user_filter') }}" method="GET" id='filterForm'>
     <label for="username">Username</label>
     <input type="text"  name="username" value="" />
 
@@ -12,8 +12,7 @@
         
     </select>
     
-
-    <button type="submit">Filter</button>
+    <button  id='filter'>Filter</button>
 </form>
 
     
@@ -21,26 +20,22 @@
     
             <script>
               $(document).ready(function(){
-                  $("#{{task.id}}done").click(function(){
-                      console.log('click');
-                      $.ajax({url: "{{ path('task_filter', {'task_id': task.id ,'state': 1 }) }}", success: function(result){
-                              console.log(result);
-                        if (result.data ){
+                  $("#filter").click(function(){
+                      {#console.log($('#filterForm').serializeArray());
+                      return false ;#}
+                      console.log('submit');
+                      $.ajax({url: $('#filterForm').attr('action'),
+                              type: $('#filterForm').attr('method'),
+                              data: $('#filterForm').serializeArray(),
+                              success: function(result){
+                              console.log('result');
+                        {#if (result.data ){
                           $("#{{task.id}}notDone").show();
                           $("#{{task.id}}done").hide();
-                        }
+                        }#}
                       }
                     });
                   });
-                  $("#{{task.id}}notDone").click(function(){
-                      $.ajax({url: "{{ path('dailySchedule_change_state', {'task_id': task.id ,'state': 0 }) }}", success: function(result){
-                        console.log(result);
-                        if (result.data){
-                          $("#{{task.id}}done").show();
-                          $("#{{task.id}}notDone").hide();
-                        }
-                      }
-                    });
-                  });
+                
               });
             </script>

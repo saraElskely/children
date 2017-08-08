@@ -28,6 +28,10 @@
 <div class="container">
     <div class="row">
         <div class="col-xs-12">
+            
+            {% if error %}
+                <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+            {% endif %}
             <form action="{{ path('login') }}" method="post">
                 <input type="hidden" name="_csrf_token"
                     value="{{ csrf_token('authenticate') }}"

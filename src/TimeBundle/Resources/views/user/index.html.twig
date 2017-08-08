@@ -2,22 +2,18 @@
 
 {% block body %}
     
-
+    {% if is_granted('ROLE_ADMIN') %} 
+        {{ include('TimeBundle:user:searchForm.html.twig') }}
+    {% endif %}
     
     <h1>Mothers list</h1>
-
-    <ul>
-        <li>
-            <a href="{{ path('user_new') }}">Create a new user</a>
-        </li>
-    </ul>
 
     {% if users %}
         <div class="row">
             {% for user in users %}
                 <div class="col-sm-4">
                     <div class="card">
-                        <img class="card-img-top" src="..." alt="Card image cap">
+{#                        <img class="card-img-top" src="..." alt="Card image cap">#}
                         <div class="card-block">
                           <h3 class="card-title">{{ user.userName }}</h3>
                           <a href="{{ path('mother_show_my_children',{'motherId': user.id }) }}" class="btn btn-primary"> Children</a>
