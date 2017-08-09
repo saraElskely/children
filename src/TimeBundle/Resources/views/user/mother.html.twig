@@ -2,9 +2,6 @@
 
 {% block body %}
     
-    {% if is_granted('ROLE_ADMIN') %} 
-        {{ include('TimeBundle:user:searchForm.html.twig') }}
-    {% endif %}
     
     <h1>Mothers list</h1>
 
@@ -37,33 +34,7 @@
             {% endfor %}
         </ul>
     {% endif%}
-    
-    <table class="table">
-        <thead class="thead-default">
-          <tr>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Username</th>
-            <th>Role</th>
-            <th>Age</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% if users %}
-              {% for user in users %}
-              <tr>
-                <th>{{user.fname}}</th>
-                <td>{{user.lname}}</td>
-                <td>{{user.username}}</td>
-                <td>{{user.role == 0 ? 'Admin' : user.role == 1 ? 'Mother' : 'Child' }}</td>
-                <td>{{user.age}}</td>
-              </tr>
-              {% endfor %}
-          {% else %}
-              <th>No Search Result </th>
-          {% endif %}
-        </tbody>
-    </table>
 
     
 {% endblock %}
+

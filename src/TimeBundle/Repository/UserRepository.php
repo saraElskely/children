@@ -16,13 +16,49 @@ use Symfony\Component\Config\Definition\Exception\Exception;
  */
 class UserRepository extends \Doctrine\ORM\EntityRepository
 {
-    public function getChildrenQueryBuilder()
+    public function getUsersQuery()
     {
         return $this->createQueryBuilder('user')
-                  ->select()
-                  ->where('user.role = 3');
+                  ->select();
 
     }
+    public function getUsers($query, $offest =1, $limit=2)
+    {
+        return $query
+                ->setFirstResult($offest)
+                ->setMaxResults($limit)
+                ->getQuery()
+                ->execute();       
+    }
+    public function getFilteredUsers($username, $role)
+    {
+        $query = $this->createQueryBuilder('user')->select();
+        if(!is_null($username) && $username !== ''){
+            $query->where("user.username LIKE '%$username%'");
+        }
+        if(  in_array($role, Roles::ROLE_ARRAY,TRUE) ) {
+            $query->andWhere("user.role = $role");
+        } 
+        elseif ($role !== '') {
+            throw new Exception('role not found');
+        }
+
+        return $query;
+//                ->getQuery()->getResult();
+    }
+    public function getQueryCount($query)
+    {
+        $alias =  $query->getRootAliases();
+//        dump($alias[0]);
+//        die;       
+        $q = clone $query;
+        return $q
+                ->select("count($alias[0].id)")
+                ->getQuery()
+                ->getSingleScalarResult()
+                ;      
+    }
+
     public function getAdminId()
     {
         $adminUsername = 'admin' ;
@@ -156,22 +192,6 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
                 ->getQuery()
                 ->getSingleScalarResult()
                 ;   
-    }
-    
-    public function getFilteredUsers($username, $role)
-    {
-        $query = $this->createQueryBuilder('user')->select();
-        if(!is_null($username) && $username !== ''){
-            $query->where("user.username LIKE '%$username%'");
-        }
-        if(  in_array($role, Roles::ROLE_ARRAY,TRUE) ) {
-            $query->andWhere("user.role = $role");
-        } 
-        elseif ($role !== '') {
-            throw new Exception('role not found');
-        }
-
-        return $query->getQuery()->getResult();
     }
     
     public function search($name)

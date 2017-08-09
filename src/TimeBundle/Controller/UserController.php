@@ -27,7 +27,11 @@ class UserController extends Controller
     // authorization missing 
     public function indexAction($page = 1)
     {
-        $limit = 2;
+        $limit = 3;
+//        dump($this->get(UserService::class)->getQueryCount());
+        dump($this->get(UserService::class)->getUsers($page, $limit));
+        die;
+        
         $resultCount = $this->get(UserService::class)->getMothersCount();
         $paginator = new Paginator($resultCount);
         $maxPages = $paginator->getMaxPage();
@@ -42,14 +46,15 @@ class UserController extends Controller
         ));
     }
     
-    public function filterAction(Request $request)
+    public function filterAction(Request $request ,$page =1)
     {
+        
         if($this->getUser()->getRole() !== Roles::ROLE_ADMIN) {
             throw new AccessDeniedException();
         }
-
+        $limit = 3;
         $users = $this->get(UserService::class)
-                    ->getFilteredUsers($request->query->get('username'),$request->query->get('role'));
+                    ->getFilteredUsers($request->query->get('username'),$request->query->get('role'), $page, $limit);
 //            dump($users);
 //            die;
         return $this->render('TimeBundle:user:search.html.twig', array('users' => $users));

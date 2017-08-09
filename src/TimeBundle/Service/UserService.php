@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use TimeBundle\Entity\User;
 use TimeBundle\constant\Roles;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use TimeBundle\Utility\Paginator;
 /**
  * Description of UserService
  *
@@ -51,10 +52,25 @@ class UserService {
     {
         return $this->entityManager->getRepository('TimeBundle:User')->getMothersCount();
     }
-    public function getFilteredUsers($username, $role)
+    public function getUsers($page = 1, $limit =2)
     {
-        return $this->entityManager->getRepository('TimeBundle:User')
+        $query = $this->entityManager->getRepository('TimeBundle:User')->getUsersQuery();
+        $resultCount = $this->entityManager->getRepository('TimeBundle:User')->getQueryCount($query);
+        $paginator = new Paginator($resultCount);
+        $maxPages = $paginator->getMaxPage();
+        $offest = $paginator->getOffest($page);
+        return $this->entityManager->getRepository('TimeBundle:User')->getUsers($query, $offest, $limit);
+    }
+    public function getFilteredUsers($username = null, $role = '', $page =1, $limit = 5)
+    {
+        $query = $this->entityManager->getRepository('TimeBundle:User')
                 ->getFilteredUsers($username, $role);
+        $resultCount = $this->entityManager->getRepository('TimeBundle:User')->getQueryCount($query);
+        $paginator = new Paginator($resultCount);
+        $maxPages = $paginator->getMaxPage();
+        $offest = $paginator->getOffest($page);
+        return $this->entityManager->getRepository('TimeBundle:User')->getUsers($query, $offest, $limit);
+        
     }
     public function denyAccessUnlessShowChildrenGranted($user, $motherId)
     {
