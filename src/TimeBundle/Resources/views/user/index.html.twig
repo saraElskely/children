@@ -2,6 +2,7 @@
 
 {% block body %}
     
+    
     {% if is_granted('ROLE_ADMIN') %} 
         {{ include('TimeBundle:user:searchForm.html.twig') }}
     {% endif %}
@@ -15,7 +16,7 @@
                     <div class="card">
 {#                        <img class="card-img-top" src="..." alt="Card image cap">#}
                         <div class="card-block">
-                          <h3 class="card-title">{{ user.userName }}</h3>
+                          <h3 class="card-title">{{ user.username }}</h3>
                           <a href="{{ path('mother_show_my_children',{'motherId': user.id }) }}" class="btn btn-primary"> Children</a>
                           <a href="{{ path('user_show', { 'id': user.id }) }}"class="btn btn-primary">Profile</a>
                         </div>
@@ -27,16 +28,7 @@
         </div>
     {% endif %}
 
-    {% if maxPages > 1%}
-        <ul class ="pagination pagination-sm ">
-            {% for num in 1..maxPages %}
-            <li {{ currentPage == num ? 'class="active"'}} >
-                <a href="{{ path('user_index', { 'page': num }) }}"> << {{num}}  >> </a>
-
-            </li>
-            {% endfor %}
-        </ul>
-    {% endif%}
+    
     
     <table class="table">
         <thead class="thead-default">
@@ -48,7 +40,7 @@
             <th>Age</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id='users'>
           {% if users %}
               {% for user in users %}
               <tr>
@@ -64,6 +56,56 @@
           {% endif %}
         </tbody>
     </table>
+        
+    {% if maxPages > 1%}
+        <ul class ="pagination pagination-sm ">
+            {% for num in 1..maxPages %}
+            <li {{ currentPage == num ? 'class="active"'}} >
+                <div id='{{num}}'> << {{num}}  >> </div>
+                
+                    <script>
+                      $(document).ready(function(){   
+                        $("#{{num}}").click(function(e){
+                               
+                                e.preventDefault();
+                                console.log($('#username').val());
+                                var filter = {'username': $('#username').val(),
+                                    'role': $('#role').val()};
+                                          console.log(filter);
+                    {#                      return false;#}
+                                          getResult('{{ path('user_filter',{'page':num }) }}', filter);          
+                                });
+
+                                function toFormData(url, filter) {
+                                    var result = url;
+                                    var str = [];
+                                    for (var p in filter)
+                                        str.push(encodeURIComponent(p) + "=" + encodeURIComponent(filter[p]));
+                                    result += str.join("&");
+                                    return result ;
+                                }
+
+                                function getResult( url, filter) {
+                                    var url = toFormData(url+"?", filter);
+                                    console.log(url);
+                                    $.ajax({"url": url ,
+                                        "method": "GET",
+                                        "dataType":"json",
+                                        success: function (result) {
+
+                                        }
+                                    });
+                                }
+
+
+                        });
+                    </script>
+               {#<a href="{{ path('user_index', { 'page': num }) }}"> << {{num}}  >> </a>
+#}
+            </li>
+            {% endfor %}
+        </ul>
+    {% endif%}
 
     
 {% endblock %}

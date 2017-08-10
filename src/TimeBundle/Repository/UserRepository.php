@@ -28,7 +28,7 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
                 ->setFirstResult($offest)
                 ->setMaxResults($limit)
                 ->getQuery()
-                ->execute();       
+                ->getArrayResult();       
     }
     public function getFilteredUsers($username, $role)
     {

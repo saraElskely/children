@@ -29,35 +29,48 @@ class UserController extends Controller
     {
         $limit = 3;
 //        dump($this->get(UserService::class)->getQueryCount());
-        dump($this->get(UserService::class)->getUsers($page, $limit));
-        die;
-        
-        $resultCount = $this->get(UserService::class)->getMothersCount();
-        $paginator = new Paginator($resultCount);
-        $maxPages = $paginator->getMaxPage();
-        $offest = $paginator->getOffest($page);
-        $users = $this->get(UserService::class)->getMothers( $offest ,$limit);
+        $result = $this->get(UserService::class)->getUsers($page, $limit);
         
         
-        return $this->render('TimeBundle:user:index.html.twig', array(
-            'users' => $users,
-            'currentPage' => $page,
-            'maxPages' => $maxPages
-        ));
+//        $resultCount = $this->get(UserService::class)->getMothersCount();
+//        $paginator = new Paginator($resultCount);
+//        $maxPages = $paginator->getMaxPage();
+//        $offest = $paginator->getOffest($page);
+//        $users = $this->get(UserService::class)->getMothers( $offest ,$limit);
+        
+        
+        return $this->render('TimeBundle:user:index.html.twig', $result);
     }
     
     public function filterAction(Request $request ,$page =1)
-    {
-        
+    { 
         if($this->getUser()->getRole() !== Roles::ROLE_ADMIN) {
             throw new AccessDeniedException();
         }
         $limit = 3;
-        $users = $this->get(UserService::class)
+        
+//        $request->query->get('username');
+//        
+//        return new \Symfony\Component\HttpFoundation\JsonResponse($request->query);
+//        return new \Symfony\Component\HttpFoundation\JsonResponse( $request->request);
+//        dump($request);
+//        die;
+        $result = $this->get(UserService::class)
                     ->getFilteredUsers($request->query->get('username'),$request->query->get('role'), $page, $limit);
-//            dump($users);
+        $username = $request->query->get('username');
+        $role = $request->query->get('role');
+        $page = $request->query->get('page');
+        $session = $this->get('session');
+        $session->set('filter', array(
+            'username' => $username,
+            'role' => $role,
+            ));
+        
+        return new \Symfony\Component\HttpFoundation\JsonResponse($result);
+//            dump($session);
 //            die;
-        return $this->render('TimeBundle:user:search.html.twig', array('users' => $users));
+//        return $this->render('TimeBundle:user:index.html.twig', $result);
+//        return $this->render('TimeBundle:user:search.html.twig', array('users' => $users));
     }
 
     /**

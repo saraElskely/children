@@ -59,18 +59,30 @@ class UserService {
         $paginator = new Paginator($resultCount);
         $maxPages = $paginator->getMaxPage();
         $offest = $paginator->getOffest($page);
-        return $this->entityManager->getRepository('TimeBundle:User')->getUsers($query, $offest, $limit);
+        
+        $users = $this->entityManager->getRepository('TimeBundle:User')->getUsers($query, $offest, $limit);
+        return [
+            'users' => $users,
+            'maxPages' => $maxPages,
+            'currentPage' => $page
+        ];
     }
     public function getFilteredUsers($username = null, $role = '', $page =1, $limit = 5)
     {
+        if($page == NULL)
+            $page =1;
         $query = $this->entityManager->getRepository('TimeBundle:User')
                 ->getFilteredUsers($username, $role);
         $resultCount = $this->entityManager->getRepository('TimeBundle:User')->getQueryCount($query);
         $paginator = new Paginator($resultCount);
         $maxPages = $paginator->getMaxPage();
         $offest = $paginator->getOffest($page);
-        return $this->entityManager->getRepository('TimeBundle:User')->getUsers($query, $offest, $limit);
-        
+        $users = $this->entityManager->getRepository('TimeBundle:User')->getUsers($query, $offest, $limit);
+        return [
+            'users' => $users,
+            'maxPages' => $maxPages,
+            'currentPage' => $page
+        ];
     }
     public function denyAccessUnlessShowChildrenGranted($user, $motherId)
     {

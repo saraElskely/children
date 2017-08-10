@@ -33,7 +33,7 @@ user_delete:
         id: '\d+'
 
 user_filter:
-    path:   /filter
-    defaults: { _controller: "TimeBundle:User:filter" }
-    methods:  GET
+    path:   /{page}/filter
+    defaults: { _controller: "TimeBundle:User:filter",page:1 }
+    
  

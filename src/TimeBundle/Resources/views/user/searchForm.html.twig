@@ -1,41 +1,60 @@
+{% set filter = app.session.get('filter') %}
+{{ dump(filter['username'])}}
+<form id='filterForm'>
+    <label for="username"> Username</label>
+    <input type="text" id='username' name="username" value="{{filter['username']}}" />
 
-<form action="{{ path('user_filter') }}" method="GET" id='filterForm'>
-    <label for="username">Username</label>
-    <input type="text"  name="username" value="" />
+    {#    <input type='hidden' name='page' value='{{filter['page']}}'/>#}
 
     <label for="roles">Role</label>
-    <select name="role">
+    <select name="role" id='role'>
         <option value="">Role</option>
         <option value="0">Admin</option>
         <option value="1">Mother</option>
         <option value="2">Child</option>
-        
+
     </select>
-    
+
     <button  id='filter'>Filter</button>
 </form>
 
-    
-    
-    
-            <script>
-              $(document).ready(function(){
-                  $("#filter").click(function(){
-                      {#console.log($('#filterForm').serializeArray());
-                      return false ;#}
-                      console.log('submit');
-                      $.ajax({url: $('#filterForm').attr('action'),
-                              type: $('#filterForm').attr('method'),
-                              data: $('#filterForm').serializeArray(),
-                              success: function(result){
-                              console.log('result');
-                        {#if (result.data ){
-                          $("#{{task.id}}notDone").show();
-                          $("#{{task.id}}done").hide();
-                        }#}
-                      }
-                    });
-                  });
+
+
+
+<script>
+    $(document).ready(function () {
+        $("#filter").click(function (e) {
+            e.preventDefault();
+            console.log($('#username').val());
+            var filter = {'username': $('#username').val(),
+                'role': $('#role').val()};
+                      console.log(filter);
+{#                      return false;#}
+                      getResult('{{ path('user_filter',{'page':1 }) }}', filter);          
+            });
+
+            function toFormData(url, filter) {
+                var result = url;
+                var str = [];
+                for (var p in filter)
+                    str.push(encodeURIComponent(p) + "=" + encodeURIComponent(filter[p]));
+                result += str.join("&");
+                return result ;
+            }
+
+            function getResult( url, filter) {
+                var url = toFormData(url+"?", filter);
+                console.log(url);
+                $.ajax({"url": url ,
+                    "method": "GET",
+                    "dataType":"json",
+                    success: function (result) {
+                        
+                    }
+                });
+            }
                 
-              });
-            </script>
+
+
+        });
+</script>
