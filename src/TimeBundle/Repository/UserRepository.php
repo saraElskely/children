@@ -153,7 +153,18 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
                 ->getQuery()
                 ->execute();      
     }
-    
+    public function getChildren($motherId)
+    {
+        $children =  $this->createQueryBuilder('user')
+                ->select()
+                ->where("user.mother = $motherId")
+                ->getQuery()
+                ->execute();
+        if(! isset($children[0])) {
+            throw new Exception('children not found');
+        }
+        return $children;
+    }
     public function checkMotherId($motherId)
     {
         $role = Roles::ROLE_MOTHER;
@@ -168,30 +179,17 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
         return TRUE;
     }
 
-    public function getMothers($offest =1, $limit=2)
+    public function getMothers()
     {
         $role = Roles::ROLE_MOTHER;
         $mothers = $this->createQueryBuilder('user')
                 ->select()
                 ->where("user.role = $role")
                 ->getQuery()
-                ->setFirstResult($offest)
-                ->setMaxResults($limit)
                 ->execute();       
 //        dump($query);
 //        die();
         return $mothers ;
-    }
-    
-    public function getMothersCount()
-    {
-        $role = Roles::ROLE_MOTHER;
-        return $this->createQueryBuilder('user')
-                ->select('count(user.id)')
-                ->where("user.role = $role")
-                ->getQuery()
-                ->getSingleScalarResult()
-                ;   
     }
     
     public function search($name)

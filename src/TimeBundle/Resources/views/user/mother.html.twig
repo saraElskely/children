@@ -24,17 +24,6 @@
         </div>
     {% endif %}
 
-    {% if maxPages > 1%}
-        <ul class ="pagination pagination-sm ">
-            {% for num in 1..maxPages %}
-            <li {{ currentPage == num ? 'class="active"'}} >
-                <a href="{{ path('user_index', { 'page': num }) }}"> << {{num}}  >> </a>
-
-            </li>
-            {% endfor %}
-        </ul>
-    {% endif%}
-
     
 {% endblock %}
 

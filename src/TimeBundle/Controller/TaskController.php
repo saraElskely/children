@@ -30,6 +30,15 @@ class TaskController extends Controller
         ));
     }
 
+    public function filterAction(Request $request)
+    {   
+        $tasks = $this->get(TaskService::class)
+                    ->getFilteredTasks($request->query->get('taskName'), $request->query->get('schedule'),NULL);
+//            dump($tasks);
+//            die;
+        return $this->render('TimeBundle:task:search.html.twig', array('tasks' => $tasks));
+    
+    }
     /**
      * Creates a new task entity.
      *
@@ -101,16 +110,6 @@ class TaskController extends Controller
             'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         ));
-    }
-    
-    public function filterAction(Request $request)
-    {   
-        $tasks = $this->get(TaskService::class)
-                    ->getFilteredTasks($request->query->get('taskName'), $request->query->get('schedule'),NULL);
-//            dump($tasks);
-//            die;
-        return $this->render('TimeBundle:task:search.html.twig', array('tasks' => $tasks));
-    
     }
 
     /**

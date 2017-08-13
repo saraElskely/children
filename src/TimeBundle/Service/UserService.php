@@ -43,14 +43,13 @@ class UserService {
         return $this->entityManager->getRepository('TimeBundle:User')->getMotherId($childId);
     }
 
-    public function getMothers($offest =1, $limit =2)
+    public function getMothers()
     {
-        return $this->entityManager->getRepository('TimeBundle:User')->getMothers($offest,$limit);
-        
+        return $this->entityManager->getRepository('TimeBundle:User')->getMothers();       
     }
-    public function getMothersCount()
+    public function getChildren($motherId)
     {
-        return $this->entityManager->getRepository('TimeBundle:User')->getMothersCount();
+        return $this->entityManager->getRepository('TimeBundle:User')->getChildren($motherId);
     }
     public function getUsers($page = 1, $limit =2)
     {

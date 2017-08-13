@@ -30,36 +30,36 @@ class UserController extends Controller
         $limit = 3;
 //        dump($this->get(UserService::class)->getQueryCount());
         $result = $this->get(UserService::class)->getUsers($page, $limit);
-        
-        
-//        $resultCount = $this->get(UserService::class)->getMothersCount();
-//        $paginator = new Paginator($resultCount);
-//        $maxPages = $paginator->getMaxPage();
-//        $offest = $paginator->getOffest($page);
-//        $users = $this->get(UserService::class)->getMothers( $offest ,$limit);
-        
+        $session = $this->get('session');
+        $session->set('filter', array(
+            'username' => '',
+            'role' => '',
+            ));
         
         return $this->render('TimeBundle:user:index.html.twig', $result);
     }
     
+    public function getMothersAction()
+    {   
+        $users = $this->get(UserService::class)->getMothers();
+        return $this->render('TimeBundle:user:mother.html.twig', array(
+            'users' => $users ,
+        ));
+    }
+
     public function filterAction(Request $request ,$page =1)
     { 
         if($this->getUser()->getRole() !== Roles::ROLE_ADMIN) {
             throw new AccessDeniedException();
         }
         $limit = 3;
-        
-//        $request->query->get('username');
-//        
-//        return new \Symfony\Component\HttpFoundation\JsonResponse($request->query);
-//        return new \Symfony\Component\HttpFoundation\JsonResponse( $request->request);
-//        dump($request);
-//        die;
+        $username = $request->query->getAlpha('username');
+        $role = $request->query->getInt('role');
+        if($role ==0 )
+            $role= '';
         $result = $this->get(UserService::class)
-                    ->getFilteredUsers($request->query->get('username'),$request->query->get('role'), $page, $limit);
-        $username = $request->query->get('username');
-        $role = $request->query->get('role');
-        $page = $request->query->get('page');
+                    ->getFilteredUsers($username, $role, $page, $limit);
+
         $session = $this->get('session');
         $session->set('filter', array(
             'username' => $username,

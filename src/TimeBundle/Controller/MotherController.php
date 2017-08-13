@@ -72,7 +72,7 @@ class MotherController extends Controller {
         $this->get(UserService::class)->denyAccessUnlessShowChildrenGranted($user, $motherId);
         
         $mother = $this->get(UserService::class)->getUser($motherId);
-        $children = $mother->getChildren();
+        $children = $this->get(UserService::class)->getChildren($motherId);
 
         return $this->render('TimeBundle:Mother:show_my_children.html.twig', array(
                 'children' => $children

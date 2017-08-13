@@ -12,8 +12,8 @@ class Roles {
     const ROLE_MOTHER = 1 ;
     const ROLE_CHILD = 2 ;
     const ROLE_ARRAY = [
-        '0',
-        '1',
-        '2'
+        self::ROLE_ADMIN,
+        self::ROLE_MOTHER,
+        self::ROLE_CHILD
     ];
 }
