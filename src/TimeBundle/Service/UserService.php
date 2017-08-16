@@ -8,6 +8,8 @@ use TimeBundle\Entity\User;
 use TimeBundle\constant\Roles;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use TimeBundle\Utility\Paginator;
+use TimeBundle\Exception\TimeBundleException;
+use TimeBundle\constant\Exceptions;
 /**
  * Description of UserService
  *
@@ -57,6 +59,10 @@ class UserService {
         $resultCount = $this->entityManager->getRepository('TimeBundle:User')->getQueryCount($query);
         $paginator = new Paginator($resultCount);
         $maxPages = $paginator->getMaxPage();
+        
+        if($page > $maxPages || $page < 1) {
+            throw new TimeBundleException(Exceptions::CODE_PAGE_NUM_NOT_FOUND);
+        }
         $offest = $paginator->getOffest($page);
         
         $users = $this->entityManager->getRepository('TimeBundle:User')->getUsers($query, $offest, $limit);
@@ -66,15 +72,17 @@ class UserService {
             'currentPage' => $page
         ];
     }
-    public function getFilteredUsers($username = null, $role = '', $page =1, $limit = 5)
+    public function getFilteredUsers($username = null, $role = null, $page =1, $limit = 3)
     {
-        if($page == NULL)
-            $page =1;
         $query = $this->entityManager->getRepository('TimeBundle:User')
                 ->getFilteredUsers($username, $role);
         $resultCount = $this->entityManager->getRepository('TimeBundle:User')->getQueryCount($query);
         $paginator = new Paginator($resultCount);
         $maxPages = $paginator->getMaxPage();
+        
+        if($page > $maxPages || $page < 1) {
+            throw new TimeBundleException(Exceptions::CODE_PAGE_NUM_NOT_FOUND);
+        }
         $offest = $paginator->getOffest($page);
         $users = $this->entityManager->getRepository('TimeBundle:User')->getUsers($query, $offest, $limit);
         return [

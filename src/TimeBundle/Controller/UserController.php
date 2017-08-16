@@ -11,6 +11,12 @@ use TimeBundle\constant\Roles;
 use TimeBundle\Service\UserService;
 use TimeBundle\Utility\Paginator;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use TimeBundle\Exception\TimeBundleException;
+use TimeBundle\constant\Exceptions;
+use TimeBundle\Security\ApiFirewallMatcher;
+use TimeBundle\constant\General;
+
 
 
 /**
@@ -25,22 +31,32 @@ class UserController extends Controller
      */
     
     // authorization missing 
-    public function indexAction($page = 1)
+    public function indexAction(Request $request, $page = 1)
     {
-        $limit = 3;
-//        dump($this->get(UserService::class)->getQueryCount());
+        if($this->getUser()->getRole() !== Roles::ROLE_ADMIN) {
+            throw new TimeBundleException(Exceptions::CODE_ACCESS_DENIED);
+        }
+        $limit = General::PAGINATION_LIMIT;
+
         $result = $this->get(UserService::class)->getUsers($page, $limit);
         $session = $this->get('session');
         $session->set('filter', array(
-            'username' => '',
-            'role' => '',
+            'username' => null,
+            'role' => null,
             ));
-        
+
+        if( ApiFirewallMatcher::matches($request) )
+        {
+            return new JsonResponse(array('status'=> 1 , 'data'=>$result));
+        }
         return $this->render('TimeBundle:user:index.html.twig', $result);
     }
     
     public function getMothersAction()
     {   
+        if($this->getUser()->getRole() !== Roles::ROLE_ADMIN) {
+            throw new TimeBundleException(Exceptions::CODE_ACCESS_DENIED);
+        }
         $users = $this->get(UserService::class)->getMothers();
         return $this->render('TimeBundle:user:mother.html.twig', array(
             'users' => $users ,
@@ -50,13 +66,15 @@ class UserController extends Controller
     public function filterAction(Request $request ,$page =1)
     { 
         if($this->getUser()->getRole() !== Roles::ROLE_ADMIN) {
-            throw new AccessDeniedException();
+            throw new TimeBundleException(Exceptions::CODE_ACCESS_DENIED);
         }
-        $limit = 3;
-        $username = $request->query->getAlpha('username');
-        $role = $request->query->getInt('role');
-        if($role ==0 )
-            $role= '';
+        $limit = General::PAGINATION_LIMIT;
+        $username = $request->query->get('username');
+        $role = $request->query->get('role') === ''? null : $request->query->getInt('role', null);
+
+        if($role === 0) {
+            throw new TimeBundleException(Exceptions::CODE_ROLE_NOT_FOUND);
+        }
         $result = $this->get(UserService::class)
                     ->getFilteredUsers($username, $role, $page, $limit);
 

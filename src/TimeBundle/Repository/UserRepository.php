@@ -7,6 +7,8 @@ use TimeBundle\constant\Roles;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use TimeBundle\Service\PaginatorService;
 use Symfony\Component\Config\Definition\Exception\Exception;
+use TimeBundle\Exception\TimeBundleException;
+use TimeBundle\constant\Exceptions;
 
 /**
  * UserRepository
@@ -39,12 +41,10 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
         if(  in_array($role, Roles::ROLE_ARRAY,TRUE) ) {
             $query->andWhere("user.role = $role");
         } 
-        elseif ($role !== '') {
-            throw new Exception('role not found');
+        elseif ($role !== null) {
+            throw new TimeBundleException(Exceptions::CODE_ROLE_NOT_FOUND);
         }
-
         return $query;
-//                ->getQuery()->getResult();
     }
     public function getQueryCount($query)
     {
@@ -82,7 +82,7 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
 //                dump($mother[0]['id']);
 //                die();
         if(!isset( $mother[0])) 
-            throw new Exception('Not child person ') ;
+            throw new TimeBundleException(Exceptions::CODE_NOT_CHILD_USER) ;
         
         return $mother[0]['id'];
     }
@@ -129,7 +129,7 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
                 ->getQuery()
                 ->getOneOrNullResult();
         if(is_null($user)) {
-            throw new Exception('user not found');
+            throw new TimeBundleException(Exceptions::CODE_USER_NOT_FOUND);
         } else {
             return $user;
         }
@@ -187,8 +187,7 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
                 ->where("user.role = $role")
                 ->getQuery()
                 ->execute();       
-//        dump($query);
-//        die();
+
         return $mothers ;
     }
     

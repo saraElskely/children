@@ -1,8 +1,8 @@
 
 {% set filter = app.session.get('filter') %}
-{% if filter is defined %}
+{#{% if filter is defined %}
     {{ dump(filter['role'])}}
-{% endif %}
+{% endif %}#}
 <form id='filterForm'>
     <label for="username"> Username</label>
     <input type="text" id='username' name="username" value="{{filter['username']}}" />
@@ -11,10 +11,10 @@
 
     <label for="roles">Role</label>
     <select name="role" id='role'>
-        <option value=3 >Role</option>
+        <option value= >Role</option>
         <option {{filter['role'] == 0 ? 'selected' :'' }} value=0   >Admin</option>
-        <option {{filter['role'] == 1 ? 'selected' :'' }} value=1>Mother</option>
-        <option {{filter['role'] == 2 ? 'selected' :'' }} value=2  >Child</option>
+        <option {{filter['role'] == 1 ? 'selected' :'' }} value=1   >Mother</option>
+        <option {{filter['role'] == 2 ? 'selected' :'' }} value=2   >Child</option>
 
     </select>
 
@@ -47,7 +47,9 @@
         function pageClick(e, filter ) {
             console.log(filter);
             var p = e.target.id;
-            getResult("/user/" + p + "/filter", filter);
+            if(! isNaN(p)) {
+                getResult("/user/" + p + "/filter", filter);
+            }
         }
 
         function toFormData(url, filter) {

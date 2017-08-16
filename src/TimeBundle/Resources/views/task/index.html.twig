@@ -1,119 +1,132 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    
-    
+
+
     {% if is_granted('ROLE_ADMIN') %} 
-        {{ include('TimeBundle:task:searchForm.html.twig') }}
+        {{ include('TimeBundle:task:filterForm.html.twig') }}
     {% endif %}
-    
-    <div class='row'>
-    {% if tasks.admin is defined%}
-    <div class="col-sm-6">
-        <div class="card" >
-            <h2> </h2>
-            <div class="card-block">
-              <h4 class="card-title"> Admin Tasks </h4>
-            </div>
-            
-            <ul class="list-group list-group-flush">
-                
-                {% for task in tasks.admin %}
-                    <li class="list-group-item">
-                        {{ task.taskName }} 
-                        <ul>
-                        {% for day in task.schedule|scheduleDate %}
-                            <li>{{day}} </li>
-                        {% endfor%}
+    <div id="tasksBlock">  
+        <div class='row'>
+            {% if tasks.admin is defined%}
+                <div class="col-sm-6">
+                    <div class="card" >
+                        <h2> </h2>
+                        <div class="card-block">
+                            <h4 class="card-title"> Admin Tasks </h4>
+                        </div>
+
+                        <ul class="list-group list-group-flush">
+
+                            {% for task in tasks.admin %}
+                                <li class="list-group-item">
+                                    {{ task.taskName }} 
+                                    <ul>
+                                        {% for day in task.schedule|scheduleDate %}
+                                            <li>{{day}} </li>
+                                            {% endfor%}
+                                    </ul>
+                                </li>
+
+                            {% endfor %}
                         </ul>
-                    </li>
 
-                {% endfor %}
-            </ul>
-            
-            <div class="card-block">
+                        <div class="card-block">
 
-            </div>
-        </div>
-    </div>
-    {% endif %}
-    {% if tasks.mothers is defined %}
-    <div class="col-sm-6">
-        <div class="card" >
-            <h2> </h2>
-            <div class="card-block">
-              <h4 class="card-title"> Mothers Tasks </h4>
-            </div>
-            
-            <ul class="list-group list-group-flush">
-                
-                {% for task in tasks.mothers %}
-                    <li class="list-group-item">
-                         {{ task.taskName }}
-                         <ul>
-                             <li>{{ task.creator.username }}</li>
-                         </ul>
-                        <ul>
-                        {% for day in task.schedule|scheduleDate %}
-                            <li>{{day}} </li>
-                        {% endfor%}
-                        </ul>                        
-                    </li>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            {% if tasks.mothers is defined %}
+                <div class="col-sm-6">
+                    <div class="card" >
+                        <h2> </h2>
+                        <div class="card-block">
+                            <h4 class="card-title"> Mothers Tasks </h4>
+                        </div>
 
-                {% endfor %}
-            </ul>
-            
-            <div class="card-block">
+                        <ul class="list-group list-group-flush">
 
-            </div>
-        </div>
-    </div>
-    {% endif %}
-    
+                            {% for task in tasks.mothers %}
+                                <li class="list-group-item">
+                                    {{ task.taskName }}
+                                    <ul>
+                                        <li>{{ task.creator.username }}</li>
+                                    </ul>
+                                    <ul>
+                                        {% for day in task.schedule|scheduleDate %}
+                                            <li>{{day}} </li>
+                                            {% endfor%}
+                                    </ul>                        
+                                </li>
 
-    <div class="col-sm-6">
-        <div class="card" >
-            <h2> </h2>
-            <div class="card-block">
-              <h4 class="card-title"> Your Tasks </h4>
-            </div>
-            
-            <ul class="list-group list-group-flush">
-                {% if tasks.yourTask %}
-                {% for task in tasks.yourTask %}
-                    <li class="list-group-item">
-                         {{ task.taskName }}
-                         <ul>
-                        {% if  task.schedule == 0 %}    
-                            <li>{{ 'Daily'}}</li>
-                        {% else %}
-                        {% for day in task.schedule|scheduleDate %}
-                            <li>{{day}} </li>
-                        {% endfor%}
+                            {% endfor %}
+                        </ul>
+
+                        <div class="card-block">
+
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+
+            <div class="col-sm-6">
+                <div class="card" >
+                    <h2> </h2>
+                    <div class="card-block">
+                        <h4 class="card-title"> Your Tasks </h4>
+                    </div>
+
+                    <ul class="list-group list-group-flush">
+                        {% if tasks.yourTask %}
+                            {% for task in tasks.yourTask %}
+                                <li class="list-group-item">
+                                    {{ task.taskName }}
+                                    <ul>
+                                        {% if  task.schedule == 0 %}    
+                                            <li>{{ 'Daily'}}</li>
+                                        {% else %}
+                                            {% for day in task.schedule|scheduleDate %}
+                                                <li>{{day}} </li>
+                                            {% endfor%}
+                                        {% endif %}
+                                    </ul>
+                                    <ul>
+                                        <li><a href="{{ path('task_edit', { 'task_id': task.id }) }}">Edit  </a></li>
+                                        <li><a href="{{ path('task_show', { 'task_id': task.id }) }}">  Show</a></li>
+                                    </ul>
+                                </li>
+
+                            {% endfor %}
+                        {%else%}
+                            <li> 
+                            </li>
                         {% endif %}
-                        </ul>
-                         <ul>
-                             <li><a href="{{ path('task_edit', { 'task_id': task.id }) }}">Edit  </a></li>
-                             <li><a href="{{ path('task_show', { 'task_id': task.id }) }}">  Show</a></li>
-                         </ul>
-                    </li>
-                
-                {% endfor %}
-                {%else%}
-                    <li> 
-                    </li>
-                {% endif %}
-                
-            </ul>
-            
-            <div class="card-block">
 
+                    </ul>
+
+                    <div class="card-block">
+
+                    </div>
+                </div>
             </div>
-        </div>
+        </div>    
     </div>
+                        
+    <table class="table" style="display:none"  id="table">
+          <thead class="thead-default">
+            <tr>
+              <th>Task Name</th>
+              <th>Creator</th>
+              <th>Schedule</th>
+            </tr>
+          </thead>
+          <tbody id="tbody">
+            
+          </tbody>
+        </table>
+    <ul class ="pagination pagination-sm " id='pagination'>
+    </ul>
 
-</div>
-    
-
-    
 {% endblock %}

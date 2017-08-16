@@ -94,5 +94,17 @@ class DailyScheduleRepository extends \Doctrine\ORM\EntityRepository
                 ->getQuery()
                 ->execute();
     }
-    
+    /*
+     * return @string date or null
+     */
+    public function getFirstDataToUser($childId)
+    {
+        $date = $this->createQueryBuilder('schedule')
+                    ->select('MIN(schedule.date)')
+                    ->where("schedule.userInSchedule = $childId")
+                    ->getQuery()
+                    ->getSingleScalarResult();
+        return $date;
+                    
+    }
 }

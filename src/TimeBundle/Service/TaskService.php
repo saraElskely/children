@@ -9,6 +9,8 @@ use TimeBundle\Service\DailyScheduleService;
 use TimeBundle\Utility\Date;
 use TimeBundle\constant\Schedule;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use TimeBundle\Utility\Paginator;
+use Symfony\Component\Config\Definition\Exception\Exception;
 
 /**
  * Description of TaskService
@@ -95,12 +97,20 @@ class TaskService {
         return $this->mapTasksToArray($allTodayTasks); 
     }
     
-    public function getWeeklyChildTasks($childId, $startDate = null)
+    public function getWeeklyChildTasks($childId, $page = 1)
     { 
-        if( $startDate === NULL) {
+        if( !is_numeric($page) || $page < 1) {
+            throw new Exception('page not found');
+        }
+      
+        $startDate = Date::getStartDateInWeek( $page);
+        $firstDateToUser = $this->entityManager
+                ->getRepository('TimeBundle:DailySchedule')
+                ->getFirstDataToUser($childId);
+        if( is_null($firstDateToUser) || strtotime($startDate) < strtotime($firstDateToUser)) {
             $startDate = Date::getStartDateInWeek();
         }
-                
+        
         $motherId = $this->entityManager
                 ->getRepository('TimeBundle:User')
                 ->getMotherId($childId);
@@ -108,9 +118,9 @@ class TaskService {
         $weeklyTasks = $this->entityManager->getRepository('TimeBundle:Task')
                 ->getWeeklyChildTasks($startDate, $motherId, $childId);
        
-        $weeklyTasksArray = $this->mapTasksToArray($weeklyTasks);
+//        $weeklyTasksArray = $this->mapTasksToArray($weeklyTasks);
         
-        return $this->getFinalWeeklyTaskArray($startDate, $weeklyTasksArray);
+        return $this->getFinalWeeklyTaskArray($startDate, $weeklyTasks);
         
     }
 
@@ -146,9 +156,10 @@ class TaskService {
                 $dailyTasksArray[$task['date']][$task['id']]=$task;
             }
         }
-        return $dailyTasksArray ;
 //        dump($dailyTasksArray);
 //        die();
+        return $dailyTasksArray ;
+        
     
     }
     
@@ -158,7 +169,7 @@ class TaskService {
             $dailyTasksArray[$date][$task['id']] = $task;
             if( is_null($task['date']) || $date != $task['date']){
                 $dailyTasksArray[$date][$task['id']]['date'] = $date;
-                $dailyTasksArray[$date][$task['id']]['state'] = false;
+                $dailyTasksArray[$date][$task['id']]['is_done'] = false;
             }
         }
         return $dailyTasksArray;
@@ -176,10 +187,23 @@ class TaskService {
         return $dailyTasksArray;
     }
     
-    public function getFilteredTasks($taskName, $schedule, $userId)
+    public function getFilteredTasks($taskName = null, $schedule =-1, $page=1, $limit=2)
     {
-        return $this->entityManager->getRepository('TimeBundle:Task')
-                ->getFilteredTasks($taskName, $schedule, $userId);
+        $query = $this->entityManager->getRepository('TimeBundle:Task')
+                ->getFilteredTasksQuery($taskName, $schedule);
+        
+        $resultCount = $this->entityManager->getRepository('TimeBundle:Task')->getQueryCount($query);
+        $paginator = new Paginator($resultCount);
+        $maxPages = $paginator->getMaxPage();
+        $offest = $paginator->getOffest($page);
+        $tasks = $this->entityManager->getRepository('TimeBundle:Task')->getTasks($query, $offest, $limit);
+
+        return [
+            'tasks' => $tasks,
+            'maxPages' => $maxPages,
+            'currentPage' => $page
+        ];
+        
     }
 
 }

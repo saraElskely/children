@@ -2,6 +2,8 @@
 
 namespace TimeBundle\Entity;
 
+use Symfony\Component\Validator\Constraints as Assert;
+
 /**
  * DailySchedule
  */

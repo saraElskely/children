@@ -16,3 +16,41 @@ api_test:
     path:   /test
     defaults: { _controller: "TimeBundle:ApiDailySchedule:test" }
     methods:  GET
+
+api_user_index:
+    path:     /user/{page}
+    defaults: { _controller: "TimeBundle:User:index", page:1 }
+    methods:  GET
+    requirements:
+        page: '\d+'
+
+api_user_show:
+    path:     /user/{id}/show
+    defaults: { _controller: "TimeBundle:User:show" }
+    methods:  GET
+    requirements:
+        id: '\d+'
+
+api_user_edit:
+    path:     /user/{id}/edit
+    defaults: { _controller: "TimeBundle:User:edit" }
+    methods:  [GET, POST]
+    requirements:
+        id: '\d+'
+    
+
+api_user_delete:
+    path:     /user/{id}/delete
+    defaults: { _controller: "TimeBundle:User:delete" }
+    methods:  DELETE
+    requirements:
+        id: '\d+'
+
+api_user_filter:
+    path:   /user/{page}/filter
+    defaults: { _controller: "TimeBundle:User:filter",page:1 }
+ 
+api_user_mother:
+    path:     /user/mothers
+    defaults: { _controller: "TimeBundle:User:getMothers" }
+    methods:  GET

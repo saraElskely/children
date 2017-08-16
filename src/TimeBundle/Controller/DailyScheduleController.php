@@ -11,6 +11,7 @@ use TimeBundle\Service\UserService;
 use TimeBundle\Service\TaskService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use TimeBundle\Utility\Date;
 
 
 /**
@@ -23,7 +24,7 @@ class DailyScheduleController extends Controller
      * Lists all child dailySchedule entities.
      *
      */
-    public function showChildScheduleAction($child_id)
+    public function showChildScheduleAction($child_id, $page=1)
     {
 //        $dailySchedules = $this->get(DailyScheduleService::class)->getChildDailySchedules($child_id);
 //
@@ -33,10 +34,11 @@ class DailyScheduleController extends Controller
         $user = $this->getUser();
         $this->get(DailyScheduleService::class)->denyAccessUnlessGranted( $user, $child_id);
         
-        $arrayOfDailyTasks = $this->get(TaskService::class)->getWeeklyChildTasks( $child_id);
+        $arrayOfDailyTasks = $this->get(TaskService::class)->getWeeklyChildTasks( $child_id, $page);
         return $this->render('TimeBundle:dailyschedule:index.html.twig', array(
             'dailySchedules' => $arrayOfDailyTasks,
-            'child_id' => $child_id
+            'child_id' => $child_id,
+            'page' => $page
         ));
     }
 
@@ -67,8 +69,9 @@ class DailyScheduleController extends Controller
     public function changeScheduleStateAction(Request $request, $task_id, $state)
     {
         $user = $this->getUser();
-        if($user->getRole() !== Roles::ROLE_CHILD) 
+        if($user->getRole() !== Roles::ROLE_CHILD) {
             throw new AccessDeniedException();
+        }
 
         $childId = $user->getId() ;
         $this->get(DailyScheduleService::class)->changeScheduleState( $childId, $task_id, $state);
@@ -81,8 +84,7 @@ class DailyScheduleController extends Controller
         
         $response = array("status" => $firewall, "data" => 1);
         
-        if( $firewall === 'api')
-        {
+        if( $firewall === 'api') {
             return new JsonResponse();
         }
 

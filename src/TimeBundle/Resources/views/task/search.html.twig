@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <table class="table">
+    <table class="table" style="display:none" >
           <thead class="thead-default">
             <tr>
               <th>Task Name</th>
@@ -9,7 +9,7 @@
               <th>Schedule</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="">
             {% if tasks %}
                 {% for task in tasks %}
                 <tr>

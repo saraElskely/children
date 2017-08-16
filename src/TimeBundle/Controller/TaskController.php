@@ -6,6 +6,10 @@ use TimeBundle\Entity\Task;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use TimeBundle\Service\TaskService;
+use TimeBundle\constant\Roles;
+//use JMS\Serializer\SerializerBuilder;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * Task controller.
@@ -21,7 +25,13 @@ class TaskController extends Controller
     {        
         $user = $this->getUser();
         $this->get(TaskService::class)->denyAccessUnlessGranted('index', $user);
-
+        if($user->getRole() === Roles::ROLE_ADMIN) {
+            $session = $this->get('session');
+            $session->set('filter', array(
+                'taskName' => null,
+                'schedule' => -1,
+            ));
+        }
         $tasks = $this->get(TaskService::class)
                     ->getTasks($user->getId(),$user->getRole());
 
@@ -30,13 +40,27 @@ class TaskController extends Controller
         ));
     }
 
-    public function filterAction(Request $request)
+    public function filterAction(Request $request, $page=1)
     {   
+        if ($this->getUser()->getRole() !== Roles::ROLE_ADMIN) {
+            throw new AccessDeniedException();
+        }
+        $limit = 2;
+        $taskName = $request->query->get('taskName') === '' ? null : $request->query->get('taskName') ;
+        $schedule = $request->query->getInt('schedule',-1);
+        
+        $session = $this->get('session');
+        $session->set('filter', array(
+            'taskName' => $taskName,
+            'schedule' => $schedule,
+        ));
         $tasks = $this->get(TaskService::class)
-                    ->getFilteredTasks($request->query->get('taskName'), $request->query->get('schedule'),NULL);
-//            dump($tasks);
-//            die;
-        return $this->render('TimeBundle:task:search.html.twig', array('tasks' => $tasks));
+                    ->getFilteredTasks($taskName, $schedule, $page, $limit);
+
+//        dump($tasks);
+//        die;
+        return new JsonResponse($tasks);
+//        return $this->render('TimeBundle:task:search.html.twig', array('tasks' => $tasks));
     
     }
     /**
@@ -54,6 +78,7 @@ class TaskController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $creator = $this->getUser();
+
             $task = $this->get(TaskService::class)
                     ->createTask($task->getTaskName(),$task->getSchedule(),$creator);
             

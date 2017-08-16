@@ -1,6 +1,6 @@
 user_index:
     path:     /{page}
-    defaults: { _controller: "TimeBundle:User:index",page:1 }
+    defaults: { _controller: "TimeBundle:User:index", page:1 }
     methods:  GET
     requirements:
         page: '\d+'
@@ -11,11 +11,6 @@ user_show:
     methods:  GET
     requirements:
         id: '\d+'
-
-user_new:
-    path:     /new
-    defaults: { _controller: "TimeBundle:User:register" }
-    methods:  [GET, POST]
 
 user_edit:
     path:     /{id}/edit

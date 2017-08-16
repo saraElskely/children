@@ -1,7 +1,7 @@
 {% set filter = app.session.get('filter') %}
-{% if filter is defined %}
+{#{% if filter is defined %}
     {{ dump(filter['taskName'])}}
-{% endif %}
+{% endif %}#}
 <form id='filterForm'>
     <label for="taskName">Task Name</label>
     <input type="text"  name="taskName" value="{{filter['taskName']}}" id='taskName'/>
@@ -44,10 +44,12 @@
             getResult('{{ path('task_filter',{'page':1 }) }}', filter);
         });
 
-        function pageClick(e, filter ) {
+        function pageClick(e, filter) {
             console.log(filter);
             var p = e.target.id;
-            getResult("/task/" + p + "/filter", filter);
+            if(! isNaN(p)) {
+                getResult("/task/" + p + "/filter", filter);
+            }
         }
 
         function toFormData(url, filter) {
@@ -68,12 +70,13 @@
                 success: function (result) {
 
                     if (result) {
+                        console.log(result);
                         var strTask = "<tr>";
                         $.each(result.tasks, function (key, task) {
-                            strTask += "<th>" + task.taskName + "</th>\
-                                                      <td>" +'task' + "</td>\
+                            strTask += "<th>" + task[0].taskName + "</th>\
+                                                      <td>" +task['username'] + "</td><td></td>\
                                                     ";
-                            strUser += '</tr>';
+                            strTask += '</tr>';
                         });
                         var strPaginate = "";
                         if (result.maxPages > 1) {
@@ -81,8 +84,10 @@
                                 strPaginate += "<li><div id='" + page + "'class='page'> << " + page + " >> </div> </li>";
                             }
                         }    
-                        $('#users').empty();
-                        $('#users').append(strTask);
+                        $('#table').slideDown(500);             
+                        $('#tasksBlock').empty();
+                        $('#tbody').empty();
+                        $('#tbody').append(strTask);
                         $('#pagination').empty();
                         $('#pagination').append(strPaginate);
                     }

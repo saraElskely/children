@@ -29,9 +29,9 @@ class Date {
         return (($day >> 1)- $offest + Schedule::SCHEDULE_DAYS_PER_WEEK) % Schedule::SCHEDULE_DAYS_PER_WEEK;
     }
     
-    public static function getStartDateInWeek(){
+    public static function getStartDateInWeek($numOfWeek = 1){
         $startDate =  new \DateTime();
-        return $startDate->modify('next friday -1 week')->format('Y-m-d');
+        return $startDate->modify("next friday -$numOfWeek week")->format('Y-m-d');
     }
     
     public function getEmptyArrayOfDatesForWeek($startDate = null) 

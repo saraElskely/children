@@ -30,6 +30,8 @@ task_delete:
         task_id: '\d+'
 
 task_filter:
-    path:   /filter
-    defaults: { _controller: "TimeBundle:Task:filter" }
+    path:   /{page}/filter
+    defaults: { _controller: "TimeBundle:Task:filter", page:1 }
     methods:  GET
+    requirements:
+        page: '\d+'
