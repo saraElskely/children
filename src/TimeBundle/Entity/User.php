@@ -4,9 +4,18 @@ namespace TimeBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\ORM\Mapping as ORM;
 use TimeBundle\constant\Roles;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+
+
 /**
  * User
+ * @ORM\Entity
+ * @UniqueEntity(
+ *     fields={"username",},
+ *     errorPath="username",
+ *     message="This username is already in use ")
  */
 class User implements UserInterface
 {
@@ -18,18 +27,49 @@ class User implements UserInterface
     /**
      * @var string
      * @Assert\NotBlank()
+     * @Assert\Type(
+     *     type="string",
+     *     message="The value {{ value }} is not a valid {{ type }}."
+     * )
+     * @Assert\Length(
+     *      min = 3,
+     *      max = 30,
+     *      minMessage = "Your first name must be at least {{ limit }} characters long",
+     *      maxMessage = "Your first name cannot be longer than {{ limit }} characters"
+     * )
      */
     private $fname;
 
     /**
      * @var string
      * @Assert\NotBlank()
+     * @Assert\Type(
+     *     type="string",
+     *     message="The value {{ value }} is not a valid {{ type }}."
+     * )
+     * @Assert\Length(
+     *      min = 3,
+     *      max = 30,
+     *      minMessage = "Your last name must be at least {{ limit }} characters long",
+     *      maxMessage = "Your last name cannot be longer than {{ limit }} characters"
+     * )
      */
     private $lname;
 
     /**
      * @var string
      * @Assert\NotBlank()
+     * @ORM\Column(name="username", type="string", unique=true)
+     * @Assert\Type(
+     *     type="alnum",
+     *     message="The value {{ value }} is not a valid {{ type }}."
+     * )
+     * @Assert\Length(
+     *      min = 6,
+     *      max = 50,
+     *      minMessage = "Your username must be at least {{ limit }} characters long",
+     *      maxMessage = "Your username cannot be longer than {{ limit }} characters"
+     * )
      */
     private $username = '';
 
@@ -48,6 +88,13 @@ class User implements UserInterface
     /**
      * @var int
      * @Assert\NotBlank()
+     * @Assert\Type("integer")
+     * @Assert\Range(
+     *      min = 3,
+     *      max = 60,
+     *      minMessage = " Age must be at least {{ limit }} years old",
+     *      maxMessage = "Age cannot be more than {{ limit }} years old"
+     * )
      */
     private $age;
 

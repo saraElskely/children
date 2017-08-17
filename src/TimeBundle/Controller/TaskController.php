@@ -136,8 +136,9 @@ class TaskController extends Controller
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
-
+            $this->get(TaskService::class)
+                    ->updateTask($task->getId(), $task->getTaskName(),$task->getSchedule());
+            
             return $this->redirectToRoute('task_edit', array('task_id' => $task->getId()));
         }
 

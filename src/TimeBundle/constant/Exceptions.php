@@ -16,6 +16,7 @@ class Exceptions {
     const CODE_TASK_NOT_FOUND = 10 ;
     const CODE_PAGE_NUM_NOT_FOUND = 11;
     const CODE_ROLE_NOT_FOUND = 12;
+    const CODE_SCHEDULE_NOT_FOUND = 13;
 
 
     const EXCEPTION_MESSAGES = [
@@ -25,7 +26,9 @@ class Exceptions {
         self::CODE_MOTHER_ID_NOT_FOUND => 'Mother Id Not Found ',
         self::CODE_MOTHER_HAS_NO_CHILDREN => 'Mother has no children',
         self::CODE_PAGE_NUM_NOT_FOUND => 'Page Number Not Found',
-        self::CODE_ROLE_NOT_FOUND => 'Role Not Found'
+        self::CODE_ROLE_NOT_FOUND => 'Role Not Found',
+        self::CODE_SCHEDULE_NOT_FOUND => 'Schedule Not Found ',
+                
         
     ];
     
@@ -36,6 +39,7 @@ class Exceptions {
         self::CODE_MOTHER_ID_NOT_FOUND => 500,
         self::CODE_PAGE_NUM_NOT_FOUND => 500,
         self::CODE_ROLE_NOT_FOUND => 500,
+        self::CODE_SCHEDULE_NOT_FOUND => 500 ,
     ];
     
 }

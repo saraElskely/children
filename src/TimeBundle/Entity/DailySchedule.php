@@ -3,9 +3,15 @@
 namespace TimeBundle\Entity;
 
 use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * DailySchedule
+ * @ORM\Entity
+ * @UniqueEntity(
+ *     fields={"taskInSchedule", "userInSchedule"},
+ * )
  */
 class DailySchedule
 {
@@ -16,6 +22,7 @@ class DailySchedule
 
     /**
      * @var bool
+     * @Assert\Type("bool")
      */
     private $isDone;
     
@@ -31,11 +38,13 @@ class DailySchedule
     
     /**
      * @var \TimeBundle\Entity\Task
+     * @ORM\ManyToOne(targetEntity="Task")
      */
     private $taskInSchedule;
 
     /**
      * @var \TimeBundle\Entity\User
+     * @ORM\ManyToOne(targetEntity="User")
      */
     private $userInSchedule;
     

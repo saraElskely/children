@@ -28,7 +28,7 @@ class MotherController extends Controller {
             $password = $passwordEncoder->encodePassword($user, $user->getPassword());
 
             $user = $this->get(UserService::class)
-                        ->createUser($user->getUsername(), $user->getFname(), $user->getFname(), $password, Roles::ROLE_MOTHER, $user->getAge());
+                        ->createUser($user->getUsername(), $user->getFname(), $user->getLname(), $password, Roles::ROLE_MOTHER, $user->getAge());
 
             return $this->redirectToRoute('mother_show_my_children',array(
                 'motherId' => $this->getUser()->getId()
@@ -56,7 +56,7 @@ class MotherController extends Controller {
             $password = $passwordEncoder->encodePassword($user, $user->getPassword());
 
                 $user = $this->get(UserService::class)
-                        ->createUser($user->getUsername(), $user->getFname(), $user->getFname(), $password, Roles::ROLE_CHILD, $user->getAge(),  $this->getUser());
+                        ->createUser($user->getUsername(), $user->getFname(), $user->getLname(), $password, Roles::ROLE_CHILD, $user->getAge(),  $this->getUser());
 
             return $this->redirectToRoute('mother_show_my_children',array(
                 'motherId' => $this->getUser()->getId()

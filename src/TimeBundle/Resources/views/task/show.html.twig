@@ -1,9 +1,9 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>Task</h1>
+    <h1>{{ task.taskName }}</h1>
 
-    <table>
+    <table class="table">
         <tbody>
             <tr>
                 <th>Id</th>
@@ -14,8 +14,22 @@
                 <td>{{ task.taskName }}</td>
             </tr>
             <tr>
+                <th>Creator</th>
+                <td>{{ task.creator.username }}</td>
+            </tr>
+            <tr>
                 <th>Schedule</th>
-                <td>{{ task.schedule }}</td>
+                <td>
+                    <ul>
+                        {% if  task.schedule == 0 %}    
+                            <li>{{ 'Daily'}}</li>
+                        {% else %}
+                            {% for day in task.schedule|scheduleDate %}
+                                <li>{{day}} </li>
+                            {% endfor%}
+                        {% endif %}
+                    </ul>
+                </td>
             </tr>
         </tbody>
     </table>
@@ -24,9 +38,9 @@
         <li>
             <a href="{{ path('task_index') }}">Back to the list</a>
         </li>
-        <li>
+        {#<li>
             <a href="{{ path('task_edit', { 'task_id': task.id }) }}">Edit</a>
-        </li>
+        </li>#}
         <li>
             {{ form_start(delete_form) }}
                 <input type="submit" value="Delete">

@@ -9,40 +9,39 @@ use TimeBundle\Utility\Date;
 use TimeBundle\Entity\User;
 use TimeBundle\Exception\TimeBundleException;
 use TimeBundle\constant\Exceptions;
+
 /**
  * Description of CreateDailySchedule
  *
  * @author saraelsayed
  */
 class DailyScheduleService {
+
     private $entityManager;
-    
+
     public function __construct(EntityManagerInterface $entityManager) {
-        $this->entityManager = $entityManager ;
+        $this->entityManager = $entityManager;
     }
-    
-    public function createAdminDailySchedule()
-    {
-        $children =$this->entityManager->getRepository('TimeBundle:User')->findByRole(Roles::ROLE_CHILD);
+
+    public function createAdminDailySchedule() {
+        $children = $this->entityManager->getRepository('TimeBundle:User')->findByRole(Roles::ROLE_CHILD);
         $adminTasks = $this->entityManager->getRepository('TimeBundle:Task')
                 ->getAdminTasks(Date::getTodayInWeek());
 
-        foreach ($children as $child){
+        foreach ($children as $child) {
             foreach ($adminTasks as $task) {
-                $createdTask = new  DailySchedule();
+                $createdTask = new DailySchedule();
                 $createdTask->setDate(new \DateTime());
                 $createdTask->setUserInSchedule($child);
                 $createdTask->setTaskInSchedule($task);
 
-                $this->entityManager->persist($createdTask); 
+                $this->entityManager->persist($createdTask);
                 $this->entityManager->flush();
             }
         }
-        
     }
-    
-    public function createMothersDailySchedule( $motherId, $childId )
-    {
+
+    public function createMothersDailySchedule($motherId, $childId) {
         $todayAsSchedule = Date::getTodayInWeek();
         $mothersTasks = $this->entityManager->getRepository('TimeBundle:Task')
                 ->getTodayMothersTasks($todayAsSchedule);
@@ -55,103 +54,97 @@ class DailyScheduleService {
         }
         die();
     }
-    
-//    public function getTodayInWeek()
-//    {
-//        $today = new \DateTime();
-//        $today = strtotime($today->format('y-m-d'));
-//        $today = date('w', $today);
-//        
-//        return pow(2,$today);
-//    }
-    
-    public function getTodayMotherTasksId($motherTasks)
-    {
+
+    public function getTodayMotherTasksId($motherTasks) {
         $todayMotherTasksId = array();
-        $today =  Date::getTodayInWeek() ;
+        $today = Date::getTodayInWeek();
         foreach ($motherTasks as $task) {
-            if(($task->getSchedule() & $today) == $today){
-                $todayMotherTasksId[]= $task->getId();
+            if (($task->getSchedule() & $today) == $today) {
+                $todayMotherTasksId[] = $task->getId();
             }
         }
         return $todayMotherTasksId;
     }
 
-    public function getChildDailySchedules($childId)
-    {
+    public function getChildDailySchedules($childId) {
         return $this->entityManager
-                ->getRepository('TimeBundle:DailySchedule')
-                ->getChildDailySchedules($childId);
+                        ->getRepository('TimeBundle:DailySchedule')
+                        ->getChildDailySchedules($childId);
     }
-    
-    public function getChildTodaySchedule($childId)
-    {
+
+    public function getChildTodaySchedule($childId) {
         return $this->entityManager
-                ->getRepository('TimeBundle:DailySchedule')
-                ->getChildTodaySchedule($childId);
+                        ->getRepository('TimeBundle:DailySchedule')
+                        ->getChildTodaySchedule($childId);
     }
-    
-    public function getDayByDayDailySchedule( $dailySchedules)
-    {
-        $arrayOfDailyTasks =array();
-        foreach ($dailySchedules as $task){
+
+    public function getDayByDayDailySchedule($dailySchedules) {
+        $arrayOfDailyTasks = array();
+        foreach ($dailySchedules as $task) {
             $date = $task->getDate()->format('y-m-d');
-            if(array_key_exists($date, $arrayOfDailyTasks)){
+            if (array_key_exists($date, $arrayOfDailyTasks)) {
                 array_push($arrayOfDailyTasks[$date], $task);
-            }
-            else{
-                $arrayOfDailyTasks[$date]=array($task);
+            } else {
+                $arrayOfDailyTasks[$date] = array($task);
             }
         }
         return $arrayOfDailyTasks;
-        
     }
-    
-    public function changeScheduleState( $childId, $taskId, $state)
-    {
-        if( $state){
-            return $this->deleteSchedule( $childId, $taskId);
-        }else{
-            return $this->createDailySchedule( $childId, $taskId); 
+
+    public function changeScheduleState($childId, $taskId, $state) {
+        if ($state) {
+            return $this->deleteSchedule($childId, $taskId);
+        } else {
+            return $this->createDailySchedule($childId, $taskId);
         }
     }
-    
-    public function createDailySchedule( $childId, $taskId)
-    {
+
+    public function createDailySchedule($childId, $taskId) {
         $child = $this->entityManager
                 ->getRepository('TimeBundle:User')
                 ->getUser($childId);
         $task = $this->entityManager
                 ->getRepository('TimeBundle:Task')
                 ->getTask($taskId);
-        
-        return $this->entityManager
-                ->getRepository('TimeBundle:DailySchedule')
-                ->createDailySchedule( $child, $task);
+
+        if (!is_null($this->entityManager->getRepository('TimeBundle:DailySchedule')
+                                ->getScheduleId($childId, $taskId))) {
+            return;
+        } else {
+            return $this->entityManager
+                            ->getRepository('TimeBundle:DailySchedule')
+                            ->createDailySchedule($child, $task);
+        }
     }
 
-    public function deleteSchedule($childId, $taskId)
-    {
+    public function deleteSchedule($childId, $taskId) {
+        $child = $this->entityManager
+                ->getRepository('TimeBundle:User')
+                ->getUser($childId);
+        $task = $this->entityManager
+                ->getRepository('TimeBundle:Task')
+                ->getTask($taskId);
+        if (is_null($this->entityManager->getRepository('TimeBundle:DailySchedule')
+                                ->getScheduleId($childId, $taskId))) {
+            throw new TimeBundleException(Exceptions::CODE_SCHEDULE_NOT_FOUND);
+        }
         return $this->entityManager
-                ->getRepository('TimeBundle:DailySchedule')
-                ->deleteSchedule( $childId, $taskId);
+                        ->getRepository('TimeBundle:DailySchedule')
+                        ->deleteSchedule($childId, $taskId);
     }
-   
-    public function denyAccessUnlessGranted(User $user, $childId)
-    {
-        switch ($user->getRole()){
+
+    public function denyAccessUnlessGranted(User $user, $childId) {
+        switch ($user->getRole()) {
             case Roles::ROLE_ADMIN :
                 return TRUE;
             case Roles::ROLE_MOTHER :
-                if( $this->entityManager->getRepository('TimeBundle:User')->getMotherId($childId) === $user->getId() )
+                if ($this->entityManager->getRepository('TimeBundle:User')->getMotherId($childId) === $user->getId())
                     return TRUE;
             case Roles::ROLE_CHILD :
-                if( $user->getId() == $childId)
+                if ($user->getId() == $childId)
                     return TRUE;
         }
         throw new TimeBundleException(Exceptions::CODE_ACCESS_DENIED);
     }
-    
-    
-    
+
 }

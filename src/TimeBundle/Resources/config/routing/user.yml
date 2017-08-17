@@ -1,19 +1,19 @@
 user_index:
-    path:     /{page}
+    path:     /users/{page}
     defaults: { _controller: "TimeBundle:User:index", page:1 }
     methods:  GET
     requirements:
         page: '\d+'
 
 user_show:
-    path:     /{id}/show
+    path:     /user/{id}/show
     defaults: { _controller: "TimeBundle:User:show" }
     methods:  GET
     requirements:
         id: '\d+'
 
 user_edit:
-    path:     /{id}/edit
+    path:     /user/{id}/edit
     defaults: { _controller: "TimeBundle:User:edit" }
     methods:  [GET, POST]
     requirements:
@@ -21,18 +21,21 @@ user_edit:
     
 
 user_delete:
-    path:     /{id}/delete
+    path:     /user/{id}/delete
     defaults: { _controller: "TimeBundle:User:delete" }
     methods:  DELETE
     requirements:
         id: '\d+'
 
 user_filter:
-    path:   /{page}/filter
+    path:   /users/{page}/filter
     defaults: { _controller: "TimeBundle:User:filter",page:1 }
+    methods:  GET
+    requirements:
+        page: '\d+'
  
 user_mother:
-    path:     /mothers
+    path:     /users/mothers
     defaults: { _controller: "TimeBundle:User:getMothers" }
     methods:  GET
  

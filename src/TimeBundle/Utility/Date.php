@@ -34,7 +34,7 @@ class Date {
         return $startDate->modify("next friday -$numOfWeek week")->format('Y-m-d');
     }
     
-    public function getEmptyArrayOfDatesForWeek($startDate = null) 
+    public static function getEmptyArrayOfDatesForWeek($startDate = null) 
     {
         $arr = array();
         for ($i = 0; $i < Schedule::SCHEDULE_DAYS_PER_WEEK; $i++) {

@@ -18,6 +18,7 @@ class TaskType extends AbstractType
         $builder->add('taskName')->add('schedule', ChoiceType::class,[
             'placeholder' => 'your schedule !',
             'multiple'  => true,
+            'expanded' => true,
             'choices' => [
                 'Daily' => Schedule::SCHEDULE_DAILY,
                 'Saturday' => Schedule::SCHEDULE_SATURDAY,

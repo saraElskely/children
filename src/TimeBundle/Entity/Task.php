@@ -3,9 +3,16 @@
 namespace TimeBundle\Entity;
 
 use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Task
+ * @ORM\Entity
+ * @UniqueEntity(
+ *     fields={"taskName",},
+ *     errorPath="taskName",
+ *     message="This name is already in use ")
  */
 class Task
 {
@@ -17,11 +24,13 @@ class Task
     /**
      * @var string
      * @Assert\NotBlank()
+     * @ORM\Column(name="taskName", type="string", unique=true)
      */
     private $taskName;
     
     /**
      * @var int
+     * @Assert\NotBlank()
      * daily or weekly or sunday ....
      */
     private $schedule;

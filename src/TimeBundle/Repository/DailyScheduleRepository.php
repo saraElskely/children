@@ -37,14 +37,12 @@ class DailyScheduleRepository extends \Doctrine\ORM\EntityRepository
                 ->getArrayResult();      
     }
     
-    public function createDailySchedule( $childId, $taskId)
+    public function createDailySchedule( $child, $task)
     {
         $entityManager = $this->getEntityManager();
         $today = new \DateTime();
-
-        $child = $entityManager->getReference('TimeBundle:User', $childId);
-        $task = $entityManager->getReference('TimeBundle:Task', $taskId);
-        
+//        $child = $entityManager->getReference('TimeBundle:User', $childId);
+//        $task = $entityManager->getReference('TimeBundle:Task', $taskId);        
         $dailySchedule = new DailySchedule();
         $dailySchedule->setDate($today)
                 ->setTaskInSchedule($task)
@@ -70,30 +68,33 @@ class DailyScheduleRepository extends \Doctrine\ORM\EntityRepository
         
     }
     
-    public function getScheduleId( $childId, $taskId, $date)
+    public function getScheduleId( $childId, $taskId, $date = null)
     {
+        if(is_null($date)) {
+            $date = new \DateTime();
+            $date = $date->format('Y-m-d');
+        }
         return $this->createQueryBuilder('schedule')
                 ->select('schedule.id')
                 ->where("schedule.taskInSchedule = $taskId AND schedule.userInSchedule = $childId")
                 ->andWhere("schedule.date = $date")
                 ->getQuery()
-                ->getOneOrNullResult() ;
-        
-        
+                ->getOneOrNullResult() ;       
     }
     
-    public function changeScheduleState( $scheduleId, $state)
-    {
-        $today = new \DateTime();
-        $today = $today->format('Y-m-d');
-        
-        return $this->createQueryBuilder('schedule')
-                ->update()
-                ->set('schedule.isDone', $state)
-                ->where("schedule.id = $scheduleId AND schedule.date = '$today'")
-                ->getQuery()
-                ->execute();
-    }
+//    public function changeScheduleState( $scheduleId, $state)
+//    {
+//        $today = new \DateTime();
+//        $today = $today->format('Y-m-d');
+//        
+//        return $this->createQueryBuilder('schedule')
+//                ->update()
+//                ->set('schedule.isDone', $state)
+//                ->where("schedule.id = $scheduleId AND schedule.date = '$today'")
+//                ->getQuery()
+//                ->execute();
+//    }
+    
     /*
      * return @string date or null
      */

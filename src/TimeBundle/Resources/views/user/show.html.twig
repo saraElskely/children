@@ -7,35 +7,36 @@
         <div class="card">
             <img class="card-img-top" src="..." alt="Card image cap">
             <div class="card-block">
-              <h3 class="card-title">{{user.username}}</h3>
+                <h3 class="card-title">{{user.username}}</h3>
             </div>
             <ul class="list-group list-group-flush">
                 <li class="list-group-item">
-                     fname :{{ user.fname }}
+                    fname :{{ user.fname }}
                 </li>
                 <li class="list-group-item">
-                     lname :{{ user.lname }}
+                    lname :{{ user.lname }}
                 </li>
                 <li class="list-group-item">
-                     age :{{ user.age }}
+                    age :{{ user.age }}
                 </li>
                 <li class="list-group-item">
-                     role :{{user.role == 1? 'Mother':(user.role == 2 ? 'Child':'admin')}}
+                    role :{{user.role == 2? 'Mother':(user.role == 3 ? 'Child':'admin')}}
                 </li>
             </ul>
         </div>
     </div>
 
 
+    {% if  app.user.id == user.id %}
+        <ul>
+            <li>
+                <a href="{{ path('user_edit',{ 'id': user.id }) }}" class="btn btn-default">Edit</a>
 
-    <ul>
-        <li>
-            <a href="{{ path('user_index') }}">Back to the list</a>
-        </li>
-        <li>
-            {{ form_start(delete_form) }}
+                {{ form_start(delete_form) }}
                 <input type="submit" value="Delete">
-            {{ form_end(delete_form) }}
-        </li>
-    </ul>
+                {{ form_end(delete_form) }}
+            </li>
+        </ul>
+    {% endif%}
+
 {% endblock %}

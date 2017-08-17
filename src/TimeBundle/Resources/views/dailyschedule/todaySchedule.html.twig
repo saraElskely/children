@@ -43,7 +43,9 @@
               $(document).ready(function(){
                   $("#{{task.id}}done").click(function(){
                       console.log('click');
-                      $.ajax({url: "{{ path('dailySchedule_change_state', {'task_id': task.id ,'state': 1 }) }}", success: function(result){
+                      $.ajax({url: "{{ path('dailySchedule_change_state', {'task_id': task.id ,'state': 1 }) }}",
+                          method: "POST" ,
+                           success: function(result){
                               console.log(result);
                         if (result.data ){
                           $("#{{task.id}}notDone").show();
@@ -53,7 +55,9 @@
                     });
                   });
                   $("#{{task.id}}notDone").click(function(){
-                      $.ajax({url: "{{ path('dailySchedule_change_state', {'task_id': task.id ,'state': 0 }) }}", success: function(result){
+                      $.ajax({url: "{{ path('dailySchedule_change_state', {'task_id': task.id ,'state': 0 }) }}",
+                          method: "POST",
+                          success: function(result){
                         console.log(result);
                         if (result.data){
                           $("#{{task.id}}done").show();

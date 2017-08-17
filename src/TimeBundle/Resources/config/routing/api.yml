@@ -1,11 +1,34 @@
-api_dailySchedule:
-#    resource: "@TimeBundle/Resources/config/routing/dailySchedule.yml"
-    path:   /today/{task_id}/{state}
+
+api_dailySchedule_change_state:
+    path:   /dailyschedule/today/task/{task_id}/state/{state}
     defaults: { _controller: "TimeBundle:DailySchedule:changeScheduleState" }
-    methods:  [POST ,GET]
+    methods:  POST
     requirements:
         schedule_id: '\d+'
-    
+        state: 1|0 
+        
+api_task_filter:
+    path:   /tasks/{page}/filter
+    defaults: { _controller: "TimeBundle:Task:filter", page:1 }
+    methods:  GET
+    requirements:
+        page: '\d+'
+
+api_user_filter:
+    path:   /users/{page}/filter
+    defaults: { _controller: "TimeBundle:User:filter",page:1 }
+    methods:  GET
+    requirements:
+        page: '\d+'
+
+####################################
+
+api_mother_registration:
+    path:     /register
+    defaults: { _controller: TimeBundle:Mother:motherRegistration }
+    methods:  [ POST]
+
+####################################
 
 api_login:
     path:   /login_check
@@ -17,8 +40,10 @@ api_test:
     defaults: { _controller: "TimeBundle:ApiDailySchedule:test" }
     methods:  GET
 
+###########################
+
 api_user_index:
-    path:     /user/{page}
+    path:     /users/{page}
     defaults: { _controller: "TimeBundle:User:index", page:1 }
     methods:  GET
     requirements:
@@ -31,26 +56,86 @@ api_user_show:
     requirements:
         id: '\d+'
 
-api_user_edit:
-    path:     /user/{id}/edit
-    defaults: { _controller: "TimeBundle:User:edit" }
-    methods:  [GET, POST]
-    requirements:
-        id: '\d+'
+#api_user_edit:
+#    path:     /user/{id}/edit
+#    defaults: { _controller: "TimeBundle:User:edit" }
+#    methods:  [ POST]
+#    requirements:
+#        id: '\d+'
     
-
 api_user_delete:
     path:     /user/{id}/delete
     defaults: { _controller: "TimeBundle:User:delete" }
     methods:  DELETE
     requirements:
         id: '\d+'
-
-api_user_filter:
-    path:   /user/{page}/filter
-    defaults: { _controller: "TimeBundle:User:filter",page:1 }
  
 api_user_mother:
     path:     /user/mothers
     defaults: { _controller: "TimeBundle:User:getMothers" }
     methods:  GET
+
+
+###############################
+
+api_dailySchedule_index:
+    path:     /dailyschedule/{page}/child/{child_id}
+    defaults: { _controller: "TimeBundle:DailySchedule:showChildSchedule", page:1 }
+    methods:  GET
+    requirements:
+        child_id: '\d+'
+        page: '\d+'
+
+api_dailySchedule_show:
+    path:     /dailyschedule/child/{child_id}/today
+    defaults: { _controller: "TimeBundle:DailySchedule:showChildTodaySchedule" }
+    methods:  GET
+    requirements:
+        child_id: '\d+'
+        
+###################################  
+
+api_task_index:
+    path:     /tasks/
+    defaults: { _controller: "TimeBundle:Task:index" }
+    methods:  GET
+
+api_task_show:
+    path:     /task/{task_id}/show
+    defaults: { _controller: "TimeBundle:Task:show" }
+    methods:  GET
+    requirements:
+        task_id: '\d+'
+
+api_task_new:
+    path:     /task/new
+    defaults: { _controller: "TimeBundle:Task:new" }
+    methods:  [ POST]
+
+api_task_edit:
+    path:     /task/{task_id}/edit
+    defaults: { _controller: "TimeBundle:Task:edit" }
+    methods:  [POST]
+    requirements:
+        task_id: '\d+'
+
+api_task_delete:
+    path:     /task/{task_id}/delete
+    defaults: { _controller: "TimeBundle:Task:delete" }
+    methods:  DELETE
+    requirements:
+        task_id: '\d+'
+
+
+        
+##################################
+
+api_mother_show_my_children:
+    path:     /mother/{motherId}/showMyChildren
+    defaults: { _controller: TimeBundle:Mother:showMyChildren }
+    methods:  GET
+
+api_mother_add_child:
+    path:     /mother/addChild
+    defaults: { _controller: TimeBundle:Mother:addChild }
+    methods:  [POST]

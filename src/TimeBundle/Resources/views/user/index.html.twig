@@ -1,4 +1,8 @@
 {% extends 'base.html.twig' %}
+{#{% block stylesheets %}
+    {{ parent() }}
+            <script src="{{ asset('js/userFilter.js')}}" ></script>
+{% endblock %}#}
 
 {% block body %}
     
@@ -24,7 +28,7 @@
                 <th>{{user.fname}}</th>
                 <td>{{user.lname}}</td>
                 <td>{{user.username}}</td>
-                <td>{{user.role == 0 ? 'Admin' : user.role == 1 ? 'Mother' : 'Child' }}</td>
+                <td>{{user.role == 1 ? 'Admin' : user.role == 2 ? 'Mother' : 'Child' }}</td>
                 <td>{{user.age}}</td>
               </tr>
               {% endfor %}
@@ -51,3 +55,5 @@
 
     
 {% endblock %}
+
+

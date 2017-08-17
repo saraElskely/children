@@ -65,6 +65,11 @@ class TaskService {
         return $this->entityManager->getRepository('TimeBundle:Task')->createTask($taskName, $schedule, $creator);    
     }
     
+    public function updateTask($taskId, $taskName, $schedule) 
+    {
+        return $this->entityManager->getRepository('TimeBundle:Task')->updateTask($taskId, $taskName, $schedule);    
+    }
+    
     public function getTask($taskId)
     {
         return $this->entityManager->getRepository('TimeBundle:Task')->getTask($taskId);

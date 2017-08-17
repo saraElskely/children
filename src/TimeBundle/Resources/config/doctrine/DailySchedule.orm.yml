@@ -11,7 +11,7 @@ TimeBundle\Entity\DailySchedule:
     fields:
         isDone:
             type: boolean
-            nullable: true
+            nullable: false
         date:
             type: date
             

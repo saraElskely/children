@@ -6,6 +6,7 @@ use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpFoundation\Response;
 use TimeBundle\Exception\TimeBundleException;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use TimeBundle\Security\ApiFirewallMatcher;
 
 /**
  * Description of ExceptionListener
@@ -36,9 +37,10 @@ class ExceptionListener {
         } else {
             $response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+//        $requestRoute = explode('_', $event->getRequest()->get('_route'), 2);
+//        $requestRoute[0] === 'api';
 
-        $requestRoute = explode('_', $event->getRequest()->get('_route'), 2);
-        if ($requestRoute[0] === 'api' || $event->getRequest()->isXmlHttpRequest()) {
+        if (ApiFirewallMatcher::matches($event->getRequest()) || $event->getRequest()->isXmlHttpRequest()) {
             $event->setResponse($response);
         } else {
             $event->setResponse(new Response(
