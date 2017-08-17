@@ -4,9 +4,9 @@ namespace TimeBundle\Repository;
 
 use TimeBundle\Entity\User;
 use TimeBundle\constant\Roles;
-use Doctrine\ORM\Tools\Pagination\Paginator;
-use TimeBundle\Service\PaginatorService;
-use Symfony\Component\Config\Definition\Exception\Exception;
+//use Doctrine\ORM\Tools\Pagination\Paginator;
+//use TimeBundle\Service\PaginatorService;
+//use Symfony\Component\Config\Definition\Exception\Exception;
 use TimeBundle\Exception\TimeBundleException;
 use TimeBundle\constant\Exceptions;
 
@@ -161,7 +161,7 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
                 ->getQuery()
                 ->execute();
         if(! isset($children[0])) {
-            throw new Exception('children not found');
+            throw new TimeBundleException(Exceptions::CODE_MOTHER_HAS_NO_CHILDREN);
         }
         return $children;
     }
@@ -175,7 +175,7 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
                 ->execute();
         
         if(!isset( $mother[0])) 
-            throw new Exception('Mother not found ') ;
+            throw new TimeBundleException(Exceptions::CODE_MOTHER_ID_NOT_FOUND) ;
         return TRUE;
     }
 

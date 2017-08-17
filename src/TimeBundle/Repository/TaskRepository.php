@@ -6,7 +6,8 @@ use TimeBundle\constant\Roles;
 use TimeBundle\Entity\Task;
 use TimeBundle\Entity\User;
 use TimeBundle\constant\Schedule;
-use Symfony\Component\Config\Definition\Exception\Exception;
+use TimeBundle\Exception\TimeBundleException;
+use TimeBundle\constant\Exceptions;
 
 /**
  * TaskRepository
@@ -44,7 +45,7 @@ class TaskRepository extends \Doctrine\ORM\EntityRepository
         $task = $this->findById($taskId); 
 
         if(!isset( $task[0])) 
-            throw new Exception('task not found ') ;
+            throw new TimeBundleException(Exceptions::CODE_TASK_NOT_FOUND) ;
         
         return $task[0] ;
     }
@@ -135,7 +136,7 @@ class TaskRepository extends \Doctrine\ORM\EntityRepository
         $subquery = $this->getEntityManager()->getRepository('TimeBundle:User')->createQueryBuilder('user')
                 ->select('user.id')
                 ->where("user.role = $role")
-                ->getDQL();
+                ->getQuery()->getArrayResult();
         
         $qb = $this->createQueryBuilder('task');
         $mothersTasks = $this->createQueryBuilder('task')->select()
@@ -152,7 +153,7 @@ class TaskRepository extends \Doctrine\ORM\EntityRepository
         $query = $this->createQueryBuilder('task')
                 ->select('task, user.username')
                 ->join('TimeBundle:User', 'user','WITH',"task.creator = user.id");
-        if( $taskName !== ''){
+        if( !is_null($taskName) || $taskName !== ''){
             $query->where("task.taskName LIKE '%$taskName%'");
         }
         $schedule == 0 ? $query->andWhere("task.schedule = $schedule"): $schedule != -1 ?

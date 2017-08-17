@@ -8,9 +8,11 @@ use TimeBundle\constant\Roles;
 use TimeBundle\Service\DailyScheduleService;
 use TimeBundle\Utility\Date;
 use TimeBundle\constant\Schedule;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+//use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use TimeBundle\Utility\Paginator;
-use Symfony\Component\Config\Definition\Exception\Exception;
+use TimeBundle\Exception\TimeBundleException;
+use TimeBundle\constant\Exceptions;
+//use Symfony\Component\Config\Definition\Exception\Exception;
 
 /**
  * Description of TaskService
@@ -49,13 +51,13 @@ class TaskService {
                 case self::DELETE:
                 case self::SHOW:
                     if(! $task && ! $task instanceof Task) {
-                        throw new Exception('task not found');
+                        throw new TimeBundleException(Exceptions::CODE_TASK_NOT_FOUND);
                     }elseif ($user->getId() === $task->getCreator()->getId()) {
                          return TRUE ;
                     }
             }
         }
-        throw new AccessDeniedException();
+        throw new TimeBundleException(Exceptions::CODE_ACCESS_DENIED);
     }
 
     public function createTask($taskName, $schedule, $creator) 
@@ -100,7 +102,7 @@ class TaskService {
     public function getWeeklyChildTasks($childId, $page = 1)
     { 
         if( !is_numeric($page) || $page < 1) {
-            throw new Exception('page not found');
+            throw new TimeBundleException(Exceptions::CODE_PAGE_NUM_NOT_FOUND);
         }
       
         $startDate = Date::getStartDateInWeek( $page);
@@ -187,7 +189,7 @@ class TaskService {
         return $dailyTasksArray;
     }
     
-    public function getFilteredTasks($taskName = null, $schedule =-1, $page=1, $limit=2)
+    public function getFilteredTasks($taskName = null, $schedule =-1, $page=1, $limit= 2)
     {
         $query = $this->entityManager->getRepository('TimeBundle:Task')
                 ->getFilteredTasksQuery($taskName, $schedule);

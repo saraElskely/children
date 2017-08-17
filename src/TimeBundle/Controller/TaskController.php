@@ -9,7 +9,10 @@ use TimeBundle\Service\TaskService;
 use TimeBundle\constant\Roles;
 //use JMS\Serializer\SerializerBuilder;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use TimeBundle\Exception\TimeBundleException;
+use TimeBundle\constant\Exceptions;
+use TimeBundle\Security\ApiFirewallMatcher;
+use TimeBundle\constant\General;
 
 /**
  * Task controller.
@@ -21,7 +24,7 @@ class TaskController extends Controller
      * Lists all task entities.
      *
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {        
         $user = $this->getUser();
         $this->get(TaskService::class)->denyAccessUnlessGranted('index', $user);
@@ -35,6 +38,10 @@ class TaskController extends Controller
         $tasks = $this->get(TaskService::class)
                     ->getTasks($user->getId(),$user->getRole());
 
+        if( ApiFirewallMatcher::matches($request) )
+        {
+            return new JsonResponse(array('status'=> 1 , 'data'=>['tasks' => $tasks]));
+        }
         return $this->render('TimeBundle:task:index.html.twig', array(
             'tasks' => $tasks,
         ));
@@ -45,7 +52,7 @@ class TaskController extends Controller
         if ($this->getUser()->getRole() !== Roles::ROLE_ADMIN) {
             throw new AccessDeniedException();
         }
-        $limit = 2;
+        $limit = General::PAGINATION_LIMIT;
         $taskName = $request->query->get('taskName') === '' ? null : $request->query->get('taskName') ;
         $schedule = $request->query->getInt('schedule',-1);
         
@@ -96,13 +103,17 @@ class TaskController extends Controller
      * Finds and displays a task entity.
      *
      */
-    public function showAction( $task_id)
+    public function showAction(Request $request, $task_id)
     {
         $user = $this->getUser();
         $task = $this->get(TaskService::class)->getTask($task_id);
         $this->get(TaskService::class)->denyAccessUnlessGranted('show', $user, $task);
         
         $deleteForm = $this->createDeleteForm($task);
+        if( ApiFirewallMatcher::matches($request) )
+        {
+            return new JsonResponse(array('status'=> 1 , 'data'=>['task' => $task]));
+        }
 
         return $this->render('TimeBundle:task:show.html.twig', array(
             'task' => $task,
@@ -155,6 +166,10 @@ class TaskController extends Controller
             $this->get(TaskService::class)->deleteTask($task->getId());
         }
 
+        if( ApiFirewallMatcher::matches($request) )
+        {
+            return new JsonResponse(array('status'=> 1 , 'data'=> 'task deleted'));
+        }
         return $this->redirectToRoute('task_index');
     }
 

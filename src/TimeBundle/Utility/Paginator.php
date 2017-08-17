@@ -4,6 +4,8 @@ namespace TimeBundle\Utility;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use TimeBundle\Exception\TimeBundleException;
+use TimeBundle\constant\Exceptions;
 
 /**
  * Description of PaginatorService
@@ -17,7 +19,7 @@ class Paginator {
     private $limit;
     
     public function __construct($numOfItem, $limit = 2) {
-        if($numOfItem > 1){
+        if($numOfItem >= 1){
             $this->numOfItem = $numOfItem ;
         } else {
             $this->numOfItem = 0 ;
@@ -34,7 +36,11 @@ class Paginator {
     
     public function getOffest( $page = 1)
     {
-        ($page <= $this->getMaxPage()) ? $this->offest= $this->limit*($page-1) : $this->offest= 0;
+        if($page <= $this->getMaxPage()) {
+            $this->offest= $this->limit*($page-1) ;
+        } else {
+            throw new TimeBundleException(Exceptions::CODE_PAGE_NUM_NOT_FOUND);
+        }
         return $this->offest ;
     }
     

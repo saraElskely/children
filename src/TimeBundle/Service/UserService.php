@@ -6,7 +6,7 @@ namespace TimeBundle\Service;
 use Doctrine\ORM\EntityManagerInterface;
 use TimeBundle\Entity\User;
 use TimeBundle\constant\Roles;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+//use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use TimeBundle\Utility\Paginator;
 use TimeBundle\Exception\TimeBundleException;
 use TimeBundle\constant\Exceptions;
@@ -99,7 +99,7 @@ class UserService {
         }elseif ( $user->getRole() === Roles::ROLE_MOTHER && $motherId == $user->getId()) {
             return TRUE;
         } 
-        throw new AccessDeniedException();
+        throw new TimeBundleException(Exceptions::CODE_ACCESS_DENIED);
     }
     private function isValid($action, $user)
     {
@@ -143,9 +143,6 @@ class UserService {
                     }
             }
         }
-        throw new AccessDeniedException();
+        throw new TimeBundleException(Exceptions::CODE_ACCESS_DENIED);
     }
-
-
-
 }

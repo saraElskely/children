@@ -9,7 +9,11 @@ use TimeBundle\Form\UserType;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use TimeBundle\constant\Roles;
 use TimeBundle\Service\UserService;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+//use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use TimeBundle\Exception\TimeBundleException;
+use TimeBundle\constant\Exceptions;
+use TimeBundle\Security\ApiFirewallMatcher;
 
 class MotherController extends Controller {
 
@@ -30,7 +34,7 @@ class MotherController extends Controller {
                 'motherId' => $this->getUser()->getId()
             ));
         }
-
+        
         return $this->render('TimeBundle:user:new.html.twig', array(
                     'user' => $user,
                     'form' => $form->createView(),
@@ -40,7 +44,7 @@ class MotherController extends Controller {
     public function addChildAction(Request $request) 
     {
         if( $this->getUser()->getRole() !== Roles::ROLE_MOTHER ) {
-            throw new AccessDeniedException();
+            throw new TimeBundleException(Exceptions::CODE_ACCESS_DENIED);
         }
         $passwordEncoder = $this->get('security.password_encoder');
 
@@ -66,14 +70,18 @@ class MotherController extends Controller {
         
     }
 
-    public function showMyChildrenAction($motherId) 
+    public function showMyChildrenAction(Request $request, $motherId) 
     {
         $user = $this->getUser();
         $this->get(UserService::class)->denyAccessUnlessShowChildrenGranted($user, $motherId);
         
         $mother = $this->get(UserService::class)->getUser($motherId);
         $children = $this->get(UserService::class)->getChildren($motherId);
-
+        
+        if( ApiFirewallMatcher::matches($request) )
+        {
+            return new JsonResponse(array('status'=> 1 , 'data'=> ['children' => $children]));
+        }
         return $this->render('TimeBundle:Mother:show_my_children.html.twig', array(
                 'children' => $children
         ));       

@@ -7,7 +7,8 @@ use TimeBundle\Entity\DailySchedule;
 use TimeBundle\constant\Roles;
 use TimeBundle\Utility\Date;
 use TimeBundle\Entity\User;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use TimeBundle\Exception\TimeBundleException;
+use TimeBundle\constant\Exceptions;
 /**
  * Description of CreateDailySchedule
  *
@@ -117,9 +118,16 @@ class DailyScheduleService {
     
     public function createDailySchedule( $childId, $taskId)
     {
+        $child = $this->entityManager
+                ->getRepository('TimeBundle:User')
+                ->getUser($childId);
+        $task = $this->entityManager
+                ->getRepository('TimeBundle:Task')
+                ->getTask($taskId);
+        
         return $this->entityManager
                 ->getRepository('TimeBundle:DailySchedule')
-                ->createDailySchedule( $childId, $taskId);
+                ->createDailySchedule( $child, $task);
     }
 
     public function deleteSchedule($childId, $taskId)
@@ -141,7 +149,7 @@ class DailyScheduleService {
                 if( $user->getId() == $childId)
                     return TRUE;
         }
-        throw new AccessDeniedException();
+        throw new TimeBundleException(Exceptions::CODE_ACCESS_DENIED);
     }
     
     

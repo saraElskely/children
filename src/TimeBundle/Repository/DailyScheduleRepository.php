@@ -3,6 +3,8 @@
 namespace TimeBundle\Repository;
 
 use TimeBundle\Entity\DailySchedule;
+use TimeBundle\Exception\TimeBundleException;
+use TimeBundle\constant\Exceptions;
 
 /**
  * DailyScheduleRepository
@@ -32,9 +34,7 @@ class DailyScheduleRepository extends \Doctrine\ORM\EntityRepository
                 ->where("schedule.userInSchedule = $childId")
                 ->andWhere("schedule.date = '$today'")
                 ->getQuery()
-                ->getArrayResult();
-        
-         
+                ->getArrayResult();      
     }
     
     public function createDailySchedule( $childId, $taskId)

@@ -52,12 +52,16 @@ class UserController extends Controller
         return $this->render('TimeBundle:user:index.html.twig', $result);
     }
     
-    public function getMothersAction()
+    public function getMothersAction(Request $request)
     {   
         if($this->getUser()->getRole() !== Roles::ROLE_ADMIN) {
             throw new TimeBundleException(Exceptions::CODE_ACCESS_DENIED);
         }
         $users = $this->get(UserService::class)->getMothers();
+        if( ApiFirewallMatcher::matches($request) )
+        {
+            return new JsonResponse(array('status'=> 1 , 'data'=> ['users' => $users]));
+        }
         return $this->render('TimeBundle:user:mother.html.twig', array(
             'users' => $users ,
         ));
@@ -84,7 +88,7 @@ class UserController extends Controller
             'role' => $role,
             ));
         
-        return new \Symfony\Component\HttpFoundation\JsonResponse($result);
+        return new JsonResponse($result);
 //            dump($session);
 //            die;
 //        return $this->render('TimeBundle:user:index.html.twig', $result);
@@ -95,13 +99,17 @@ class UserController extends Controller
      * Finds and displays a user entity.
      *
      */
-    public function showAction($id)
+    public function showAction(Request $request, $id)
     {   
         $currUser = $this->getUser();
         $user = $this->get(UserService::class)->getUser($id);
         $this->get(UserService::class)->denyAccessUnlessGranted('show', $currUser, $user);
 
         $deleteForm = $this->createDeleteForm($user);
+        if( ApiFirewallMatcher::matches($request) )
+        {
+            return new JsonResponse(array('status'=> 1 , 'data'=> ['user' => $user]));
+        }
         return $this->render('TimeBundle:user:show.html.twig', array(
             'user' => $user,
             'delete_form' => $deleteForm->createView(),
@@ -154,9 +162,11 @@ class UserController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $this->get(UserService::class)->deleteUser($user->getId());
         }
-            
-        //if mother ==> error
-        return $this->redirectToRoute('user_index');
+        if( ApiFirewallMatcher::matches($request) )
+        {
+            return new JsonResponse(array('status'=> 1 , 'data'=> 'user deleted'));
+        }
+        return $this->redirectToRoute('login_redirection');
     }
 
     /**
