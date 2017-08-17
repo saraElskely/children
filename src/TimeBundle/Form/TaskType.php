@@ -17,13 +17,18 @@ class TaskType extends AbstractType
     {
         $builder->add('taskName')->add('schedule', ChoiceType::class,[
             'placeholder' => 'your schedule !',
-                    'choices' => [
-                        'Daily' => Schedule::SCHEDULE_DAILY,
-                        'Saturday' => Schedule::SCHEDULE_SATURDAY,
-                        'Sunday' => Schedule::SCHEDULE_SUNDAY,
-                        'Monday' => Schedule::SCHEDULE_MONDAY
-                    ]
-            ]);
+            'multiple'  => true,
+            'choices' => [
+                'Daily' => Schedule::SCHEDULE_DAILY,
+                'Saturday' => Schedule::SCHEDULE_SATURDAY,
+                'Sunday' => Schedule::SCHEDULE_SUNDAY,
+                'Monday' => Schedule::SCHEDULE_MONDAY,
+                'Tuesday'=> Schedule::SCHEDULE_TUESDAY,
+                'Wednesday ' => Schedule::SCHEDULE_WEDNESDAY,
+                'thursday'=> Schedule::SCHEDULE_THURSDAY,
+                'Friday' => Schedule::SCHEDULE_FRIDAY
+            ]
+        ]);
     }
     
     /**

@@ -10,7 +10,9 @@ use TimeBundle\Service\DailyScheduleService;
 use TimeBundle\Service\UserService;
 use TimeBundle\Service\TaskService;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use TimeBundle\Utility\Date;
+
 
 /**
  * Dailyschedule controller.
@@ -22,15 +24,21 @@ class DailyScheduleController extends Controller
      * Lists all child dailySchedule entities.
      *
      */
-    public function showChildScheduleAction($child_id)
+    public function showChildScheduleAction($child_id, $page=1)
     {
-        $dailySchedules = $this->get(DailyScheduleService::class)->getChildDailySchedules($child_id);
-
-        $arrayOfDailyTasks = $this->get(DailyScheduleService::class)->getDayByDayDailySchedule($dailySchedules); // array => day is a key && value for each key is tasks in this day
-       
+//        $dailySchedules = $this->get(DailyScheduleService::class)->getChildDailySchedules($child_id);
+//
+//        $arrayOfDailyTasks = $this->get(DailyScheduleService::class)->getDayByDayDailySchedule($dailySchedules); // array => day is a key && value for each key is tasks in this day
+//        dump($arrayOfDailyTasks);
+//        die;
+        $user = $this->getUser();
+        $this->get(DailyScheduleService::class)->denyAccessUnlessGranted( $user, $child_id);
+        
+        $arrayOfDailyTasks = $this->get(TaskService::class)->getWeeklyChildTasks( $child_id, $page);
         return $this->render('TimeBundle:dailyschedule:index.html.twig', array(
             'dailySchedules' => $arrayOfDailyTasks,
-            'child_id' => $child_id
+            'child_id' => $child_id,
+            'page' => $page
         ));
     }
 
@@ -45,9 +53,11 @@ class DailyScheduleController extends Controller
 //        $w = $this->get(DailyScheduleService::class)->deleteSchedule( 9, 6);
 //        dump($w);
 //        die();
-        $motherId = $this->get(UserService::class)->getMotherId($child_id);
-        $todayAsSchedule = Date::getTodayInWeek();
-        $todayTasks = $this->get(TaskService::class)->getTodayChildTasks($todayAsSchedule, $motherId, $child_id);
+        
+        $user = $this->getUser();
+        $this->get(DailyScheduleService::class)->denyAccessUnlessGranted( $user, $child_id);
+        
+        $todayTasks = $this->get(TaskService::class)->getTodayChildTasks( $child_id);
         
         return $this->render('TimeBundle:dailyschedule:todaySchedule.html.twig', array(
             'dailySchedules' => $todayTasks,
@@ -58,8 +68,12 @@ class DailyScheduleController extends Controller
     
     public function changeScheduleStateAction(Request $request, $task_id, $state)
     {
-        $childId = $this->getUser()->getId();
-        
+        $user = $this->getUser();
+        if($user->getRole() !== Roles::ROLE_CHILD) {
+            throw new AccessDeniedException();
+        }
+
+        $childId = $user->getId() ;
         $this->get(DailyScheduleService::class)->changeScheduleState( $childId, $task_id, $state);
         
         $firewall = $this->container
@@ -70,8 +84,7 @@ class DailyScheduleController extends Controller
         
         $response = array("status" => $firewall, "data" => 1);
         
-        if( $firewall === 'api')
-        {
+        if( $firewall === 'api') {
             return new JsonResponse();
         }
 

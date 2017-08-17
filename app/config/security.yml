@@ -57,7 +57,7 @@ security:
 
                 # login success redirecting options (read further below)
                 always_use_default_target_path: false
-                default_target_path:            /task
+                default_target_path:            /redirect
                 target_path_parameter:          _target_path
                 use_referer:                    false
 
@@ -83,7 +83,8 @@ security:
         - { path: ^/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/user, roles: ROLE_USER }
         - { path: ^/task, roles: ROLE_CREATOR }
-        - { path: ^/mother, roles: ROLE_MOTHER }
+        - { path: ^/mother, roles: [ROLE_MOTHER, ROLE_ADMIN] }
+        - { path: ^/dailyschedule, roles: ROLE_USER }
 #        - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
         
     encoders:

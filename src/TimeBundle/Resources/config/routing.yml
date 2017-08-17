@@ -29,6 +29,10 @@ login:
 logout:
     path:     /logout
     defaults: { _controller: TimeBundle:Security:logout }
+    
+login_redirection:
+    path:   /redirect
+    defaults: { _controller: TimeBundle:Security:redirect }
 
 mother_registration:
     path:     /register

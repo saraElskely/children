@@ -1,9 +1,10 @@
 dailySchedule_index:
-    path:     /{child_id}
-    defaults: { _controller: "TimeBundle:DailySchedule:showChildSchedule" }
+    path:     /{page}/user/{child_id}
+    defaults: { _controller: "TimeBundle:DailySchedule:showChildSchedule", page:1 }
     methods:  GET
     requirements:
         child_id: '\d+'
+        page: '\d+'
 #        firewall: api|dailySchedule
 
 

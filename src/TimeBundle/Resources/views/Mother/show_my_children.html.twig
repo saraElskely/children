@@ -3,13 +3,16 @@
 {% block title %}TimeBundle:Mother:showMyChildren{% endblock %}
 
 {% block body %}
-    <h1>Welcome {{ app.user.fname }}  your children </h1>
-    {% if children %}
+    <h1>Welcome {{ app.user.fname }}  </h1>
+            
+    {% if children is defined %}
+        
+        <h2> {{ children[0].mother.fname }}`s children </h2>
     <div class="row">
         {% for child in children %}
         <div class="col-sm-4">
             <div class="card">
-                <img class="card-img-top" src="..." alt="Card image cap">
+{#                <img class="card-img-top" src="..." alt="Card image cap">#}
                 <div class="card-block">
                   <h3 class="card-title">{{child.username|title}}</h3>
                   <a href="{{ path('dailySchedule_index', { 'child_id': child.id }) }}" class="btn btn-primary">Go To {{child.fname}}`s Schedule</a>
@@ -19,6 +22,6 @@
         {% endfor %}
     </div>
     {% else %}
-        <a class="nav-link" href="{{ path('mother_add_child') }}">Add child</a>
+        <h2> No children </h2>
     {% endif %}
 {% endblock %}

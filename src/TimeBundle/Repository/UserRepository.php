@@ -6,6 +6,9 @@ use TimeBundle\Entity\User;
 use TimeBundle\constant\Roles;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use TimeBundle\Service\PaginatorService;
+use Symfony\Component\Config\Definition\Exception\Exception;
+use TimeBundle\Exception\TimeBundleException;
+use TimeBundle\constant\Exceptions;
 
 /**
  * UserRepository
@@ -15,13 +18,47 @@ use TimeBundle\Service\PaginatorService;
  */
 class UserRepository extends \Doctrine\ORM\EntityRepository
 {
-    public function getChildrenQueryBuilder()
+    public function getUsersQuery()
     {
         return $this->createQueryBuilder('user')
-                  ->select()
-                  ->where('user.role = 3');
+                  ->select();
 
     }
+    public function getUsers($query, $offest =1, $limit=2)
+    {
+        return $query
+                ->setFirstResult($offest)
+                ->setMaxResults($limit)
+                ->getQuery()
+                ->getArrayResult();       
+    }
+    public function getFilteredUsers($username, $role)
+    {
+        $query = $this->createQueryBuilder('user')->select();
+        if(!is_null($username) && $username !== ''){
+            $query->where("user.username LIKE '%$username%'");
+        }
+        if(  in_array($role, Roles::ROLE_ARRAY,TRUE) ) {
+            $query->andWhere("user.role = $role");
+        } 
+        elseif ($role !== null) {
+            throw new TimeBundleException(Exceptions::CODE_ROLE_NOT_FOUND);
+        }
+        return $query;
+    }
+    public function getQueryCount($query)
+    {
+        $alias =  $query->getRootAliases();
+//        dump($alias[0]);
+//        die;       
+        $q = clone $query;
+        return $q
+                ->select("count($alias[0].id)")
+                ->getQuery()
+                ->getSingleScalarResult()
+                ;      
+    }
+
     public function getAdminId()
     {
         $adminUsername = 'admin' ;
@@ -37,17 +74,21 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
     public function getMotherId($childId)
     {
         $mother = $this->createQueryBuilder('user')
-                        ->select()
+                        ->select('mother.id')
                         ->where("user.id =$childId")
+                        ->join('user.mother', 'mother')
                         ->getQuery()
                         ->execute();
-//                dump($mother[0]->getId());
+//                dump($mother[0]['id']);
 //                die();
-        return $mother[0]->getId();
+        if(!isset( $mother[0])) 
+            throw new TimeBundleException(Exceptions::CODE_NOT_CHILD_USER) ;
+        
+        return $mother[0]['id'];
     }
 
-        public function createAdminUser($encodedPassword){
-        
+    public function createAdminUser($encodedPassword)
+    {
         $admin = new User();
         
         $admin->setUsername('admin')
@@ -56,8 +97,7 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
                 ->setFname('admin')
                 ->setLname('admin')
                 ->setPassword($encodedPassword);
-        
-        
+
         $entityManager = $this->getEntityManager();
         $entityManager->persist($admin);
         $entityManager->flush();
@@ -65,7 +105,8 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
         return $admin;
     }
     
-    public function createUser($username ,$fname ,$lname ,$encodedPassword ,$role ,$age,User $mother = null){
+    public function createUser($username ,$fname ,$lname ,$encodedPassword ,$role ,$age,User $mother = null)
+    {
         $user = new User();
         $user->setAge($age)
                 ->setFname($fname)
@@ -87,8 +128,12 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
                 ->where("user.id = $userId")
                 ->getQuery()
                 ->getOneOrNullResult();
-        
-        return $user;   
+        if(is_null($user)) {
+            throw new TimeBundleException(Exceptions::CODE_USER_NOT_FOUND);
+        } else {
+            return $user;
+        }
+           
     }
     
     public function deleteUser($userId)
@@ -108,36 +153,52 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
                 ->getQuery()
                 ->execute();      
     }
+    public function getChildren($motherId)
+    {
+        $children =  $this->createQueryBuilder('user')
+                ->select()
+                ->where("user.mother = $motherId")
+                ->getQuery()
+                ->execute();
+        if(! isset($children[0])) {
+            throw new Exception('children not found');
+        }
+        return $children;
+    }
+    public function checkMotherId($motherId)
+    {
+        $role = Roles::ROLE_MOTHER;
+        $mother = $this->createQueryBuilder('user')
+                ->select()
+                ->where("user.id = $motherId AND user.role = $role")
+                ->getQuery()
+                ->execute();
+        
+        if(!isset( $mother[0])) 
+            throw new Exception('Mother not found ') ;
+        return TRUE;
+    }
 
-    public function getMothers($offest =1, $limit=2)
+    public function getMothers()
     {
         $role = Roles::ROLE_MOTHER;
         $mothers = $this->createQueryBuilder('user')
                 ->select()
                 ->where("user.role = $role")
                 ->getQuery()
-                ->setFirstResult($offest)
-                ->setMaxResults($limit)
-                ->execute();
-        
-//        dump($query);
-//        die();
+                ->execute();       
 
         return $mothers ;
-        
     }
     
-    public function getMothersCount()
+    public function search($name)
     {
-        $role = Roles::ROLE_MOTHER;
         return $this->createQueryBuilder('user')
-                ->select('count(user.id)')
-                ->where("user.role = $role")
+                ->where("user.username LIKE '%$name%'")
+                ->orWhere("user.fname LIKE '%$name%'")
+                ->orWhere("user.lname LIKE '%$name%'")
                 ->getQuery()
-                ->getSingleScalarResult()
-                ;
-        
-        
+                ->getResult();
     }
 
 }

@@ -2,6 +2,8 @@
 
 namespace TimeBundle\Entity;
 
+use Symfony\Component\Validator\Constraints as Assert;
+
 /**
  * Task
  */
@@ -14,6 +16,7 @@ class Task
 
     /**
      * @var string
+     * @Assert\NotBlank()
      */
     private $taskName;
     

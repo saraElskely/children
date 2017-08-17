@@ -6,7 +6,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use TimeBundle\Entity\DailySchedule;
 use TimeBundle\constant\Roles;
 use TimeBundle\Utility\Date;
-
+use TimeBundle\Entity\User;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 /**
  * Description of CreateDailySchedule
  *
@@ -52,9 +53,6 @@ class DailyScheduleService {
             dump($childrenId);
         }
         die();
-//        $todayMotherTasksId = $motherTasks ? $this->getTodayMotherTasksId($motherTasks): NULL;
-//        return $this->entityManager->getRepository('TimeBundle:DailySchedule')
-//                ->createMotherDailySchedule( $todayMotherTasksId, $childId );
     }
     
 //    public function getTodayInWeek()
@@ -129,6 +127,21 @@ class DailyScheduleService {
         return $this->entityManager
                 ->getRepository('TimeBundle:DailySchedule')
                 ->deleteSchedule( $childId, $taskId);
+    }
+   
+    public function denyAccessUnlessGranted(User $user, $childId)
+    {
+        switch ($user->getRole()){
+            case Roles::ROLE_ADMIN :
+                return TRUE;
+            case Roles::ROLE_MOTHER :
+                if( $this->entityManager->getRepository('TimeBundle:User')->getMotherId($childId) === $user->getId() )
+                    return TRUE;
+            case Roles::ROLE_CHILD :
+                if( $user->getId() == $childId)
+                    return TRUE;
+        }
+        throw new AccessDeniedException();
     }
     
     

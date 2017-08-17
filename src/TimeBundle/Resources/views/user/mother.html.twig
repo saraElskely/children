@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    
+    
+    <h1>Mothers list</h1>
+
+    {% if users %}
+        <div class="row">
+            {% for user in users %}
+                <div class="col-sm-4">
+                    <div class="card">
+{#                        <img class="card-img-top" src="..." alt="Card image cap">#}
+                        <div class="card-block">
+                          <h3 class="card-title">{{ user.userName }}</h3>
+                          <a href="{{ path('mother_show_my_children',{'motherId': user.id }) }}" class="btn btn-primary"> Children</a>
+                          <a href="{{ path('user_show', { 'id': user.id }) }}"class="btn btn-primary">Profile</a>
+                        </div>
+
+                    </div>
+                </div>
+
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    
+{% endblock %}
+

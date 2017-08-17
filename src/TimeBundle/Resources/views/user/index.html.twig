@@ -2,45 +2,52 @@
 
 {% block body %}
     
-
     
-    <h1>Mothers list</h1>
-
-    <ul>
-        <li>
-            <a href="{{ path('user_new') }}">Create a new user</a>
-        </li>
-    </ul>
-
-    {% if users %}
-        <div class="row">
-            {% for user in users %}
-                <div class="col-sm-4">
-                    <div class="card">
-                        <img class="card-img-top" src="..." alt="Card image cap">
-                        <div class="card-block">
-                          <h3 class="card-title">{{ user.userName }}</h3>
-                          <a href="{{ path('mother_show_my_children',{'motherId': user.id }) }}" class="btn btn-primary"> Children</a>
-                          <a href="{{ path('user_show', { 'id': user.id }) }}"class="btn btn-primary">Profile</a>
-                        </div>
-
-                    </div>
-                </div>
-
-            {% endfor %}
-        </div>
+    {% if is_granted('ROLE_ADMIN') %} 
+        {{ include('TimeBundle:user:filterForm.html.twig') }}
     {% endif %}
-
+    
+    <table class="table">
+        <thead class="thead-default">
+          <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Username</th>
+            <th>Role</th>
+            <th>Age</th>
+          </tr>
+        </thead>
+        <tbody id='users'>
+          {% if users %}
+              {% for user in users %}
+              <tr>
+                <th>{{user.fname}}</th>
+                <td>{{user.lname}}</td>
+                <td>{{user.username}}</td>
+                <td>{{user.role == 0 ? 'Admin' : user.role == 1 ? 'Mother' : 'Child' }}</td>
+                <td>{{user.age}}</td>
+              </tr>
+              {% endfor %}
+          {% else %}
+              <th>No Search Result </th>
+          {% endif %}
+        </tbody>
+    </table>
+        
     {% if maxPages > 1%}
-        <ul class ="pagination pagination-sm ">
+        <ul class ="pagination pagination-sm " id='pagination'>
             {% for num in 1..maxPages %}
-            <li {{ currentPage == num ? 'class="active"'}} >
-                <a href="{{ path('user_index', { 'page': num }) }}"> << {{num}}  >> </a>
-
+            <li  >
+                <div id='{{num}}' class='page'> << {{num}}  >> </div>
+                
+               {#<a href="{{ path('user_index', { 'page': num }) }}"> << {{num}}  >> </a>
+#}
             </li>
             {% endfor %}
         </ul>
     {% endif%}
+    
+                    
 
     
 {% endblock %}

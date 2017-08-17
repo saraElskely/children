@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <table class="table" style="display:none" >
+          <thead class="thead-default">
+            <tr>
+              <th>Task Name</th>
+              <th>Creator</th>
+              <th>Schedule</th>
+            </tr>
+          </thead>
+          <tbody id="">
+            {% if tasks %}
+                {% for task in tasks %}
+                <tr>
+                  <th>{{ task.taskName }}</th>
+                  <td>{{ task.creator.username}}</td>
+                  <td>
+                      <ul>
+                        {% if task.schedule == 0 %}
+                            <li>Daily</li>
+                        {% else %}
+                        {% for day in task.schedule|scheduleDate %}
+                            <li>{{day}} </li>
+                        {% endfor%}
+                        {% endif %}
+                      </ul>
+                  </td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <th>No Search Result </th>
+            {% endif %}
+          </tbody>
+        </table>
+    
+    
+    
+
+{% endblock %}

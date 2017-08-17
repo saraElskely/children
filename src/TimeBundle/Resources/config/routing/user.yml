@@ -1,24 +1,38 @@
 user_index:
     path:     /{page}
-    defaults: { _controller: "TimeBundle:User:index",page:1 }
+    defaults: { _controller: "TimeBundle:User:index", page:1 }
     methods:  GET
+    requirements:
+        page: '\d+'
 
 user_show:
     path:     /{id}/show
     defaults: { _controller: "TimeBundle:User:show" }
     methods:  GET
-
-user_new:
-    path:     /new
-    defaults: { _controller: "TimeBundle:User:register" }
-    methods:  [GET, POST]
+    requirements:
+        id: '\d+'
 
 user_edit:
     path:     /{id}/edit
     defaults: { _controller: "TimeBundle:User:edit" }
     methods:  [GET, POST]
+    requirements:
+        id: '\d+'
+    
 
 user_delete:
     path:     /{id}/delete
     defaults: { _controller: "TimeBundle:User:delete" }
     methods:  DELETE
+    requirements:
+        id: '\d+'
+
+user_filter:
+    path:   /{page}/filter
+    defaults: { _controller: "TimeBundle:User:filter",page:1 }
+ 
+user_mother:
+    path:     /mothers
+    defaults: { _controller: "TimeBundle:User:getMothers" }
+    methods:  GET
+ 

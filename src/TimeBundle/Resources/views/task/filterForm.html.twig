@@ -1,0 +1,98 @@
+{% set filter = app.session.get('filter') %}
+{#{% if filter is defined %}
+    {{ dump(filter['taskName'])}}
+{% endif %}#}
+<form id='filterForm'>
+    <label for="taskName">Task Name</label>
+    <input type="text"  name="taskName" value="{{filter['taskName']}}" id='taskName'/>
+
+    <label for="shedule">Schedule</label>
+    <select name="schedule" id='schedule'>
+        <option {{filter['schedule'] == -1 ? 'selected' :'' }} value="-1">Schedule</option>
+        <option {{filter['schedule'] == 0 ? 'selected' :'' }} value="0">Daily</option>
+        <option {{filter['schedule'] == 1 ? 'selected' :'' }} value="1">Sunday</option>
+        <option {{filter['schedule'] == 2 ? 'selected' :'' }} value="2">Monday</option>
+        <option {{filter['schedule'] == 4 ? 'selected' :'' }} value="4">Tuesday</option>
+        <option {{filter['schedule'] == 8 ? 'selected' :'' }} value="8">Wednesday</option>
+        <option {{filter['schedule'] == 16 ? 'selected' :'' }} value="16">thursday</option>
+        <option {{filter['schedule'] == 32 ? 'selected' :'' }} value="32">Friday</option>
+        <option {{filter['schedule'] == 64 ? 'selected' :'' }} value="64">Saturday</option>
+    </select>
+    
+
+    <button  id='filter'>Filter</button>
+</form>
+
+   
+<script>
+    $(document).ready(function () {
+
+        $('#pagination').on('click',function (e) {
+            console.log(e);
+            e.preventDefault();
+            var filter = {'taskName': $('#taskName').val(),
+                'schedule': $('#schedule').val()};
+            pageClick(e, filter);
+        });
+
+        $("#filter").click(function (e) {
+            e.preventDefault();
+            var filter = {'taskName': $('#taskName').val(),
+                'schedule': $('#schedule').val()};
+            console.log(filter);
+    {#                      return false;#}
+            getResult('{{ path('task_filter',{'page':1 }) }}', filter);
+        });
+
+        function pageClick(e, filter) {
+            console.log(filter);
+            var p = e.target.id;
+            if(! isNaN(p)) {
+                getResult("/task/" + p + "/filter", filter);
+            }
+        }
+
+        function toFormData(url, filter) {
+            var result = url;
+            var str = [];
+            for (var p in filter)
+                str.push(encodeURIComponent(p) + "=" + encodeURIComponent(filter[p]));
+            result += str.join("&");
+            return result;
+        }
+
+        function getResult(url, filter) {
+            var url = toFormData(url + "?", filter);
+            console.log(url);
+            $.ajax({"url": url,
+                "method": "GET",
+                "dataType": "json",
+                success: function (result) {
+
+                    if (result) {
+                        console.log(result);
+                        var strTask = "<tr>";
+                        $.each(result.tasks, function (key, task) {
+                            strTask += "<th>" + task[0].taskName + "</th>\
+                                                      <td>" +task['username'] + "</td><td></td>\
+                                                    ";
+                            strTask += '</tr>';
+                        });
+                        var strPaginate = "";
+                        if (result.maxPages > 1) {
+                            for (var page = 1; page <= result.maxPages; page++) {
+                                strPaginate += "<li><div id='" + page + "'class='page'> << " + page + " >> </div> </li>";
+                            }
+                        }    
+                        $('#table').slideDown(500);             
+                        $('#tasksBlock').empty();
+                        $('#tbody').empty();
+                        $('#tbody').append(strTask);
+                        $('#pagination').empty();
+                        $('#pagination').append(strPaginate);
+                    }
+                }
+            });
+        }
+    });
+</script>

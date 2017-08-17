@@ -9,6 +9,7 @@ use TimeBundle\Form\UserType;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use TimeBundle\constant\Roles;
 use TimeBundle\Service\UserService;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class MotherController extends Controller {
 
@@ -22,7 +23,7 @@ class MotherController extends Controller {
         if ($form->isSubmitted() && $form->isValid()) {
             $password = $passwordEncoder->encodePassword($user, $user->getPassword());
 
-                $user = $this->get(UserService::class)
+            $user = $this->get(UserService::class)
                         ->createUser($user->getUsername(), $user->getFname(), $user->getFname(), $password, Roles::ROLE_MOTHER, $user->getAge());
 
             return $this->redirectToRoute('mother_show_my_children',array(
@@ -36,7 +37,11 @@ class MotherController extends Controller {
         ));
     }
 
-    public function addChildAction(Request $request) {
+    public function addChildAction(Request $request) 
+    {
+        if( $this->getUser()->getRole() !== Roles::ROLE_MOTHER ) {
+            throw new AccessDeniedException();
+        }
         $passwordEncoder = $this->get('security.password_encoder');
 
         $user = new User();
@@ -61,13 +66,17 @@ class MotherController extends Controller {
         
     }
 
-    public function showMyChildrenAction($motherId) {
+    public function showMyChildrenAction($motherId) 
+    {
+        $user = $this->getUser();
+        $this->get(UserService::class)->denyAccessUnlessShowChildrenGranted($user, $motherId);
+        
         $mother = $this->get(UserService::class)->getUser($motherId);
-        $children = $mother->getChildren();
+        $children = $this->get(UserService::class)->getChildren($motherId);
 
         return $this->render('TimeBundle:Mother:show_my_children.html.twig', array(
-                    'children' => $children
-        ));
+                'children' => $children
+        ));       
     }
 
 //    public function showMyChildrenTasksAction()

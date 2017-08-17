@@ -43,3 +43,16 @@ services:
     app.jwt_token_authenticator:
         parent: lexik_jwt_authentication.security.guard.jwt_token_authenticator
         class: TimeBundle\Security\Guard\JWTAuthenticator
+        
+    TimeBundle\Twig\:
+        resource: '../../src/TimeBundle/Twig'
+        public: true
+        tags:
+            - { name: twig.extension }
+            
+    TimeBundle.exception_listener:
+        class: TimeBundle\EventListener\ExceptionListener
+        arguments: 
+            $twig: '@templating.engine.twig'
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception }

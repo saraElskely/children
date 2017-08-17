@@ -25,7 +25,7 @@
             <a href="{{ path('task_index') }}">Back to the list</a>
         </li>
         <li>
-            <a href="{{ path('task_edit', { 'id': task.id }) }}">Edit</a>
+            <a href="{{ path('task_edit', { 'task_id': task.id }) }}">Edit</a>
         </li>
         <li>
             {{ form_start(delete_form) }}

@@ -5,6 +5,8 @@ namespace TimeBundle\Repository;
 use TimeBundle\constant\Roles;
 use TimeBundle\Entity\Task;
 use TimeBundle\Entity\User;
+use TimeBundle\constant\Schedule;
+use Symfony\Component\Config\Definition\Exception\Exception;
 
 /**
  * TaskRepository
@@ -16,10 +18,19 @@ class TaskRepository extends \Doctrine\ORM\EntityRepository
 {
     public function createTask($taskName , $schedule ,$creator)
     {
+        $newSchedule= Schedule::SCHEDULE_DAILY;
+        foreach ($schedule as $value) {
+            if($value === Schedule::SCHEDULE_DAILY) {
+                $newSchedule = $value;
+                break;
+            }
+            $newSchedule = $newSchedule | $value ;
+        }
+
         $task = new Task();
         $task->setTaskName($taskName)
                 ->setCreator($creator)
-                ->setSchedule($schedule);
+                ->setSchedule($newSchedule);
         
         $entityManager = $this->getEntityManager();
         $entityManager->persist($task);
@@ -28,11 +39,21 @@ class TaskRepository extends \Doctrine\ORM\EntityRepository
                 
     }
     
-    public function deleteTask($task_id)
+    public function getTask($taskId)
+    {
+        $task = $this->findById($taskId); 
+
+        if(!isset( $task[0])) 
+            throw new Exception('task not found ') ;
+        
+        return $task[0] ;
+    }
+
+    public function deleteTask($taskId)
     {
         $this->createQueryBuilder('task')
                 ->delete()
-                ->where("task.id = $task_id")
+                ->where("task.id = $taskId")
                 ->getQuery()
                 ->execute();
     }
@@ -53,18 +74,51 @@ class TaskRepository extends \Doctrine\ORM\EntityRepository
     {
         $today = new \DateTime();
         $today = $today->format('Y-m-d');
-        
+
         $adminId = $this->getEntityManager()->getRepository('TimeBundle:User')->getAdminId();
-        dump( $this->createQueryBuilder('task')
+        $SCHEDULE_DAILY = Schedule::SCHEDULE_DAILY;
+
+        return  $this->createQueryBuilder('task')
                 ->select('task , schedule.isDone')
-                ->leftJoin('TimeBundle:DailySchedule', 'schedule','WITH',"task.id = schedule.id AND schedule.date = '$today'")
-                ->where("task.schedule = 0 OR task.schedule = $todayAsSchedule")
+                ->leftJoin('TimeBundle:DailySchedule', 'schedule','WITH'," schedule.date = '$today'")
+                ->where("task.schedule = $SCHEDULE_DAILY OR task.schedule = $todayAsSchedule")
                 ->andWhere("task.creator = $adminId OR task.creator = $motherId")
                 ->getQuery()
-                ->execute());
-        die();
+                ->execute();
     }
 
+    public function getWeeklyChildTasks($startDate, $motherId, $childId)
+    { 
+        $start = $startDate;
+        
+        $date = new \DateTime($start);
+        $end = $date->modify('+1 week')->format('Y-m-d');
+        dump($startDate);
+        dump($end);
+        $adminId = $this->getEntityManager()->getRepository('TimeBundle:User')->getAdminId();       
+//        SELECT t.* ,s.is_done ,s.date
+//        FROM task AS t
+//        LEFT JOIN daily_schedule AS s 
+//        ON t.id = s.taskId  AND (s.date BETWEEN '2017-07-28' AND '2017-08-04') AND s.userId = 23
+//        WHERE t.user IN (10 ,7)
+        $sql = "SELECT t.* ,s.is_done ,s.date FROM task AS t LEFT JOIN daily_schedule AS s ON t.id = s.taskId  AND (s.date BETWEEN :start AND :end) AND s.userId = :childId WHERE t.user IN (:adminId ,:motherId)";
+        $connection = $this->getEntityManager()->getConnection();
+        $query = $connection->prepare($sql);
+        $query->bindValue('start', $start);
+        $query->bindValue('end', $end);
+        $query->bindValue('childId', $childId);
+        $query->bindValue('motherId', $motherId);
+        $query->bindValue('adminId', $adminId);
+        $query->execute();
+        return $query->fetchAll();       
+//        dump(  $this->createQueryBuilder('task')
+//                ->select('task, schedule.isDone, schedule.date')
+//                ->leftJoin('TimeBundle:DailySchedule', 'schedule','WITH',
+//                        "task.id = schedule.taskInSchedule AND (schedule.date BETWEEN '$start' AND '$end') AND schedule.userInSchedule = $childId")
+//                ->Where("task.creator IN ($adminId,  $motherId)")
+//                ->getQuery()
+//                ->execute());  
+    }
 
     public function getMotherTasks($motherId)
     {
@@ -87,9 +141,43 @@ class TaskRepository extends \Doctrine\ORM\EntityRepository
         $mothersTasks = $this->createQueryBuilder('task')->select()
                 ->where($qb->expr()->in('task.creator', $subquery))
                 ->getQuery()
-                ->getArrayResult();
+                ->getResult();
         
         return $mothersTasks ;
         
+    }
+    
+    public function getFilteredTasksQuery($taskName, $schedule)
+    {
+        $query = $this->createQueryBuilder('task')
+                ->select('task, user.username')
+                ->join('TimeBundle:User', 'user','WITH',"task.creator = user.id");
+        if( $taskName !== ''){
+            $query->where("task.taskName LIKE '%$taskName%'");
+        }
+        $schedule == 0 ? $query->andWhere("task.schedule = $schedule"): $schedule != -1 ?
+            $query->andWhere("BIT_AND(task.schedule, $schedule) = $schedule") : $query ;
+        
+        return $query;
+    }
+    
+    public function getQueryCount($query)
+    {
+        $alias =  $query->getRootAliases();       
+        $q = clone $query;
+        return $q
+                ->select("count($alias[0].id)")
+                ->getQuery()
+                ->getSingleScalarResult()
+                ;      
+    }
+    
+    public function getTasks($query, $offest =1, $limit=2)
+    {
+        return $query
+                ->setFirstResult($offest)
+                ->setMaxResults($limit)
+                ->getQuery()
+                ->getArrayResult();       
     }
 }

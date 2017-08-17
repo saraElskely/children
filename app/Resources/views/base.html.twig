@@ -23,6 +23,12 @@
           {% elseif is_granted('ROLE_CHILD') %}
               <a class="nav-link" href="{{ path('dailySchedule_index',{'child_id': app.user.id }) }}">Your Schedule</a>
               <a class="nav-link" href="{{ path('dailySchedule_show',{'child_id': app.user.id }) }}">Today Schedule</a>
+          {% elseif is_granted('ROLE_ADMIN') %}
+              <a class="nav-link" href="{{ path('user_index') }}">Users</a>
+              <a class="nav-link" href="{{ path('user_mother') }}">Mothers</a>
+              <a class="nav-link" href="{{ path('task_index') }}">Tasks</a>
+              <a class="nav-link" href="{{ path('task_new') }}">Create task</a>
+     
           {% endif %}
           
           {% if is_granted('IS_AUTHENTICATED_FULLY') %}
@@ -38,7 +44,12 @@
     </div>        
 
     <div class='container'>      
-            
+            {#{% if is_granted('ROLE_ADMIN') %}
+                
+                {{ include('TimeBundle:task:searchForm.html.twig') }}
+                {{ include('TimeBundle:user:searchForm.html.twig') }}
+                
+            {% endif %}#}
 
         {% block body %}
         
