@@ -22,9 +22,13 @@
                                 <li class="list-group-item">
                                     {{ task.taskName }} 
                                     <ul>
-                                        {% for day in task.schedule|scheduleDate %}
-                                            <li>{{day}} </li>
+                                        {% if  task.schedule == 0 %}    
+                                            <li>{{ 'Daily'}}</li>
+                                        {% else %}
+                                            {% for day in task.schedule|scheduleDate %}
+                                                <li>{{day}} </li>
                                             {% endfor%}
+                                        {% endif %}
                                     </ul>
                                 </li>
 
@@ -54,9 +58,13 @@
                                         <li>{{ task.creator.username }}</li>
                                     </ul>
                                     <ul>
-                                        {% for day in task.schedule|scheduleDate %}
-                                            <li>{{day}} </li>
-                                        {% endfor%}
+                                        {% if  task.schedule == 0 %}    
+                                            <li>{{ 'Daily'}}</li>
+                                        {% else %}
+                                            {% for day in task.schedule|scheduleDate %}
+                                                <li>{{day}} </li>
+                                            {% endfor%}
+                                        {% endif %}
                                     </ul>                        
                                 </li>
 
@@ -115,24 +123,24 @@
     </div>
                         
     <table class="table" style="display:none"  id="table">
-          <thead class="thead-default">
+        <thead class="thead-default">
             <tr>
               <th>Task Name</th>
               <th>Creator</th>
               <th>Schedule</th>
             </tr>
-          </thead>
+        </thead>
         <tbody id="tbody">
             
         </tbody>
     </table>
                         
                         
-        <nav aria-label="...">
-            <ul class="pagination" id='pagination' >
-                
-            </ul>
-        </nav>
+    <nav aria-label="...">
+        <ul class="pagination" id='pagination' >
+
+        </ul>
+    </nav>
 
 
 {% endblock %}
