@@ -1,14 +1,13 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    {#{{dump()}}#}
+    <a class="card-link" href="{{ path('dailySchedule_show', { 'child_id': child_id }) }}">Today Schedule </a>
+    <br><br>
     <h1>User Dailyschedules list</h1>
-
-          <a class="card-link" href="{{ path('dailySchedule_show', { 'child_id': child_id }) }}">Today Schedule </a>
-
+          <br>
+          
             {% if dailySchedules %}
                 <div class="row">
-  
                 {% for taskDate,dailySchedule in dailySchedules %}
                     <div class="col-sm-3">
                         <div class="card" >
@@ -53,9 +52,22 @@
                 {% endfor %}
                 </div>
             {% endif %}
-            <a href="{{ path('dailySchedule_index', { 'page': (page+1), 'child_id': child_id }) }}" class="btn btn-primary">pre</a>
-            <a href="{{ path('dailySchedule_index', { 'page': page == 1? page :(page-1), 'child_id': child_id }) }}" class="btn btn-primary">next</a>
-
-            
+           
+    {% if maxWeeks > 1%}
+        <nav aria-label="...">
+            <ul class="pagination" id='pagination'  >
+                {% for num in maxWeeks..1 %}
+                    <li class="{{ currentWeek == num ? 'page-item active' : 'page-item'}}" style="cursor: pointer;">
+                        <div   id='{{num}}' class='page'>
+                            <a class="page-link" href="{{ path('dailySchedule_index', {'child_id': child_id }) }}?week={{num}}">
+                                {{num}}      
+                            </a>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </nav>
+        
+    {% endif%}           
     
 {% endblock %}

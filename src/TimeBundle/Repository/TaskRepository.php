@@ -17,25 +17,11 @@ use TimeBundle\constant\Exceptions;
  */
 class TaskRepository extends \Doctrine\ORM\EntityRepository {
 
-    private function getSchedule($schedule) {
-        $newSchedule = Schedule::SCHEDULE_DAILY;
-        foreach ($schedule as $value) {
-            if ($value === Schedule::SCHEDULE_DAILY) {
-                $newSchedule = $value;
-                break;
-            }
-            $newSchedule = $newSchedule | $value;
-        }
-        return $newSchedule;
-    }
-
     public function createTask($taskName, $schedule, $creator) {
-        $newSchedule = $this->getSchedule($schedule);
-
         $task = new Task();
         $task->setTaskName($taskName)
                 ->setCreator($creator)
-                ->setSchedule($newSchedule);
+                ->setSchedule($schedule);
 
         $entityManager = $this->getEntityManager();
         $entityManager->persist($task);
@@ -44,30 +30,30 @@ class TaskRepository extends \Doctrine\ORM\EntityRepository {
     }
 
     public function updateTask($taskId, $taskName, $schedule) {
-        $newSchedule = $this->getSchedule($schedule);
         return $this->createQueryBuilder('task')
                         ->update()
                         ->set('task.taskName', $taskName)
-                        ->set('task.schedule', $newSchedule)
-                        ->where("task.id = $taskId")
+                        ->set('task.schedule', $schedule)
+                        ->where("task.id = :taskId")
+                        ->setParameter('taskId', $taskId)
                         ->getQuery()
                         ->execute();
     }
 
     public function getTask($taskId) {
-        $task = $this->findById($taskId);
-
-        if (!isset($task[0])) {
+        $task = $this->findOneById($taskId);
+        if (!isset($task)) {
             throw new TimeBundleException(Exceptions::CODE_TASK_NOT_FOUND);
         }
 
-        return $task[0];
+        return $task;
     }
 
     public function deleteTask($taskId) {
         $this->createQueryBuilder('task')
                 ->delete()
-                ->where("task.id = $taskId")
+                ->where("task.id = :taskId")
+                ->setParameter('taskId', $taskId)
                 ->getQuery()
                 ->execute();
     }
@@ -76,35 +62,36 @@ class TaskRepository extends \Doctrine\ORM\EntityRepository {
         $adminId = $this->getEntityManager()->getRepository('TimeBundle:User')->getAdminId();
         return $this->createQueryBuilder('task')
                         ->select()
-                        ->where("task.creator = $adminId")
-//                ->andWhere("task.schedule = 0 OR task.schedule = $todayAsSchedule")
+                        ->where("task.creator = :adminId")
+                        ->setParameter('adminId', $adminId)
                         ->getQuery()
                         ->execute();
     }
 
-    public function getTodayChildTasks($todayAsSchedule, $motherId) {
-        $today = new \DateTime();
-        $today = $today->format('Y-m-d');
+    public function getTodayChildTasks($todayAsSchedule, $motherId, $childId) {
+        $today = (new \DateTime())->format('Y-m-d');
 
         $adminId = $this->getEntityManager()->getRepository('TimeBundle:User')->getAdminId();
-        $SCHEDULE_DAILY = Schedule::SCHEDULE_DAILY;
-
+       
         return $this->createQueryBuilder('task')
                         ->select('task , schedule.isDone')
-                        ->leftJoin('TimeBundle:DailySchedule', 'schedule', 'WITH', " schedule.date = '$today'")
-                        ->where("task.schedule = $SCHEDULE_DAILY OR task.schedule = $todayAsSchedule")
-                        ->andWhere("task.creator = $adminId OR task.creator = $motherId")
+                        ->leftJoin('TimeBundle:DailySchedule', 'schedule', 'WITH', " schedule.date = :today AND schedule.userInSchedule = :childId AND task.id = schedule.taskInSchedule")
+                        ->setParameter('today', $today)
+                        ->setParameter('childId', $childId)
+                        ->where("task.schedule = :daily OR task.schedule = :todayAsSchedule")
+                        ->setParameter('daily', Schedule::SCHEDULE_DAILY )
+                        ->setParameter('todayAsSchedule', $todayAsSchedule)
+                        ->andWhere("task.creator = :adminId OR task.creator = :motherId")
+                        ->setParameter('adminId', $adminId)
+                        ->setParameter('motherId', $motherId)
                         ->getQuery()
                         ->execute();
     }
 
     public function getWeeklyChildTasks($startDate, $motherId, $childId) {
-        $start = $startDate;
-
-        $date = new \DateTime($start);
-        $end = $date->modify('+1 week')->format('Y-m-d');
+        $endDate = (new \DateTime($startDate))->modify('+1 week')->format('Y-m-d');
         dump($startDate);
-        dump($end);
+        dump($endDate);
         $adminId = $this->getEntityManager()->getRepository('TimeBundle:User')->getAdminId();
 //        SELECT t.* ,s.is_done ,s.date
 //        FROM task AS t
@@ -114,8 +101,8 @@ class TaskRepository extends \Doctrine\ORM\EntityRepository {
         $sql = "SELECT t.* ,s.is_done ,s.date FROM task AS t LEFT JOIN daily_schedule AS s ON t.id = s.taskId  AND (s.date BETWEEN :start AND :end) AND s.userId = :childId WHERE t.user IN (:adminId ,:motherId)";
         $connection = $this->getEntityManager()->getConnection();
         $query = $connection->prepare($sql);
-        $query->bindValue('start', $start);
-        $query->bindValue('end', $end);
+        $query->bindValue('start', $startDate);
+        $query->bindValue('end', $endDate);
         $query->bindValue('childId', $childId);
         $query->bindValue('motherId', $motherId);
         $query->bindValue('adminId', $adminId);
@@ -133,7 +120,8 @@ class TaskRepository extends \Doctrine\ORM\EntityRepository {
     public function getMotherTasks($motherId) {
         return $this->createQueryBuilder('task')
                         ->select()
-                        ->where("task.creator = $motherId")
+                        ->where("task.creator = :motherId")
+                        ->setParameter('motherId', $motherId)
                         ->getQuery()
                         ->execute();
     }

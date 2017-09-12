@@ -1,28 +1,3 @@
-
-api_dailySchedule_change_state:
-    path:   /dailyschedule/today/task/{task_id}/state/{state}
-    defaults: { _controller: "TimeBundle:DailySchedule:changeScheduleState" }
-    methods:  POST
-    requirements:
-        schedule_id: '\d+'
-        state: 1|0 
-        
-api_task_filter:
-    path:   /tasks/{page}/filter
-    defaults: { _controller: "TimeBundle:Task:filter", page:1 }
-    methods:  GET
-    requirements:
-        page: '\d+'
-
-api_user_filter:
-    path:   /users/{page}/filter
-    defaults: { _controller: "TimeBundle:User:filter",page:1 }
-    methods:  GET
-    requirements:
-        page: '\d+'
-
-####################################
-
 api_mother_registration:
     path:     /register
     defaults: { _controller: TimeBundle:Mother:motherRegistration }
@@ -43,11 +18,9 @@ api_test:
 ###########################
 
 api_user_index:
-    path:     /users/{page}
-    defaults: { _controller: "TimeBundle:User:index", page:1 }
+    path:     /user/
+    defaults: { _controller: "TimeBundle:User:index" }
     methods:  GET
-    requirements:
-        page: '\d+'
 
 api_user_show:
     path:     /user/{id}/show
@@ -74,6 +47,11 @@ api_user_mother:
     path:     /user/mothers
     defaults: { _controller: "TimeBundle:User:getMothers" }
     methods:  GET
+    
+api_user_filter:
+    path:   /user/filter
+    defaults: { _controller: "TimeBundle:User:filter" }
+    methods:  GET
 
 
 ###############################
@@ -93,10 +71,17 @@ api_dailySchedule_show:
     requirements:
         child_id: '\d+'
         
+api_dailySchedule_change_state:
+    path:   /dailyschedule/today/task/{task_id}/state
+    defaults: { _controller: "TimeBundle:DailySchedule:changeScheduleState" }
+    methods:  POST
+    requirements:
+        schedule_id: '\d+' 
+        
 ###################################  
 
 api_task_index:
-    path:     /tasks/
+    path:     /task/
     defaults: { _controller: "TimeBundle:Task:index" }
     methods:  GET
 
@@ -112,12 +97,12 @@ api_task_new:
     defaults: { _controller: "TimeBundle:Task:new" }
     methods:  [ POST]
 
-api_task_edit:
-    path:     /task/{task_id}/edit
-    defaults: { _controller: "TimeBundle:Task:edit" }
-    methods:  [POST]
-    requirements:
-        task_id: '\d+'
+#api_task_edit:
+#    path:     /task/{task_id}/edit
+#    defaults: { _controller: "TimeBundle:Task:edit" }
+#    methods:  [POST]
+#    requirements:
+#        task_id: '\d+'
 
 api_task_delete:
     path:     /task/{task_id}/delete
@@ -125,6 +110,11 @@ api_task_delete:
     methods:  DELETE
     requirements:
         task_id: '\d+'
+        
+api_task_filter:
+    path:   /task/filter
+    defaults: { _controller: "TimeBundle:Task:filter" }
+    methods:  GET
 
 
         

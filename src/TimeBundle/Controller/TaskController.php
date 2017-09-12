@@ -7,12 +7,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use TimeBundle\Service\TaskService;
 use TimeBundle\constant\Roles;
-//use JMS\Serializer\SerializerBuilder;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use TimeBundle\Exception\TimeBundleException;
 use TimeBundle\constant\Exceptions;
 use TimeBundle\Security\ApiFirewallMatcher;
 use TimeBundle\constant\General;
+use TimeBundle\constant\Actions;
 
 /**
  * Task controller.
@@ -27,14 +27,8 @@ class TaskController extends Controller
     public function indexAction(Request $request)
     {        
         $user = $this->getUser();
-        $this->get(TaskService::class)->denyAccessUnlessGranted('index', $user);
-        if($user->getRole() === Roles::ROLE_ADMIN) {
-            $session = $this->get('session');
-            $session->set('filter', array(
-                'taskName' => null,
-                'schedule' => -1,
-            ));
-        }
+        $this->get(TaskService::class)->denyAccessUnlessGranted(Actions::INDEX, $user);
+        
         $tasks = $this->get(TaskService::class)
                     ->getTasks($user->getId(),$user->getRole());
 
@@ -47,26 +41,25 @@ class TaskController extends Controller
         ));
     }
 
-    public function filterAction(Request $request, $page=1)
+    public function filterAction(Request $request)
     {   
         if ($this->getUser()->getRole() !== Roles::ROLE_ADMIN) {
             throw new AccessDeniedException();
         }
-        $limit = General::PAGINATION_LIMIT;
+        
         $taskName = $request->query->get('taskName') === '' ? null : $request->query->get('taskName') ;
         $schedule = $request->query->getInt('schedule',-1);
         
-        $session = $this->get('session');
-        $session->set('filter', array(
-            'taskName' => $taskName,
-            'schedule' => $schedule,
-        ));
+        $page = $request->query->get('page') === null ? 1 : $request->query->getInt('page', 1);
+        if($page === 0) {
+            throw new TimeBundleException(Exceptions::CODE_PAGE_NUM_NOT_FOUND);
+        }
         $tasks = $this->get(TaskService::class)
-                    ->getFilteredTasks($taskName, $schedule, $page, $limit);
+                    ->getFilteredTasks($taskName, $schedule, $page, General::PAGINATION_LIMIT);
 
 //        dump($tasks);
 //        die;
-        return new JsonResponse($tasks);
+        return new JsonResponse(array('status'=> 1 , 'data'=>$tasks));
 //        return $this->render('TimeBundle:task:search.html.twig', array('tasks' => $tasks));
     
     }
@@ -77,7 +70,7 @@ class TaskController extends Controller
     public function newAction(Request $request)
     {
         $user = $this->getUser();
-        $this->get(TaskService::class)->denyAccessUnlessGranted('new', $user);
+        $this->get(TaskService::class)->denyAccessUnlessGranted(Actions::CREATE, $user);
         
         $task = new Task();
         $form = $this->createForm('TimeBundle\Form\TaskType', $task);
@@ -107,7 +100,7 @@ class TaskController extends Controller
     {
         $user = $this->getUser();
         $task = $this->get(TaskService::class)->getTask($task_id);
-        $this->get(TaskService::class)->denyAccessUnlessGranted('show', $user, $task);
+        $this->get(TaskService::class)->denyAccessUnlessGranted(Actions::SHOW, $user, $task);
         
         $deleteForm = $this->createDeleteForm($task);
         if( ApiFirewallMatcher::matches($request) )
@@ -129,7 +122,7 @@ class TaskController extends Controller
     {
         $user = $this->getUser();
         $task = $this->get(TaskService::class)->getTask($task_id);
-        $this->get(TaskService::class)->denyAccessUnlessGranted('edit', $user, $task);
+        $this->get(TaskService::class)->denyAccessUnlessGranted(Actions::EDIT, $user, $task);
 
         $deleteForm = $this->createDeleteForm($task);
         $editForm = $this->createForm('TimeBundle\Form\TaskType', $task);
@@ -158,7 +151,7 @@ class TaskController extends Controller
         $user = $this->getUser();
         $task = $this->get(TaskService::class)->getTask($task_id);
         
-        $this->get(TaskService::class)->denyAccessUnlessGranted('delete', $user, $task);
+        $this->get(TaskService::class)->denyAccessUnlessGranted(Actions::DELETE, $user, $task);
         
         $form = $this->createDeleteForm($task);
         $form->handleRequest($request);

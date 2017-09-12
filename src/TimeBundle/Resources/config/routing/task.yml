@@ -1,17 +1,17 @@
 task_index:
-    path:     /tasks/
+    path:     /
     defaults: { _controller: "TimeBundle:Task:index" }
     methods:  GET
 
 task_show:
-    path:     /task/{task_id}/show
+    path:     /{task_id}/show
     defaults: { _controller: "TimeBundle:Task:show" }
     methods:  GET
     requirements:
         task_id: '\d+'
 
 task_new:
-    path:     /task/new
+    path:     /new
     defaults: { _controller: "TimeBundle:Task:new" }
     methods:  [GET, POST]
 
@@ -23,15 +23,13 @@ task_new:
 #        task_id: '\d+'
 
 task_delete:
-    path:     /task/{task_id}/delete
+    path:     /{task_id}/delete
     defaults: { _controller: "TimeBundle:Task:delete" }
     methods:  DELETE
     requirements:
         task_id: '\d+'
 
 task_filter:
-    path:   /tasks/{page}/filter
-    defaults: { _controller: "TimeBundle:Task:filter", page:1 }
+    path:   /filter
+    defaults: { _controller: "TimeBundle:Task:filter" }
     methods:  GET
-    requirements:
-        page: '\d+'

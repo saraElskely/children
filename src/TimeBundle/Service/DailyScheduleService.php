@@ -41,19 +41,19 @@ class DailyScheduleService {
         }
     }
 
-    public function createMothersDailySchedule($motherId, $childId) {
-        $todayAsSchedule = Date::getTodayInWeek();
-        $mothersTasks = $this->entityManager->getRepository('TimeBundle:Task')
-                ->getTodayMothersTasks($todayAsSchedule);
-        foreach ($mothersTasks as $task) {
-            $motherId = $task->getCreator()->getId();
-            $childrenId = $this->entityManager
-                    ->getRepository('TimeBundle:User')
-                    ->getMotherChildrenId($motherId);
-            dump($childrenId);
-        }
-        die();
-    }
+//    public function createMothersDailySchedule($motherId, $childId) {
+//        $todayAsSchedule = Date::getTodayInWeek();
+//        $mothersTasks = $this->entityManager->getRepository('TimeBundle:Task')
+//                ->getTodayMothersTasks($todayAsSchedule);
+//        foreach ($mothersTasks as $task) {
+//            $motherId = $task->getCreator()->getId();
+//            $childrenId = $this->entityManager
+//                    ->getRepository('TimeBundle:User')
+//                    ->getMotherChildrenId($motherId);
+//            dump($childrenId);
+//        }
+//        die();
+//    }
 
     public function getTodayMotherTasksId($motherTasks) {
         $todayMotherTasksId = array();
@@ -92,7 +92,7 @@ class DailyScheduleService {
     }
 
     public function changeScheduleState($childId, $taskId, $state) {
-        if ($state) {
+        if (!$state) {
             return $this->deleteSchedule($childId, $taskId);
         } else {
             return $this->createDailySchedule($childId, $taskId);
@@ -130,7 +130,7 @@ class DailyScheduleService {
         }
         return $this->entityManager
                         ->getRepository('TimeBundle:DailySchedule')
-                        ->deleteSchedule($childId, $taskId);
+                        ->deleteSchedule($child->getId(), $task->getId());
     }
 
     public function denyAccessUnlessGranted(User $user, $childId) {
@@ -138,11 +138,13 @@ class DailyScheduleService {
             case Roles::ROLE_ADMIN :
                 return TRUE;
             case Roles::ROLE_MOTHER :
-                if ($this->entityManager->getRepository('TimeBundle:User')->getMotherId($childId) === $user->getId())
+                if ($this->entityManager->getRepository('TimeBundle:User')->getMotherId($childId) === $user->getId()) {
                     return TRUE;
+                }
             case Roles::ROLE_CHILD :
-                if ($user->getId() == $childId)
+                if ($user->getId() == $childId) {
                     return TRUE;
+                }
         }
         throw new TimeBundleException(Exceptions::CODE_ACCESS_DENIED);
     }

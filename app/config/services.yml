@@ -50,9 +50,9 @@ services:
         tags:
             - { name: twig.extension }
             
-    TimeBundle.exception_listener:
-        class: TimeBundle\EventListener\ExceptionListener
-        arguments: 
-            $twig: '@templating.engine.twig'
-        tags:
-            - { name: kernel.event_listener, event: kernel.exception }
+#    TimeBundle.exception_listener:
+#        class: TimeBundle\EventListener\ExceptionListener
+#        arguments: 
+#            $twig: '@templating.engine.twig'
+#        tags:
+#            - { name: kernel.event_listener, event: kernel.exception }

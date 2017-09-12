@@ -1,10 +1,9 @@
 dailySchedule_index:
-    path:     /{page}/child/{child_id}
-    defaults: { _controller: "TimeBundle:DailySchedule:showChildSchedule", page:1 }
+    path:     /child/{child_id}
+    defaults: { _controller: "TimeBundle:DailySchedule:showChildSchedule" }
     methods:  GET
     requirements:
         child_id: '\d+'
-        page: '\d+'
 
 dailySchedule_show:
     path:     /child/{child_id}/today
@@ -14,9 +13,8 @@ dailySchedule_show:
         child_id: '\d+'   
 
 dailySchedule_change_state:
-    path:   /today/task/{task_id}/{state}
+    path:   /today/task/{task_id}/state
     defaults: { _controller: "TimeBundle:DailySchedule:changeScheduleState" }
     methods:  [POST]
     requirements:
         schedule_id: '\d+'
-        state: 1|0

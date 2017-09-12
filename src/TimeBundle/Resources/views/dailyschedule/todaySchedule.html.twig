@@ -1,88 +1,95 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    
+
     <div class='container'>
-    <h1>Today Dailyschedule</h1>
+        <h1>Today Dailyschedule</h1>
+        <br>
 
-    {% if dailySchedules %}
-    
-        <div class="card" >
-            <h2> </h2>
-            <div class="card-block">
-              {#<h4 class="card-title">{{dailySchedules[0].date|date('l')}}</h4>
-              <p class="card-text">{{ dailySchedules[0].date|date('Y-m-d') }}</p>#}
+        {% if dailySchedules %}
+
+            <div class="card" >
+                <h2> </h2>
+                <div class="card-block">
+                    {#<h4 class="card-title">{{dailySchedules[0].date|date('l')}}</h4>
+                    <p class="card-text">{{ dailySchedules[0].date|date('Y-m-d') }}</p>#}
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for task in dailySchedules %}
+                        <li class="list-group-item">
+                            {{ task.taskName }}
+                            {#                         <pre class='text-right '> {% if dailySchedule.isDone %}Yes{% else %}No{% endif %}</div>#}
+
+                            {% if task.state is defined and task.state == 'Done' %}
+                                <div class="date" id="{{task.id}}done" >
+                                    <h6 style="cursor:pointer" class="glyphicon glyphicon-ok" aria-hidden="true">Done</h6>
+                                </div>
+                                <div class="date" style="display:none" id="{{task.id}}notDone">
+                                    <h6 style="cursor:pointer" class="fa fa-plus" aria-hidden="true">NotDone</h6>
+                                </div>
+
+
+                            {% else %}
+                                <div class="date" style="display:none" id="{{task.id}}done">
+                                    <h6 style="cursor:pointer" class="glyphicon glyphicon-ok" aria-hidden="true">Done</h6>
+                                </div>
+                                <div class="date" id="{{task.id}}notDone">
+                                    <h6 style="cursor:pointer" class="fa fa-plus" aria-hidden="true">NotDone</h6>
+                                </div>
+                            {% endif %}
+                        </li>
+
+                        {% if is_granted('ROLE_CHILD') %}
+                        <script>
+                            $(document).ready(function () {
+                                $("#{{task.id}}done").click(function () {
+                                    console.log('click');
+                                    $.ajax({
+                                        url: "{{ path('dailySchedule_change_state', {'task_id': task.id  }) }}",
+                                        method: "POST",
+                                        data:
+                                                {'state': false},
+                                        success: function (result) {
+                                            console.log(result);
+                                            if (result.data) {
+                                                $("#{{task.id}}notDone").show();
+                                                $("#{{task.id}}done").hide();
+                                            }
+                                        }
+                                    });
+                                });
+                                $("#{{task.id}}notDone").click(function () {
+                                    $.ajax({url: "{{ path('dailySchedule_change_state', {'task_id': task.id }) }}",
+                                        method: "POST",
+                                        data:
+                                                {'state': true},
+                                        success: function (result) {
+                                            console.log(result);
+                                            if (result.data) {
+                                                $("#{{task.id}}done").show();
+                                                $("#{{task.id}}notDone").hide();
+                                            }
+                                        }
+                                    });
+                                });
+                            });
+                        </script>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+                <div class="card-block">
+                    <a class="card-link" href="{{ path('dailySchedule_index',{ 'child_id': child_id }) }}">Back to the list</a>
+
+
+                </div>
             </div>
-            <ul class="list-group list-group-flush">
-                {% for task in dailySchedules %}
-                    <li class="list-group-item">
-                         {{ task.taskName }}
-{#                         <pre class='text-right '> {% if dailySchedule.isDone %}Yes{% else %}No{% endif %}</div>#}
-                    
-                        {% if task.state is defined and task.state == 'Done' %}
-                           <div class="date" id="{{task.id}}done" >
-                            <h6 class="glyphicon glyphicon-ok" aria-hidden="true">Done</h6>
-                           </div>
-                           <div class="date" style="display:none" id="{{task.id}}notDone">
-                             <h6 class="fa fa-plus" aria-hidden="true">NotDone</h6>
-                           </div>
+
+        {% endif %}
 
 
-                         {% else %}
-                           <div class="date" style="display:none" id="{{task.id}}done">
-                             <h6 class="glyphicon glyphicon-ok" aria-hidden="true">Done</h6>
-                           </div>
-                           <div class="date" id="{{task.id}}notDone">
-                             <h6 class="fa fa-plus" aria-hidden="true">NotDone</h6>
-                           </div>
-                         {% endif %}
-                    </li>
-                    
-                    
-            <script>
-              $(document).ready(function(){
-                  $("#{{task.id}}done").click(function(){
-                      console.log('click');
-                      $.ajax({url: "{{ path('dailySchedule_change_state', {'task_id': task.id ,'state': 1 }) }}",
-                          method: "POST" ,
-                           success: function(result){
-                              console.log(result);
-                        if (result.data ){
-                          $("#{{task.id}}notDone").show();
-                          $("#{{task.id}}done").hide();
-                        }
-                      }
-                    });
-                  });
-                  $("#{{task.id}}notDone").click(function(){
-                      $.ajax({url: "{{ path('dailySchedule_change_state', {'task_id': task.id ,'state': 0 }) }}",
-                          method: "POST",
-                          success: function(result){
-                        console.log(result);
-                        if (result.data){
-                          $("#{{task.id}}done").show();
-                          $("#{{task.id}}notDone").hide();
-                        }
-                      }
-                    });
-                  });
-              });
-            </script>
-                {% endfor %}
-            </ul>
-            <div class="card-block">
-              <a class="card-link" href="{{ path('dailySchedule_index',{ 'child_id': child_id }) }}">Back to the list</a>
-              
-              
-            </div>
-        </div>
-    
-    {% endif %}
-    
-   
     </div>
- 
-    
-             
-    
+
+
+
+
 {% endblock %}

@@ -56,7 +56,7 @@
                                     <ul>
                                         {% for day in task.schedule|scheduleDate %}
                                             <li>{{day}} </li>
-                                            {% endfor%}
+                                        {% endfor%}
                                     </ul>                        
                                 </li>
 
@@ -122,11 +122,17 @@
               <th>Schedule</th>
             </tr>
           </thead>
-          <tbody id="tbody">
+        <tbody id="tbody">
             
-          </tbody>
-        </table>
-    <ul class ="pagination pagination-sm " id='pagination'>
-    </ul>
+        </tbody>
+    </table>
+                        
+                        
+        <nav aria-label="...">
+            <ul class="pagination" id='pagination' >
+                
+            </ul>
+        </nav>
+
 
 {% endblock %}

@@ -9,13 +9,12 @@ use TimeBundle\Form\UserType;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use TimeBundle\constant\Roles;
 use TimeBundle\Service\UserService;
-use TimeBundle\Utility\Paginator;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use TimeBundle\Exception\TimeBundleException;
 use TimeBundle\constant\Exceptions;
 use TimeBundle\Security\ApiFirewallMatcher;
 use TimeBundle\constant\General;
+use TimeBundle\constant\Actions;
 
 
 
@@ -31,25 +30,21 @@ class UserController extends Controller
      */
     
     // authorization missing 
-    public function indexAction(Request $request, $page = 1)
+    public function indexAction(Request $request)
     {
-        if($this->getUser()->getRole() !== Roles::ROLE_ADMIN) {
-            throw new TimeBundleException(Exceptions::CODE_ACCESS_DENIED);
-        }
-        $limit = General::PAGINATION_LIMIT;
+//        if($this->getUser()->getRole() !== Roles::ROLE_ADMIN) {
+//            throw new TimeBundleException(Exceptions::CODE_ACCESS_DENIED);
+//        }
+//        $limit = General::PAGINATION_LIMIT;
+//
+//        $result = $this->get(UserService::class)->getUsers($page, $limit);
+//        $session = $this->get('session');
+//        $session->set('filter', array(
+//            'username' => null,
+//            'role' => null,
+//            ));
 
-        $result = $this->get(UserService::class)->getUsers($page, $limit);
-        $session = $this->get('session');
-        $session->set('filter', array(
-            'username' => null,
-            'role' => null,
-            ));
-
-        if( ApiFirewallMatcher::matches($request) )
-        {
-            return new JsonResponse(array('status'=> 1 , 'data'=>$result));
-        }
-        return $this->render('TimeBundle:user:index.html.twig', $result);
+        return  $this->filterAction($request);
     }
     
     public function getMothersAction(Request $request)
@@ -67,32 +62,36 @@ class UserController extends Controller
         ));
     }
 
-    public function filterAction(Request $request ,$page =1)
+    public function filterAction(Request $request )
     { 
         if($this->getUser()->getRole() !== Roles::ROLE_ADMIN) {
             throw new TimeBundleException(Exceptions::CODE_ACCESS_DENIED);
         }
         $limit = General::PAGINATION_LIMIT;
         $username = $request->query->get('username');
-        $role = $request->query->get('role') === ''? null : $request->query->getInt('role', null);
-
+        
+//        dump($request->query->get('page'));
+//        die;
+        $role = $request->query->get('role') ;
+        if( !is_null($role)) {
+            $role = $role === ''? null : $request->query->getInt('role', null);
+        }
         if($role === 0) {
             throw new TimeBundleException(Exceptions::CODE_ROLE_NOT_FOUND);
         }
+        
+        $page = $request->query->get('page') === null ? 1 : $request->query->getInt('page', 1);
+        if($page === 0) {
+            throw new TimeBundleException(Exceptions::CODE_PAGE_NUM_NOT_FOUND);
+        }
         $result = $this->get(UserService::class)
                     ->getFilteredUsers($username, $role, $page, $limit);
-
-        $session = $this->get('session');
-        $session->set('filter', array(
-            'username' => $username,
-            'role' => $role,
-            ));
         
-        return new JsonResponse($result);
-//            dump($session);
-//            die;
-//        return $this->render('TimeBundle:user:index.html.twig', $result);
-//        return $this->render('TimeBundle:user:search.html.twig', array('users' => $users));
+        if( $request->isXmlHttpRequest() || ApiFirewallMatcher::matches($request) ) {
+            return new JsonResponse(array('status'=> 1 , 'data'=>$result));
+        }
+        return $this->render('TimeBundle:user:index.html.twig', $result);
+        
     }
 
     /**
@@ -103,7 +102,7 @@ class UserController extends Controller
     {   
         $currUser = $this->getUser();
         $user = $this->get(UserService::class)->getUser($id);
-        $this->get(UserService::class)->denyAccessUnlessGranted('show', $currUser, $user);
+        $this->get(UserService::class)->denyAccessUnlessGranted(Actions::SHOW, $currUser, $user);
 
         $deleteForm = $this->createDeleteForm($user);
         if( ApiFirewallMatcher::matches($request) )
@@ -126,7 +125,7 @@ class UserController extends Controller
         
         $currUser = $this->getUser();
         $user = $this->get(UserService::class)->getUser($id);
-        $this->get(UserService::class)->denyAccessUnlessGranted('edit', $currUser, $user);
+        $this->get(UserService::class)->denyAccessUnlessGranted(Actions::EDIT, $currUser, $user);
         
         $deleteForm = $this->createDeleteForm($user);
         $editForm = $this->createForm('TimeBundle\Form\UserType', $user);
@@ -154,7 +153,7 @@ class UserController extends Controller
     {
         $currUser = $this->getUser();
         $user = $this->get(UserService::class)->getUser($id);
-        $this->get(UserService::class)->denyAccessUnlessGranted('delete', $currUser, $user);
+        $this->get(UserService::class)->denyAccessUnlessGranted(Actions::DELETE, $currUser, $user);
         
         $form = $this->createDeleteForm($user);
         $form->handleRequest($request);

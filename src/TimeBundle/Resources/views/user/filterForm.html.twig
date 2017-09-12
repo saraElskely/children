@@ -5,13 +5,13 @@
 {% endif %}#}
 <form id='filterForm'>
     <label for="username"> Username</label>
-    <input type="text" id='username' name="username" value="{{filter['username']}}" />
+    <input type="text" id='username' name="username" value="" />
 
     {#    <input type='hidden' name='page' value='{{filter['page']}}'/>#}
 
     <label for="roles">Role</label>
     <select name="role" id='role'>
-        <option selected  >Role</option>
+        <option selected value='' >Role</option>
         <option value=1   >Admin</option>
         <option value=2   >Mother</option>
         <option value=3   >Child</option>
@@ -29,7 +29,10 @@
         $('#pagination').on('click', function (e) {
             console.log(e);
             e.preventDefault();
-            var filter = {'username': $('#username').val(),
+            var p = e.target.id;
+            var filter = {
+                'page': p,
+                'username': $('#username').val(),
                 'role': $('#role').val()}
             pageClick(e, filter);
         });
@@ -37,17 +40,19 @@
         $("#filter").click(function (e) {
             e.preventDefault();
             console.log($('#username').val());
-            var filter = {'username': $('#username').val(),
+            var filter = {
+                'page': 1,
+                'username': $('#username').val(),
                 'role': $('#role').val()};
             console.log(filter);
-                getResult('{{ path('user_filter',{'page':1 }) }}', filter);
+                getResult('{{ path('user_filter') }}', filter);
             });
 
             function pageClick(e, filter) {
                 console.log(filter);
                 var p = e.target.id;
                 if (!isNaN(p)) {
-                    getResult("/users/" + p + "/filter", filter);
+                    getResult("/user/filter", filter);
                 }
             }
 
@@ -70,10 +75,10 @@
 
                         if (result) {
                             var strUser = "<tr>";
-                            $.each(result.users, function (key, user) {
+                            $.each(result.data.users, function (key, user) {
                                 var role = user.role == 1 ? 'admin' : user.role == 2 ? 'Mother' : 'child';
-                                strUser += "<th>" + user.fname + "</th>\
-                                                      <td>" + user.lname + "</td>\
+                                strUser += "<th><a href='/user/"+user.id+"/show' >" + user.fname + "</th>\
+                                                      <td>" + user.lname + "</a></td>\
                                                       <td>" + user.username + "</td>\
                                                       <td>" + role + "</td>\
                                                       <td>" + user.age + "</td>\
@@ -81,9 +86,17 @@
                                 strUser += '</tr>';
                             });
                             var strPaginate = "";
-                            if (result.maxPages > 1) {
-                                for (var page = 1; page <= result.maxPages; page++) {
-                                    strPaginate += "<li><div id='" + page + "'class='page'> << " + page + " >> </div> </li>";
+                            if (result.data.maxPages > 1) {
+                                for (var page = 1; page <= result.data.maxPages; page++) { 
+                                    var active ='';
+                                    var id = page;
+                                    if(result.data.currentPage == page) {
+                                        active = 'active';
+                                        id = 'active';
+                                    }
+                                    
+                                    strPaginate += "<li class='page-item "+active+"'>\
+                                                        <div class='page-link'  id='"+id+"' class='page'>"+page+"</div></li>";
                                 }
                             }
 
@@ -92,6 +105,7 @@
                             $('#users').append(strUser);
                             $('#pagination').empty();
                             $('#pagination').append(strPaginate);
+                            $(".page-link").css("cursor","pointer");
                         }
                     }
                 });

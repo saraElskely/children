@@ -5,7 +5,7 @@
 {% block body %}
     <h1 class="center-block">Welcome {{ app.user.fname }}  </h1>
     <br>
-    {% if children is defined %}
+    {% if children  %}
         
         <h2> {{ children[0].mother.fname }}`s children </h2>
         <br>
