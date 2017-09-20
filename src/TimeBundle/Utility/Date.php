@@ -12,10 +12,7 @@ use TimeBundle\constant\Schedule;
 class Date {
 
     public static function getTodayInWeek() {
-        $today = new \DateTime();
-        $today = strtotime($today->format('Y-m-d'));
-        $today = date('w', $today);
-
+        $today = date('w', strtotime((new \DateTime())->format('Y-m-d')));
         return pow(2, $today);
     }
 
